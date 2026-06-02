@@ -37,7 +37,7 @@ export default function AuditPage() {
                                             {log.knowledgeTitle ?? log.metadata?.title ?? "Unknown knowledge item"}
                                         </p>
                                         <p className="text-sm text-neutral-400">
-                                            {log.actorId ?? "demo-user"}{" "}
+                                            {log.actorEmail ?? log.actorId ?? log.actorUserId ?? "demo-user"}{" "}
                                             {log.action === "seed.demo_created" ? "created" : log.action} this knowledge item
                                         </p>
                                     </div>

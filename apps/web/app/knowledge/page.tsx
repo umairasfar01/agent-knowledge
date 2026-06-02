@@ -6,10 +6,12 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import Link from "next/link";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 export default function KnowledgePage() {
   const knowledgeItems = useQuery(api.knowledge.listKnowledge);
   const agents = useQuery(api.agents.listAgents);
+  const { user } = useAuth();
 
   const createKnowledge = useMutation(api.knowledge.createKnowledge);
   const deleteKnowledge = useMutation(api.knowledge.deleteKnowledge);
@@ -53,6 +55,8 @@ export default function KnowledgePage() {
         ? new Date(lastReviewedAt).getTime()
         : undefined,
       allowedAgentIds,
+      actorEmail: user?.email ?? "unknown-user",
+      ownerEmail: user?.email ?? "unknown-user",
     };
 
     if (editingId) {
@@ -407,7 +411,12 @@ export default function KnowledgePage() {
 
                       <button
                         type="button"
-                        onClick={() => deleteKnowledge({ id: item._id })}
+                        onClick={() =>
+                          deleteKnowledge({
+                            id: item._id,
+                            actorEmail: user?.email ?? "unknown-user",
+                          })
+                        }
                         className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
                       >
                         Delete

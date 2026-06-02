@@ -13,6 +13,8 @@ export const createKnowledge = mutation({
     sourceUrl: v.optional(v.string()),
     lastReviewedAt: v.optional(v.number()),
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
+    actorEmail: v.optional(v.string()),
+    ownerEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -31,6 +33,7 @@ export const createKnowledge = mutation({
       createdAt: now,
       updatedAt: now,
       allowedAgentIds: args.allowedAgentIds,
+      ownerEmail: args.ownerEmail,
     });
 
     await ctx.db.insert("auditLogs", {
@@ -38,6 +41,7 @@ export const createKnowledge = mutation({
       knowledgeId,
       knowledgeTitle: args.title,
       actorId: "demo-user",
+      actorEmail: args.actorEmail,
       createdAt: now,
     });
 
@@ -55,6 +59,7 @@ export const listKnowledge = query({
 export const deleteKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
+    actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const item = await ctx.db.get(args.id);
@@ -67,6 +72,7 @@ export const deleteKnowledge = mutation({
       knowledgeTitle: item?.title ?? "Unknown knowledge item",
       actorId: "demo-user",
       createdAt: Date.now(),
+      actorEmail: args.actorEmail,
     });
   },
 });
@@ -84,6 +90,7 @@ export const updateKnowledge = mutation({
     sourceUrl: v.optional(v.string()),
     lastReviewedAt: v.optional(v.number()),
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
+    actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
@@ -104,6 +111,7 @@ export const updateKnowledge = mutation({
       knowledgeId: args.id,
       knowledgeTitle: args.title,
       actorId: "demo-user",
+      actorEmail: args.actorEmail,
       createdAt: Date.now(),
     });
   },
@@ -163,10 +171,10 @@ export const listApprovalQueue = query({
 export const approveKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
+    actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const item = await ctx.db.get(args.id);
-
     await ctx.db.patch(args.id, {
       requiresApproval: false,
       updatedAt: Date.now(),
@@ -177,6 +185,7 @@ export const approveKnowledge = mutation({
       knowledgeId: args.id,
       knowledgeTitle: item?.title ?? "Unknown knowledge item",
       actorId: "demo-user",
+      actorEmail: args.actorEmail,
       createdAt: Date.now(),
     });
   },

@@ -128,7 +128,7 @@ export default function KnowledgeDetailPage() {
                                                 </p>
 
                                                 <p className="mt-1 text-sm text-neutral-400">
-                                                    {log.actorId ?? log.actorUserId ?? "demo-user"}{" "}
+                                                    {log.actorEmail ?? log.actorId ?? log.actorUserId ?? "demo-user"}{" "}
                                                     {log.action === "seed.demo_created" ? "created" : log.action} this knowledge item
                                                 </p>
 
@@ -142,6 +142,15 @@ export default function KnowledgeDetailPage() {
                             </section>
 
                             <div className="mt-4 space-y-3 text-sm text-neutral-300">
+                                <p>
+                                    Owner:{" "}
+                                    {item.ownerEmail ? (
+                                        item.ownerEmail
+                                    ) : (
+                                        <span className="text-neutral-500">Unknown owner</span>
+                                    )}
+                                </p>
+
                                 <p>
                                     Source:{" "}
                                     {item.sourceUrl ? (

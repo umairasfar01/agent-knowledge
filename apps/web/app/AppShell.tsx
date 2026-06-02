@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const { user, signOut } = useAuth();
+
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
       <div className="grid min-h-screen md:grid-cols-[260px_1fr]">
@@ -47,6 +52,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               Approvals
             </Link>
+
+            <div className="mt-8 border-t border-neutral-800 pt-6">
+              <p className="text-xs text-neutral-500">Signed in as</p>
+              <p className="mt-1 truncate text-sm text-neutral-300">
+                {user?.email ?? "Unknown user"}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => signOut()}
+                className="mt-4 w-full rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
+              >
+                Sign out
+              </button>
+            </div>
             
           </nav>
         </aside>

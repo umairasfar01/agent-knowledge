@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
+import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 
 export const metadata: Metadata = {
   title: "Agent Knowledge",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <AuthKitProvider>
+          <ConvexClientProvider>{children}</ConvexClientProvider>
+        </AuthKitProvider>
       </body>
     </html>
   );

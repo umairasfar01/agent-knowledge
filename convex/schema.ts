@@ -8,6 +8,7 @@ export default defineSchema({
     category: v.string(),
     status: v.union(v.literal("draft"), v.literal("verified")),
     ownerId: v.optional(v.string()),
+    ownerEmail: v.optional(v.string()),
 
     sourceUrl: v.optional(v.string()),
     lastReviewedAt: v.optional(v.number()),
@@ -22,34 +23,35 @@ export default defineSchema({
   }),
 
   auditLogs: defineTable({
-  action: v.union(
-    v.literal("created"),
-    v.literal("updated"),
-    v.literal("deleted"),
-    v.literal("seed.demo_created")
-  ),
+    action: v.union(
+      v.literal("created"),
+      v.literal("updated"),
+      v.literal("deleted"),
+      v.literal("seed.demo_created")
+    ),
 
-  knowledgeId: v.optional(v.id("knowledge")),
-  knowledgeTitle: v.optional(v.string()),
-  actorId: v.optional(v.string()),
+    knowledgeId: v.optional(v.id("knowledge")),
+    knowledgeTitle: v.optional(v.string()),
+    actorId: v.optional(v.string()),
+    actorEmail: v.optional(v.string()),
+    actorUserId: v.optional(v.string()),
 
-  actorUserId: v.optional(v.string()),
-  organizationId: v.optional(v.string()),
-  targetId: v.optional(v.string()),
-  targetType: v.optional(v.string()),
-  metadata: v.optional(v.any()),
+    organizationId: v.optional(v.string()),
+    targetId: v.optional(v.string()),
+    targetType: v.optional(v.string()),
+    metadata: v.optional(v.any()),
 
-  createdAt: v.number(),
-}),
+    createdAt: v.number(),
+  }),
 
   agents: defineTable({
-  name: v.string(),
-  description: v.string(),
-  role: v.optional(v.string()),
-  organizationId: v.optional(v.string()),
-  status: v.union(v.literal("active"), v.literal("disabled")),
-  createdAt: v.number(),
-  updatedAt: v.number(),
-}),
+    name: v.string(),
+    description: v.string(),
+    role: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
+    status: v.union(v.literal("active"), v.literal("disabled")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }),
 
 });

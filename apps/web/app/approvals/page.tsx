@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
-import { useMutation,} from "convex/react";
+import { useMutation, } from "convex/react";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 export default function ApprovalsPage() {
     const approvalItems = useQuery(api.knowledge.listApprovalQueue);
     const approveKnowledge = useMutation(api.knowledge.approveKnowledge);
+    const { user } = useAuth();
 
     return (
         <AppShell>
@@ -77,7 +79,12 @@ export default function ApprovalsPage() {
 
                                         <button
                                             type="button"
-                                            onClick={() => approveKnowledge({ id: item._id })}
+                                            onClick={() =>
+                                                approveKnowledge({
+                                                    id: item._id,
+                                                    actorEmail: user?.email ?? "unknown-user",
+                                                })
+                                            }
                                             className="rounded-full border border-green-900/60 px-3 py-1 text-xs text-green-300 hover:bg-green-950"
                                         >
                                             Mark as approved
