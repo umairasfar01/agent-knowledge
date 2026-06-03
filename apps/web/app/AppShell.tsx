@@ -67,7 +67,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 Sign out
               </button>
             </div>
-            
+
           </nav>
         </aside>
 

@@ -6,6 +6,7 @@ import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
 import { useMutation, } from "convex/react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function ApprovalsPage() {
     const approvalItems = useQuery(api.knowledge.listApprovalQueue);
@@ -83,6 +84,7 @@ export default function ApprovalsPage() {
                                                 approveKnowledge({
                                                     id: item._id,
                                                     actorEmail: user?.email ?? "unknown-user",
+                                                    organizationId: DEFAULT_ORG_ID,
                                                 })
                                             }
                                             className="rounded-full border border-green-900/60 px-3 py-1 text-xs text-green-300 hover:bg-green-950"

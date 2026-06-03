@@ -7,6 +7,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import Link from "next/link";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function KnowledgePage() {
   const knowledgeItems = useQuery(api.knowledge.listKnowledge);
@@ -56,7 +57,7 @@ export default function KnowledgePage() {
         : undefined,
       allowedAgentIds,
       actorEmail: user?.email ?? "unknown-user",
-      ownerEmail: user?.email ?? "unknown-user",
+      organizationId: DEFAULT_ORG_ID,
     };
 
     if (editingId) {
@@ -415,6 +416,7 @@ export default function KnowledgePage() {
                           deleteKnowledge({
                             id: item._id,
                             actorEmail: user?.email ?? "unknown-user",
+                            organizationId: "default-org",
                           })
                         }
                         className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"

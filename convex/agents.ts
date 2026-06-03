@@ -7,6 +7,7 @@ export const createAgent = mutation({
     description: v.string(),
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
+    organizationId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -16,6 +17,7 @@ export const createAgent = mutation({
       description: args.description,
       role: args.role,
       status: args.status,
+      organizationId: args.organizationId,
       createdAt: now,
       updatedAt: now,
     });
@@ -25,7 +27,13 @@ export const createAgent = mutation({
 export const listAgents = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("agents").order("desc").collect();
+    const agents = await ctx.db.query("agents").order("desc").collect();
+
+    return agents.filter(
+      (agent) =>
+        agent.organizationId === "default-org" ||
+        agent.organizationId === undefined
+    );
   },
 });
 
@@ -36,6 +44,7 @@ export const updateAgent = mutation({
     description: v.string(),
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
+    organizationId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
@@ -44,6 +53,7 @@ export const updateAgent = mutation({
       role: args.role,
       status: args.status,
       updatedAt: Date.now(),
+      organizationId: args.organizationId,
     });
   },
 });

@@ -9,6 +9,7 @@ export default defineSchema({
     status: v.union(v.literal("draft"), v.literal("verified")),
     ownerId: v.optional(v.string()),
     ownerEmail: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
 
     sourceUrl: v.optional(v.string()),
     lastReviewedAt: v.optional(v.number()),

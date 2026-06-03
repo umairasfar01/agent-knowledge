@@ -6,6 +6,7 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import Link from "next/link";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function AgentsPage() {
     const agents = useQuery(api.agents.listAgents);
@@ -31,6 +32,7 @@ export default function AgentsPage() {
                 description,
                 role,
                 status,
+                organizationId: DEFAULT_ORG_ID,
             });
             setEditingId(null);
         } else {
@@ -39,6 +41,7 @@ export default function AgentsPage() {
                 description,
                 role,
                 status,
+                organizationId: DEFAULT_ORG_ID,
             });
         }
 

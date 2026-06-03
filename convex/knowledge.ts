@@ -15,6 +15,7 @@ export const createKnowledge = mutation({
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
     actorEmail: v.optional(v.string()),
     ownerEmail: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -34,6 +35,7 @@ export const createKnowledge = mutation({
       updatedAt: now,
       allowedAgentIds: args.allowedAgentIds,
       ownerEmail: args.ownerEmail,
+      organizationId: args.organizationId,
     });
 
     await ctx.db.insert("auditLogs", {
@@ -43,6 +45,7 @@ export const createKnowledge = mutation({
       actorId: "demo-user",
       actorEmail: args.actorEmail,
       createdAt: now,
+      organizationId: args.organizationId,
     });
 
     return knowledgeId;
@@ -52,7 +55,13 @@ export const createKnowledge = mutation({
 export const listKnowledge = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("knowledge").order("desc").collect();
+    const items = await ctx.db.query("knowledge").order("desc").collect();
+
+    return items.filter(
+      (item) =>
+        item.organizationId === "default-org" ||
+        item.organizationId === undefined
+    );
   },
 });
 
@@ -60,6 +69,7 @@ export const deleteKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const item = await ctx.db.get(args.id);
@@ -73,6 +83,7 @@ export const deleteKnowledge = mutation({
       actorId: "demo-user",
       createdAt: Date.now(),
       actorEmail: args.actorEmail,
+      organizationId: args.organizationId,
     });
   },
 });
@@ -91,6 +102,7 @@ export const updateKnowledge = mutation({
     lastReviewedAt: v.optional(v.number()),
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
     actorEmail: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
@@ -120,7 +132,15 @@ export const updateKnowledge = mutation({
 export const listAuditLogs = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("auditLogs").order("desc").take(20);
+    const logs = await ctx.db.query("auditLogs").order("desc").collect();
+
+    return logs
+      .filter(
+        (log) =>
+          log.organizationId === "default-org" ||
+          log.organizationId === undefined
+      )
+      .slice(0, 20);
   },
 });
 
@@ -141,7 +161,12 @@ export const listAuditLogsForKnowledge = query({
     const logs = await ctx.db.query("auditLogs").order("desc").collect();
 
     return logs
-      .filter((log) => log.knowledgeId === args.knowledgeId)
+      .filter(
+        (log) =>
+          log.knowledgeId === args.knowledgeId &&
+          (log.organizationId === "default-org" ||
+            log.organizationId === undefined)
+      )
       .slice(0, 10);
   },
 });
@@ -153,8 +178,11 @@ export const listKnowledgeForAgent = query({
   handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
 
-    return items.filter((item) =>
-      item.allowedAgentIds?.includes(args.agentId)
+    return items.filter(
+      (item) =>
+        item.allowedAgentIds?.includes(args.agentId) &&
+        (item.organizationId === "default-org" ||
+          item.organizationId === undefined)
     );
   },
 });
@@ -164,14 +192,20 @@ export const listApprovalQueue = query({
   handler: async (ctx) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
 
-    return items.filter((item) => item.requiresApproval === true);
+    return items.filter(
+      (item) =>
+        item.requiresApproval === true &&
+        (item.organizationId === "default-org" ||
+          item.organizationId === undefined)
+    );
   },
-});
+});;
 
 export const approveKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const item = await ctx.db.get(args.id);
