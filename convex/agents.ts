@@ -9,6 +9,7 @@ export const createAgent = mutation({
     status: v.union(v.literal("active"), v.literal("disabled")),
     organizationId: v.optional(v.string()),
     actorRole: v.string(),
+    actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
 
@@ -17,7 +18,7 @@ export const createAgent = mutation({
     }
     const now = Date.now();
 
-    return await ctx.db.insert("agents", {
+    const agentId = await ctx.db.insert("agents", {
       name: args.name,
       description: args.description,
       role: args.role,
@@ -26,6 +27,18 @@ export const createAgent = mutation({
       createdAt: now,
       updatedAt: now,
     });
+    await ctx.db.insert("auditLogs", {
+      action: "agent.created",
+      agentId,
+      agentName: args.name,
+      actorEmail: args.actorEmail,
+      actorId: "demo-user",
+      organizationId: args.organizationId,
+      createdAt: now,
+    });
+
+    return agentId;
+
   },
 });
 
@@ -53,6 +66,7 @@ export const updateAgent = mutation({
     status: v.union(v.literal("active"), v.literal("disabled")),
     organizationId: v.optional(v.string()),
     actorRole: v.string(),
+    actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (args.actorRole !== "admin") {
@@ -66,6 +80,16 @@ export const updateAgent = mutation({
       updatedAt: Date.now(),
       organizationId: args.organizationId,
     });
+
+    await ctx.db.insert("auditLogs", {
+      action: "agent.updated",
+      agentId: args.id,
+      agentName: args.name,
+      actorEmail: args.actorEmail,
+      actorId: "demo-user",
+      organizationId: args.organizationId,
+      createdAt: Date.now(),
+    });
   },
 });
 
@@ -73,12 +97,26 @@ export const deleteAgent = mutation({
   args: {
     id: v.id("agents"),
     actorRole: v.string(),
+    actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (args.actorRole !== "admin") {
       throw new Error("Unauthorized");
     }
+
+    const agent = await ctx.db.get(args.id);
+
     await ctx.db.delete(args.id);
+
+    await ctx.db.insert("auditLogs", {
+      action: "agent.deleted",
+      agentId: undefined,
+      agentName: agent?.name ?? "Unknown agent",
+      actorId: "demo-user",
+      actorEmail: args.actorEmail,
+      organizationId: agent?.organizationId,
+      createdAt: Date.now(),
+    });
   },
 });
 

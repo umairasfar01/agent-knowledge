@@ -8,6 +8,7 @@ import { Id } from "../../../../../convex/_generated/dataModel";
 import { AppShell } from "../../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
+
 export default function AgentDetailPage() {
   const params = useParams();
   const id = params.id as Id<"agents">;

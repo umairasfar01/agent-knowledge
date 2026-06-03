@@ -28,7 +28,11 @@ export default defineSchema({
       v.literal("created"),
       v.literal("updated"),
       v.literal("deleted"),
-      v.literal("seed.demo_created")
+      v.literal("seed.demo_created"),
+      v.literal("agent.created"),
+      v.literal("agent.updated"),
+      v.literal("agent.deleted")
+
     ),
 
     knowledgeId: v.optional(v.id("knowledge")),
@@ -43,6 +47,10 @@ export default defineSchema({
     metadata: v.optional(v.any()),
 
     createdAt: v.number(),
+
+    agentId: v.optional(v.id("agents")),
+    agentName: v.optional(v.string()),
+    
   }),
 
   agents: defineTable({

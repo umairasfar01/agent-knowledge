@@ -7,8 +7,8 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function AuditPage() {
     const auditLogs = useQuery(api.knowledge.listAuditLogs, {
-  organizationId: DEFAULT_ORG_ID,
-});
+        organizationId: DEFAULT_ORG_ID,
+    });
 
     return (
         <AppShell>
@@ -37,11 +37,22 @@ export default function AuditPage() {
                                 >
                                     <div>
                                         <p className="font-medium">
-                                            {log.knowledgeTitle ?? log.metadata?.title ?? "Unknown knowledge item"}
+                                            {log.knowledgeTitle ??
+                                                log.agentName ??
+                                                log.metadata?.title ??
+                                                "Unknown item"}
                                         </p>
                                         <p className="text-sm text-neutral-400">
                                             {log.actorEmail ?? log.actorId ?? log.actorUserId ?? "demo-user"}{" "}
-                                            {log.action === "seed.demo_created" ? "created" : log.action} this knowledge item
+                                            {log.action === "seed.demo_created"
+                                                ? "created this knowledge item"
+                                                : log.action === "agent.created"
+                                                    ? "created this agent"
+                                                    : log.action === "agent.updated"
+                                                        ? "updated this agent"
+                                                        : log.action === "agent.deleted"
+                                                            ? "deleted this agent"
+                                                            : `${log.action} this knowledge item`}
                                         </p>
                                     </div>
 
