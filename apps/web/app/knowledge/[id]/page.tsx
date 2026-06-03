@@ -6,16 +6,20 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { AppShell } from "../../AppShell";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function KnowledgeDetailPage() {
     const params = useParams();
     const id = params.id as Id<"knowledge">;
 
     const item = useQuery(api.knowledge.getKnowledge, { id });
-    const agents = useQuery(api.agents.listAgents);
+    const agents = useQuery(api.agents.listAgents, {
+        organizationId: DEFAULT_ORG_ID,
+    });
 
     const auditLogs = useQuery(api.knowledge.listAuditLogsForKnowledge, {
         knowledgeId: id,
+        organizationId: DEFAULT_ORG_ID,
     });
 
     return (

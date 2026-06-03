@@ -10,8 +10,12 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function KnowledgePage() {
-  const knowledgeItems = useQuery(api.knowledge.listKnowledge);
-  const agents = useQuery(api.agents.listAgents);
+  const knowledgeItems = useQuery(api.knowledge.listKnowledge, {
+    organizationId: DEFAULT_ORG_ID,
+  });
+  const agents = useQuery(api.agents.listAgents, {
+    organizationId: DEFAULT_ORG_ID,
+  });
   const { user } = useAuth();
 
   const createKnowledge = useMutation(api.knowledge.createKnowledge);

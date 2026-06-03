@@ -3,9 +3,12 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function AuditPage() {
-    const auditLogs = useQuery(api.knowledge.listAuditLogs);
+    const auditLogs = useQuery(api.knowledge.listAuditLogs, {
+  organizationId: DEFAULT_ORG_ID,
+});
 
     return (
         <AppShell>

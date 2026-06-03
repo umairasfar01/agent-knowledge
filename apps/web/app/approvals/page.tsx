@@ -9,7 +9,9 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function ApprovalsPage() {
-    const approvalItems = useQuery(api.knowledge.listApprovalQueue);
+    const approvalItems = useQuery(api.knowledge.listApprovalQueue, {
+  organizationId: DEFAULT_ORG_ID,
+});
     const approveKnowledge = useMutation(api.knowledge.approveKnowledge);
     const { user } = useAuth();
 

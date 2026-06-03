@@ -25,13 +25,15 @@ export const createAgent = mutation({
 });
 
 export const listAgents = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
     const agents = await ctx.db.query("agents").order("desc").collect();
 
     return agents.filter(
       (agent) =>
-        agent.organizationId === "default-org" ||
+        agent.organizationId === args.organizationId ||
         agent.organizationId === undefined
     );
   },

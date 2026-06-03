@@ -53,13 +53,15 @@ export const createKnowledge = mutation({
 });
 
 export const listKnowledge = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
 
     return items.filter(
       (item) =>
-        item.organizationId === "default-org" ||
+        item.organizationId === args.organizationId ||
         item.organizationId === undefined
     );
   },
@@ -130,14 +132,16 @@ export const updateKnowledge = mutation({
 });
 
 export const listAuditLogs = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
     const logs = await ctx.db.query("auditLogs").order("desc").collect();
 
     return logs
       .filter(
         (log) =>
-          log.organizationId === "default-org" ||
+          log.organizationId === args.organizationId ||
           log.organizationId === undefined
       )
       .slice(0, 20);
@@ -156,6 +160,7 @@ export const getKnowledge = query({
 export const listAuditLogsForKnowledge = query({
   args: {
     knowledgeId: v.id("knowledge"),
+    organizationId: v.string(),
   },
   handler: async (ctx, args) => {
     const logs = await ctx.db.query("auditLogs").order("desc").collect();
@@ -164,7 +169,7 @@ export const listAuditLogsForKnowledge = query({
       .filter(
         (log) =>
           log.knowledgeId === args.knowledgeId &&
-          (log.organizationId === "default-org" ||
+          (log.organizationId === args.organizationId ||
             log.organizationId === undefined)
       )
       .slice(0, 10);
@@ -174,6 +179,7 @@ export const listAuditLogsForKnowledge = query({
 export const listKnowledgeForAgent = query({
   args: {
     agentId: v.id("agents"),
+    organizationId: v.string(),
   },
   handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
@@ -181,25 +187,27 @@ export const listKnowledgeForAgent = query({
     return items.filter(
       (item) =>
         item.allowedAgentIds?.includes(args.agentId) &&
-        (item.organizationId === "default-org" ||
+        (item.organizationId === args.organizationId ||
           item.organizationId === undefined)
     );
   },
 });
 
 export const listApprovalQueue = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
 
     return items.filter(
       (item) =>
         item.requiresApproval === true &&
-        (item.organizationId === "default-org" ||
+        (item.organizationId === args.organizationId ||
           item.organizationId === undefined)
     );
   },
-});;
+});
 
 export const approveKnowledge = mutation({
   args: {

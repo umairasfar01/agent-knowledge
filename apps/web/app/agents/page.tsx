@@ -9,7 +9,9 @@ import Link from "next/link";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function AgentsPage() {
-    const agents = useQuery(api.agents.listAgents);
+    const agents = useQuery(api.agents.listAgents, {
+        organizationId: DEFAULT_ORG_ID,
+    });
     const createAgent = useMutation(api.agents.createAgent);
     const updateAgent = useMutation(api.agents.updateAgent);
     const deleteAgent = useMutation(api.agents.deleteAgent);

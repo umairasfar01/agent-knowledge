@@ -4,10 +4,15 @@ import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function DashboardPage() {
-  const knowledgeItems = useQuery(api.knowledge.listKnowledge);
-  const agents = useQuery(api.agents.listAgents);
+  const knowledgeItems = useQuery(api.knowledge.listKnowledge, {
+    organizationId: DEFAULT_ORG_ID,
+  });
+  const agents = useQuery(api.agents.listAgents, {
+    organizationId: DEFAULT_ORG_ID,
+  });
 
   const total = knowledgeItems?.length ?? 0;
   const drafts = knowledgeItems?.filter((item) => item.status === "draft").length ?? 0;
