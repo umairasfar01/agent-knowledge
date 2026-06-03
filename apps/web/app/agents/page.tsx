@@ -232,7 +232,21 @@ export default function AgentsPage() {
                     </div>
 
                     {agents === undefined ? (
-                        <p className="text-neutral-400">Loading...</p>
+                        <div className="grid gap-4 md:grid-cols-2">
+                            {[1, 2, 3, 4].map((item) => (
+                                <div
+                                    key={item}
+                                    className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                                >
+                                    <div className="h-5 w-1/2 rounded bg-neutral-800" />
+                                    <div className="mt-3 h-4 w-1/3 rounded bg-neutral-800" />
+                                    <div className="mt-5 space-y-2">
+                                        <div className="h-4 w-full rounded bg-neutral-800" />
+                                        <div className="h-4 w-2/3 rounded bg-neutral-800" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     ) : agents.length === 0 ? (
                         <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
                             <p className="font-medium text-neutral-200">No matching agents found.</p>
