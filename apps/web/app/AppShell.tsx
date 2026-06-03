@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
@@ -52,6 +53,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               Approvals
             </Link>
+
+            <div className="mt-8 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+              <p className="text-xs text-neutral-500">Organization</p>
+              <p className="mt-1 text-sm font-medium text-neutral-300">
+                {DEFAULT_ORG_ID}
+              </p>
+            </div>
 
             <div className="mt-8 border-t border-neutral-800 pt-6">
               <p className="text-xs text-neutral-500">Signed in as</p>
