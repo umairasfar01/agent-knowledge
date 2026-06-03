@@ -13,10 +13,18 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 export default function AgentsPage() {
     const { user } = useAuth();
+
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState<
+        "all" | "active" | "disabled"
+    >("all");
+    const [roleFilter, setRoleFilter] = useState("all");
+
     const agents = useQuery(api.agents.listAgents, {
         organizationId: DEFAULT_ORG_ID,
-    
-
+        search,
+        status: statusFilter,
+        role: roleFilter,
     });
     const createAgent = useMutation(api.agents.createAgent);
     const updateAgent = useMutation(api.agents.updateAgent);
@@ -186,7 +194,42 @@ export default function AgentsPage() {
                 )}
 
                 <section className="space-y-4">
-                    <h2 className="text-xl font-semibold">Agent List</h2>
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <h2 className="text-xl font-semibold">Agent List</h2>
+
+                        <div className="flex flex-col gap-3 md:flex-row">
+                            <input
+                                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none placeholder:text-neutral-500 md:w-72"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Search agents..."
+                            />
+
+                            <select
+                                className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none"
+                                value={statusFilter}
+                                onChange={(e) =>
+                                    setStatusFilter(e.target.value as "all" | "active" | "disabled")
+                                }
+                            >
+                                <option value="all">All statuses</option>
+                                <option value="active">Active</option>
+                                <option value="disabled">Disabled</option>
+                            </select>
+
+                            <select
+                                className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none"
+                                value={roleFilter}
+                                onChange={(e) => setRoleFilter(e.target.value)}
+                            >
+                                <option value="all">All roles</option>
+                                <option>Support Agent</option>
+                                <option>Developer Agent</option>
+                                <option>Sales Agent</option>
+                                <option>Operations Agent</option>
+                            </select>
+                        </div>
+                    </div>
 
                     {agents === undefined ? (
                         <p className="text-neutral-400">Loading...</p>

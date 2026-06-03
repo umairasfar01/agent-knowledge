@@ -45,15 +45,35 @@ export const createAgent = mutation({
 export const listAgents = query({
   args: {
     organizationId: v.string(),
+    search: v.optional(v.string()),
+    status: v.optional(
+      v.union(v.literal("all"), v.literal("active"), v.literal("disabled"))
+    ),
+    role: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const agents = await ctx.db.query("agents").order("desc").collect();
 
-    return agents.filter(
-      (agent) =>
+    const search = args.search?.toLowerCase().trim() ?? "";
+    const status = args.status ?? "all";
+    const role = args.role ?? "all";
+
+    return agents.filter((agent) => {
+      const matchesOrganization =
         agent.organizationId === args.organizationId ||
-        agent.organizationId === undefined
-    );
+        agent.organizationId === undefined;
+
+      const matchesSearch =
+        !search ||
+        agent.name.toLowerCase().includes(search) ||
+        agent.description.toLowerCase().includes(search);
+
+      const matchesStatus = status === "all" || agent.status === status;
+
+      const matchesRole = role === "all" || agent.role === role;
+
+      return matchesOrganization && matchesSearch && matchesStatus && matchesRole;
+    });
   },
 });
 
