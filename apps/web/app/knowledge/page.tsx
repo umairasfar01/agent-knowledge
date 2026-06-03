@@ -11,9 +11,19 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 import { CURRENT_USER_ROLE, canManageKnowledge } from "@/lib/role";
 
 export default function KnowledgePage() {
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "verified">(
+    "all"
+  );
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
   const knowledgeItems = useQuery(api.knowledge.listKnowledge, {
-    organizationId: DEFAULT_ORG_ID,
-  });
+  organizationId: DEFAULT_ORG_ID,
+  search,
+  status: statusFilter,
+  category: categoryFilter,
+});
   const agents = useQuery(api.agents.listAgents, {
     organizationId: DEFAULT_ORG_ID,
   });
@@ -36,12 +46,6 @@ export default function KnowledgePage() {
   const [sourceUrl, setSourceUrl] = useState("");
   const [lastReviewedAt, setLastReviewedAt] = useState("");
   const [allowedAgentIds, setAllowedAgentIds] = useState<Id<"agents">[]>([]);
-
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "verified">(
-    "all"
-  );
-  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const canManage = canManageKnowledge(CURRENT_USER_ROLE);
 
@@ -125,20 +129,6 @@ export default function KnowledgePage() {
     setAllowedAgentIds(item.allowedAgentIds ?? []);
   }
 
-  const filteredKnowledgeItems =
-    knowledgeItems?.filter((item) => {
-      const matchesSearch =
-        item.title.toLowerCase().includes(search.toLowerCase()) ||
-        item.content.toLowerCase().includes(search.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === "all" || item.status === statusFilter;
-
-      const matchesCategory =
-        categoryFilter === "all" || item.category === categoryFilter;
-
-      return matchesSearch && matchesStatus && matchesCategory;
-    }) ?? [];
 
   return (
     <AppShell>
@@ -390,11 +380,11 @@ export default function KnowledgePage() {
 
           {knowledgeItems === undefined ? (
             <p className="text-neutral-400">Loading...</p>
-          ) : filteredKnowledgeItems.length === 0 ? (
+          ) : knowledgeItems.length === 0 ? (
             <p className="text-neutral-400">No knowledge items found.</p>
           ) : (
             <div className="space-y-3">
-              {filteredKnowledgeItems.map((item) => (
+              {knowledgeItems.map((item) => (
                 <article
                   key={item._id}
                   className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"

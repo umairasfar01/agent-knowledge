@@ -60,15 +60,41 @@ export const createKnowledge = mutation({
 export const listKnowledge = query({
   args: {
     organizationId: v.string(),
+    search: v.optional(v.string()),
+    status: v.optional(
+      v.union(v.literal("all"), v.literal("draft"), v.literal("verified"))
+    ),
+    category: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
 
-    return items.filter(
-      (item) =>
+    const search = args.search?.toLowerCase().trim() ?? "";
+    const status = args.status ?? "all";
+    const category = args.category ?? "all";
+
+    return items.filter((item) => {
+      const matchesOrganization =
         item.organizationId === args.organizationId ||
-        item.organizationId === undefined
-    );
+        item.organizationId === undefined;
+
+      const matchesSearch =
+        !search ||
+        item.title.toLowerCase().includes(search) ||
+        item.content.toLowerCase().includes(search);
+
+      const matchesStatus = status === "all" || item.status === status;
+
+      const matchesCategory =
+        category === "all" || item.category === category;
+
+      return (
+        matchesOrganization &&
+        matchesSearch &&
+        matchesStatus &&
+        matchesCategory
+      );
+    });
   },
 });
 
