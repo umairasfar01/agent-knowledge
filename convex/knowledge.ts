@@ -16,9 +16,14 @@ export const createKnowledge = mutation({
     actorEmail: v.optional(v.string()),
     ownerEmail: v.optional(v.string()),
     organizationId: v.optional(v.string()),
+    actorRole: v.string()
   },
   handler: async (ctx, args) => {
     const now = Date.now();
+
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
 
     const knowledgeId = await ctx.db.insert("knowledge", {
       title: args.title,
@@ -72,8 +77,12 @@ export const deleteKnowledge = mutation({
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
     organizationId: v.optional(v.string()),
+    actorRole: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
     const item = await ctx.db.get(args.id);
 
     await ctx.db.delete(args.id);
@@ -105,8 +114,12 @@ export const updateKnowledge = mutation({
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
     actorEmail: v.optional(v.string()),
     organizationId: v.optional(v.string()),
+    actorRole: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
     await ctx.db.patch(args.id, {
       title: args.title,
       content: args.content,
@@ -214,8 +227,12 @@ export const approveKnowledge = mutation({
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
     organizationId: v.optional(v.string()),
+    actorRole: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
     const item = await ctx.db.get(args.id);
     await ctx.db.patch(args.id, {
       requiresApproval: false,

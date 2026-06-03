@@ -91,6 +91,7 @@ export default function ApprovalsPage() {
                                                     id: item._id,
                                                     actorEmail: user?.email ?? "unknown-user",
                                                     organizationId: DEFAULT_ORG_ID,
+                                                    actorRole: CURRENT_USER_ROLE,
                                                 })
                                             }
                                             className="rounded-full border border-green-900/60 px-3 py-1 text-xs text-green-300 hover:bg-green-950"
