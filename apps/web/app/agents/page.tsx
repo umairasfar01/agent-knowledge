@@ -39,6 +39,7 @@ export default function AgentsPage() {
                 role,
                 status,
                 organizationId: DEFAULT_ORG_ID,
+                actorRole: CURRENT_USER_ROLE,
             });
             setEditingId(null);
         } else {
@@ -48,6 +49,7 @@ export default function AgentsPage() {
                 role,
                 status,
                 organizationId: DEFAULT_ORG_ID,
+                actorRole: CURRENT_USER_ROLE,
             });
         }
 
@@ -229,7 +231,10 @@ export default function AgentsPage() {
 
                                                 <button
                                                     type="button"
-                                                    onClick={() => deleteAgent({ id: agent._id })}
+                                                    onClick={() => deleteAgent({
+                                                        id: agent._id,
+                                                        actorRole: CURRENT_USER_ROLE,
+                                                    })}
                                                     className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
                                                 >
                                                     Delete

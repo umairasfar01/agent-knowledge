@@ -8,8 +8,13 @@ export const createAgent = mutation({
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
     organizationId: v.optional(v.string()),
+    actorRole: v.string(),
   },
   handler: async (ctx, args) => {
+
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
     const now = Date.now();
 
     return await ctx.db.insert("agents", {
@@ -47,8 +52,12 @@ export const updateAgent = mutation({
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
     organizationId: v.optional(v.string()),
+    actorRole: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
     await ctx.db.patch(args.id, {
       name: args.name,
       description: args.description,
@@ -63,8 +72,12 @@ export const updateAgent = mutation({
 export const deleteAgent = mutation({
   args: {
     id: v.id("agents"),
+    actorRole: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.actorRole !== "admin") {
+      throw new Error("Unauthorized");
+    }
     await ctx.db.delete(args.id);
   },
 });
