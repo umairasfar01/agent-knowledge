@@ -19,11 +19,11 @@ export default function KnowledgePage() {
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const knowledgeItems = useQuery(api.knowledge.listKnowledge, {
-  organizationId: DEFAULT_ORG_ID,
-  search,
-  status: statusFilter,
-  category: categoryFilter,
-});
+    organizationId: DEFAULT_ORG_ID,
+    search,
+    status: statusFilter,
+    category: categoryFilter,
+  });
   const agents = useQuery(api.agents.listAgents, {
     organizationId: DEFAULT_ORG_ID,
   });
@@ -146,195 +146,195 @@ export default function KnowledgePage() {
         </header>
 
         {canManage && (
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-5 rounded-2xl border border-neutral-800 bg-neutral-900 p-6"
-        >
-          
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-neutral-300">
-              Title
-            </label>
-            <input
-              className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Refund policy"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-neutral-300">
-              Content
-            </label>
-            <textarea
-              className="min-h-32 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write the knowledge agents should use..."
-            />
-          </div>
-          
-
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Category
-              </label>
-              <select
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option>Company Policy</option>
-                <option>Product Documentation</option>
-                <option>Runbook</option>
-                <option>Agent Instruction</option>
-                <option>Tool Usage Rule</option>
-              </select>
-            </div>
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-5 rounded-2xl border border-neutral-800 bg-neutral-900 p-6"
+          >
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-neutral-300">
-                Status
-              </label>
-              <select
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-                value={status}
-                onChange={(e) =>
-                  setStatus(e.target.value as "draft" | "verified")
-                }
-              >
-                <option value="draft">Draft</option>
-                <option value="verified">Verified</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
-            <p className="text-sm font-medium text-neutral-300">
-              Agent usage rules
-            </p>
-
-            <div className="mt-3 grid gap-3 md:grid-cols-3">
-              <label className="flex items-center gap-2 text-sm text-neutral-300">
-                <input
-                  type="checkbox"
-                  checked={canUseToAnswer}
-                  onChange={(e) => setCanUseToAnswer(e.target.checked)}
-                />
-                Can use to answer
-              </label>
-
-              <label className="flex items-center gap-2 text-sm text-neutral-300">
-                <input
-                  type="checkbox"
-                  checked={canUseToAct}
-                  onChange={(e) => setCanUseToAct(e.target.checked)}
-                />
-                Can use to take action
-              </label>
-
-              <label className="flex items-center gap-2 text-sm text-neutral-300">
-                <input
-                  type="checkbox"
-                  checked={requiresApproval}
-                  onChange={(e) => setRequiresApproval(e.target.checked)}
-                />
-                Requires approval
-              </label>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
-            <p className="text-sm font-medium text-neutral-300">
-              Allowed agents
-            </p>
-            <p className="mt-1 text-sm text-neutral-500">
-              Choose which agents can use this knowledge record.
-            </p>
-
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              {agents === undefined ? (
-                <p className="text-sm text-neutral-400">Loading agents...</p>
-              ) : agents.length === 0 ? (
-                <p className="text-sm text-neutral-400">
-                  No agents yet. Create agents first.
-                </p>
-              ) : (
-                agents.map((agent) => (
-                  <label
-                    key={agent._id}
-                    className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-neutral-300"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={allowedAgentIds.includes(agent._id)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setAllowedAgentIds([...allowedAgentIds, agent._id]);
-                        } else {
-                          setAllowedAgentIds(
-                            allowedAgentIds.filter((id) => id !== agent._id)
-                          );
-                        }
-                      }}
-                    />
-                    {agent.name}
-                  </label>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Source URL
+                Title
               </label>
               <input
                 className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
-                value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
-                placeholder="https://company.com/policy"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Refund policy"
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-neutral-300">
-                Last reviewed date
+                Content
               </label>
-              <input
-                type="date"
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
-                value={lastReviewedAt}
-                onChange={(e) => setLastReviewedAt(e.target.value)}
+              <textarea
+                className="min-h-32 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Write the knowledge agents should use..."
               />
             </div>
-          </div>
 
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              className="w-fit rounded-lg bg-white px-4 py-2 font-medium text-black hover:bg-neutral-200"
-            >
-              {editingId ? "Update Knowledge" : "Create Knowledge"}
-            </button>
 
-            {editingId && (
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-300">
+                  Category
+                </label>
+                <select
+                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <option>Company Policy</option>
+                  <option>Product Documentation</option>
+                  <option>Runbook</option>
+                  <option>Agent Instruction</option>
+                  <option>Tool Usage Rule</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-300">
+                  Status
+                </label>
+                <select
+                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  value={status}
+                  onChange={(e) =>
+                    setStatus(e.target.value as "draft" | "verified")
+                  }
+                >
+                  <option value="draft">Draft</option>
+                  <option value="verified">Verified</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+              <p className="text-sm font-medium text-neutral-300">
+                Agent usage rules
+              </p>
+
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
+                <label className="flex items-center gap-2 text-sm text-neutral-300">
+                  <input
+                    type="checkbox"
+                    checked={canUseToAnswer}
+                    onChange={(e) => setCanUseToAnswer(e.target.checked)}
+                  />
+                  Can use to answer
+                </label>
+
+                <label className="flex items-center gap-2 text-sm text-neutral-300">
+                  <input
+                    type="checkbox"
+                    checked={canUseToAct}
+                    onChange={(e) => setCanUseToAct(e.target.checked)}
+                  />
+                  Can use to take action
+                </label>
+
+                <label className="flex items-center gap-2 text-sm text-neutral-300">
+                  <input
+                    type="checkbox"
+                    checked={requiresApproval}
+                    onChange={(e) => setRequiresApproval(e.target.checked)}
+                  />
+                  Requires approval
+                </label>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+              <p className="text-sm font-medium text-neutral-300">
+                Allowed agents
+              </p>
+              <p className="mt-1 text-sm text-neutral-500">
+                Choose which agents can use this knowledge record.
+              </p>
+
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                {agents === undefined ? (
+                  <p className="text-sm text-neutral-400">Loading agents...</p>
+                ) : agents.length === 0 ? (
+                  <p className="text-sm text-neutral-400">
+                    No agents yet. Create agents first.
+                  </p>
+                ) : (
+                  agents.map((agent) => (
+                    <label
+                      key={agent._id}
+                      className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-neutral-300"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={allowedAgentIds.includes(agent._id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setAllowedAgentIds([...allowedAgentIds, agent._id]);
+                          } else {
+                            setAllowedAgentIds(
+                              allowedAgentIds.filter((id) => id !== agent._id)
+                            );
+                          }
+                        }}
+                      />
+                      {agent.name}
+                    </label>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-300">
+                  Source URL
+                </label>
+                <input
+                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                  value={sourceUrl}
+                  onChange={(e) => setSourceUrl(e.target.value)}
+                  placeholder="https://company.com/policy"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-300">
+                  Last reviewed date
+                </label>
+                <input
+                  type="date"
+                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  value={lastReviewedAt}
+                  onChange={(e) => setLastReviewedAt(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3">
               <button
-                type="button"
-                onClick={() => {
-                  setEditingId(null);
-                  resetForm();
-                }}
-                className="w-fit rounded-lg border border-neutral-700 px-4 py-2 font-medium text-neutral-200 hover:bg-neutral-800"
+                type="submit"
+                className="w-fit rounded-lg bg-white px-4 py-2 font-medium text-black hover:bg-neutral-200"
               >
-                Cancel Edit
+                {editingId ? "Update Knowledge" : "Create Knowledge"}
               </button>
-            )}
-          </div>
-        </form>
+
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(null);
+                    resetForm();
+                  }}
+                  className="w-fit rounded-lg border border-neutral-700 px-4 py-2 font-medium text-neutral-200 hover:bg-neutral-800"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
+          </form>
         )}
 
         <section className="space-y-4">
@@ -381,7 +381,14 @@ export default function KnowledgePage() {
           {knowledgeItems === undefined ? (
             <p className="text-neutral-400">Loading...</p>
           ) : knowledgeItems.length === 0 ? (
-            <p className="text-neutral-400">No knowledge items found.</p>
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+              <p className="font-medium text-neutral-200">
+                No matching knowledge found.
+              </p>
+              <p className="mt-1 text-sm text-neutral-500">
+                Try changing your search, status, or category filters.
+              </p>
+            </div>
           ) : (
             <div className="space-y-3">
               {knowledgeItems.map((item) => (
@@ -407,29 +414,29 @@ export default function KnowledgePage() {
                       {canManage && (
                         <>
 
-                      <button
-                        type="button"
-                        onClick={() => handleEdit(item)}
-                        className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
-                      >
-                        Edit
-                      </button>
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(item)}
+                            className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
+                          >
+                            Edit
+                          </button>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          deleteKnowledge({
-                            id: item._id,
-                            actorEmail: user?.email ?? "unknown-user",
-                            organizationId: "default-org",
-                            actorRole: CURRENT_USER_ROLE,
-                          })
-                        }
-                        className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
-                      >
-                        Delete
-                      </button>
-                      </>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              deleteKnowledge({
+                                id: item._id,
+                                actorEmail: user?.email ?? "unknown-user",
+                                organizationId: "default-org",
+                                actorRole: CURRENT_USER_ROLE,
+                              })
+                            }
+                            className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
+                          >
+                            Delete
+                          </button>
+                        </>
                       )}
 
                     </div>

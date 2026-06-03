@@ -234,7 +234,12 @@ export default function AgentsPage() {
                     {agents === undefined ? (
                         <p className="text-neutral-400">Loading...</p>
                     ) : agents.length === 0 ? (
-                        <p className="text-neutral-400">No agents yet.</p>
+                        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                            <p className="font-medium text-neutral-200">No matching agents found.</p>
+                            <p className="mt-1 text-sm text-neutral-500">
+                                Try changing your search, status, or role filters.
+                            </p>
+                        </div>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2">
                             {agents.map((agent) => (
