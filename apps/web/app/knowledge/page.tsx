@@ -8,6 +8,7 @@ import { AppShell } from "../AppShell";
 import Link from "next/link";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { CURRENT_USER_ROLE, canManageKnowledge } from "@/lib/role";
 
 export default function KnowledgePage() {
   const knowledgeItems = useQuery(api.knowledge.listKnowledge, {
@@ -41,6 +42,8 @@ export default function KnowledgePage() {
     "all"
   );
   const [categoryFilter, setCategoryFilter] = useState("all");
+
+  const canManage = canManageKnowledge(CURRENT_USER_ROLE);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -151,10 +154,12 @@ export default function KnowledgePage() {
           </p>
         </header>
 
+        {canManage && (
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-5 rounded-2xl border border-neutral-800 bg-neutral-900 p-6"
         >
+          
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-neutral-300">
               Title
@@ -178,6 +183,7 @@ export default function KnowledgePage() {
               placeholder="Write the knowledge agents should use..."
             />
           </div>
+          
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="flex flex-col gap-2">
@@ -338,6 +344,7 @@ export default function KnowledgePage() {
             )}
           </div>
         </form>
+        )}
 
         <section className="space-y-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -406,6 +413,9 @@ export default function KnowledgePage() {
                         Open
                       </Link>
 
+                      {canManage && (
+                        <>
+
                       <button
                         type="button"
                         onClick={() => handleEdit(item)}
@@ -427,6 +437,9 @@ export default function KnowledgePage() {
                       >
                         Delete
                       </button>
+                      </>
+                      )}
+
                     </div>
                   </div>
 

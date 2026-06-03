@@ -7,6 +7,7 @@ import { AppShell } from "../AppShell";
 import { useMutation, } from "convex/react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { CURRENT_USER_ROLE, canManageKnowledge } from "@/lib/role";
 
 export default function ApprovalsPage() {
     const approvalItems = useQuery(api.knowledge.listApprovalQueue, {
@@ -14,6 +15,7 @@ export default function ApprovalsPage() {
 });
     const approveKnowledge = useMutation(api.knowledge.approveKnowledge);
     const { user } = useAuth();
+    const canManage = canManageKnowledge(CURRENT_USER_ROLE);
 
     return (
         <AppShell>
@@ -80,6 +82,8 @@ export default function ApprovalsPage() {
                                             Open
                                         </Link>
 
+                                        {canManage && (
+
                                         <button
                                             type="button"
                                             onClick={() =>
@@ -93,6 +97,8 @@ export default function ApprovalsPage() {
                                         >
                                             Mark as approved
                                         </button>
+
+                                        )}
 
                                     </div>
                                 </article>
