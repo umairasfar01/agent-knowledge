@@ -128,3 +128,22 @@ export const getAgent = query({
     return await ctx.db.get(args.id);
   },
 });
+
+export const listAuditLogsForAgent = query({
+  args: {
+    agentId: v.id("agents"),
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const logs = await ctx.db.query("auditLogs").order("desc").collect();
+
+    return logs
+      .filter(
+        (log) =>
+          log.agentId === args.agentId &&
+          (log.organizationId === args.organizationId ||
+            log.organizationId === undefined)
+      )
+      .slice(0, 10);
+  },
+});

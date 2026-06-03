@@ -19,6 +19,11 @@ export default function AgentDetailPage() {
     organizationId: DEFAULT_ORG_ID,
   });;
 
+  const auditLogs = useQuery(api.agents.listAuditLogsForAgent, {
+    agentId: id,
+    organizationId: DEFAULT_ORG_ID,
+  });
+
   return (
     <AppShell>
       <div className="mx-auto max-w-5xl space-y-8">
@@ -91,6 +96,45 @@ export default function AgentDetailPage() {
                         {item.content}
                       </p>
                     </Link>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+              <h2 className="text-xl font-semibold">Audit history</h2>
+
+              {auditLogs === undefined ? (
+                <p className="mt-3 text-neutral-400">Loading audit history...</p>
+              ) : auditLogs.length === 0 ? (
+                <p className="mt-3 text-neutral-400">
+                  No audit history found for this agent.
+                </p>
+              ) : (
+                <div className="mt-5 space-y-3">
+                  {auditLogs.map((log) => (
+                    <div
+                      key={log._id}
+                      className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+                    >
+                      <p className="font-medium">
+                        {log.action === "agent.created"
+                          ? "Created agent"
+                          : log.action === "agent.updated"
+                            ? "Updated agent"
+                            : log.action === "agent.deleted"
+                              ? "Deleted agent"
+                              : log.action}
+                      </p>
+
+                      <p className="mt-1 text-sm text-neutral-400">
+                        {log.actorEmail ?? log.actorId ?? "demo-user"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-neutral-500">
+                        {new Date(log.createdAt).toLocaleString()}
+                      </p>
+                    </div>
                   ))}
                 </div>
               )}
