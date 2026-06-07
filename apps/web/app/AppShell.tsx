@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { usePathname } from "next/navigation";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { getCurrentOrgId } from "@/lib/org";
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
@@ -15,13 +16,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const upsertCurrentUser = useMutation(api.users.upsertCurrentUser);
 
-  const organizationId =
+    const organizationId =
     "organizationId" in auth ? auth.organizationId : undefined;
 
   const switchToOrganization =
     "switchToOrganization" in auth ? auth.switchToOrganization : undefined;
 
-  const currentOrgId = getCurrentOrgId(organizationId);
+      const currentOrgId = getCurrentOrgId(organizationId);
+
+  const membershipData = useQuery(
+    api.users.getMembershipByWorkosUser,
+    user?.id
+      ? {
+        workosUserId: user.id,
+        organizationId: currentOrgId,
+      }
+      : "skip"
+  );
+
+  const currentRole = membershipData?.membership.role ?? "member";
 
   useEffect(() => {
     if (!user?.id || !user?.email || !currentOrgId) return;
@@ -103,6 +116,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <p className="mt-1 truncate text-sm text-neutral-300">
                 {user?.email ?? "Unknown user"}
               </p>
+
+              <p className="mt-3 text-xs text-neutral-500">Role</p>
+              <p className="mt-1 text-sm text-neutral-300">{currentRole}</p>
 
               <button
                 type="button"
