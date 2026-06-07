@@ -9,14 +9,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
   const pathname = usePathname();
 
-function navClass(href: string) {
-  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+  function navClass(href: string) {
+    const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
-  return `block rounded-lg px-3 py-2 text-sm ${isActive
-    ? "bg-neutral-800 text-white"
-    : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
-    }`;
-}
+    return `block rounded-lg px-3 py-2 text-sm ${isActive
+      ? "bg-neutral-800 text-white"
+      : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+      }`;
+  }
 
 
   return (
@@ -49,6 +49,10 @@ function navClass(href: string) {
 
             <Link href="/audit" className={navClass("/audit")}>
               Audit Logs
+            </Link>
+
+            <Link href="/settings" className={navClass("/settings")}>
+              Settings
             </Link>
 
 
