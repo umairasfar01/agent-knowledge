@@ -3,9 +3,21 @@
 import Link from "next/link";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { usePathname } from "next/navigation";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
+  const pathname = usePathname();
+
+function navClass(href: string) {
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+
+  return `block rounded-lg px-3 py-2 text-sm ${isActive
+    ? "bg-neutral-800 text-white"
+    : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+    }`;
+}
+
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
@@ -19,40 +31,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <nav className="mt-8 space-y-2">
-            <Link
-              href="/dashboard"
-              className="block rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
-            >
+            <Link href="/dashboard" className={navClass("/dashboard")}>
               Dashboard
             </Link>
 
-            <Link
-              href="/knowledge"
-              className="block rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
-            >
+            <Link href="/knowledge" className={navClass("/knowledge")}>
               Knowledge
             </Link>
 
-            <Link
-              href="/audit"
-              className="block rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
-            >
-              Audit Logs
-            </Link>
-
-            <Link
-              href="/agents"
-              className="block rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
-            >
+            <Link href="/agents" className={navClass("/agents")}>
               Agents
             </Link>
 
-            <Link
-              href="/approvals"
-              className="block rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
-            >
+            <Link href="/approvals" className={navClass("/approvals")}>
               Approvals
             </Link>
+
+            <Link href="/audit" className={navClass("/audit")}>
+              Audit Logs
+            </Link>
+
 
             <div className="mt-8 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
               <p className="text-xs text-neutral-500">Organization</p>
