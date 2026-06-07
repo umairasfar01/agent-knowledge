@@ -7,15 +7,17 @@ import { AppShell } from "../AppShell";
 import { useMutation, } from "convex/react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
-import { CURRENT_USER_ROLE, canManageKnowledge } from "@/lib/role";
+import { canManageKnowledge } from "@/lib/role";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 
 export default function ApprovalsPage() {
     const approvalItems = useQuery(api.knowledge.listApprovalQueue, {
-  organizationId: DEFAULT_ORG_ID,
-});
+        organizationId: DEFAULT_ORG_ID,
+    });
     const approveKnowledge = useMutation(api.knowledge.approveKnowledge);
     const { user } = useAuth();
-    const canManage = canManageKnowledge(CURRENT_USER_ROLE);
+    const currentRole = useCurrentRole();
+    const canManage = canManageKnowledge(currentRole);
 
     return (
         <AppShell>
@@ -84,20 +86,20 @@ export default function ApprovalsPage() {
 
                                         {canManage && (
 
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                approveKnowledge({
-                                                    id: item._id,
-                                                    actorEmail: user?.email ?? "unknown-user",
-                                                    organizationId: DEFAULT_ORG_ID,
-                                                    actorRole: CURRENT_USER_ROLE,
-                                                })
-                                            }
-                                            className="rounded-full border border-green-900/60 px-3 py-1 text-xs text-green-300 hover:bg-green-950"
-                                        >
-                                            Mark as approved
-                                        </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    approveKnowledge({
+                                                        id: item._id,
+                                                        actorEmail: user?.email ?? "unknown-user",
+                                                        organizationId: DEFAULT_ORG_ID,
+                                                        actorRole: currentRole,
+                                                    })
+                                                }
+                                                className="rounded-full border border-green-900/60 px-3 py-1 text-xs text-green-300 hover:bg-green-950"
+                                            >
+                                                Mark as approved
+                                            </button>
 
                                         )}
 
