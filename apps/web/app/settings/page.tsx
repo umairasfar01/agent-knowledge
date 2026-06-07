@@ -3,10 +3,11 @@
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
-import { CURRENT_USER_ROLE } from "@/lib/role";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 
 export default function SettingsPage() {
   const { user } = useAuth();
+  const currentRole = useCurrentRole();
 
   return (
     <AppShell>
@@ -39,7 +40,7 @@ export default function SettingsPage() {
 
             <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
               <p className="text-neutral-500">Current role</p>
-              <p className="mt-1 text-neutral-200">{CURRENT_USER_ROLE}</p>
+              <p className="mt-1 text-neutral-200">{currentRole}</p>
             </div>
 
             <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">

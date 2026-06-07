@@ -1,5 +1,5 @@
-export const CURRENT_USER_ROLE = "admin";
+export type MembershipRole = "owner" | "admin" | "member";
 
 export function canManageKnowledge(role: string) {
-  return role === "admin";
+  return role === "owner" || role === "admin";
 }
