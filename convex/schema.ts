@@ -21,6 +21,33 @@ export default defineSchema({
     canUseToAnswer: v.optional(v.boolean()),
     requiresApproval: v.optional(v.boolean()),
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
+
+
+  }),
+
+  users: defineTable({
+    workosUserId: v.optional(v.string()),
+    email: v.string(),
+    name: v.optional(v.string()),
+
+    // old seed fields
+    organizationId: v.optional(v.string()),
+    role: v.optional(v.string()),
+
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }),
+
+  memberships: defineTable({
+    userId: v.id("users"),
+    organizationId: v.string(),
+    role: v.union(
+      v.literal("owner"),
+      v.literal("admin"),
+      v.literal("member")
+    ),
+    createdAt: v.number(),
+    updatedAt: v.number(),
   }),
 
   auditLogs: defineTable({
@@ -50,7 +77,7 @@ export default defineSchema({
 
     agentId: v.optional(v.id("agents")),
     agentName: v.optional(v.string()),
-    
+
   }),
 
   agents: defineTable({

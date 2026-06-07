@@ -1,13 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
-import { getCurrentOrgId } from "@/lib/org";
 import { usePathname } from "next/navigation";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { getCurrentOrgId } from "@/lib/org";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const { user, signOut } = auth;
+
+  const pathname = usePathname();
+  const upsertCurrentUser = useMutation(api.users.upsertCurrentUser);
 
   const organizationId =
     "organizationId" in auth ? auth.organizationId : undefined;
@@ -16,7 +22,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     "switchToOrganization" in auth ? auth.switchToOrganization : undefined;
 
   const currentOrgId = getCurrentOrgId(organizationId);
-  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!user?.id || !user?.email || !currentOrgId) return;
+
+    void upsertCurrentUser({
+      workosUserId: user.id,
+      email: user.email,
+      name: user.firstName ?? undefined,
+      organizationId: currentOrgId,
+    });
+  }, [user?.id, user?.email, user?.firstName, currentOrgId, upsertCurrentUser]);
 
   function navClass(href: string) {
     const isActive = pathname === href || pathname.startsWith(`${href}/`);
