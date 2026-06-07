@@ -7,7 +7,8 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import Link from "next/link";
 import { DEFAULT_ORG_ID } from "@/lib/org";
-import { CURRENT_USER_ROLE, canManageKnowledge } from "@/lib/role";
+import { canManageKnowledge } from "@/lib/role";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 
@@ -30,7 +31,8 @@ export default function AgentsPage() {
     const updateAgent = useMutation(api.agents.updateAgent);
     const deleteAgent = useMutation(api.agents.deleteAgent);
 
-    const canManage = canManageKnowledge(CURRENT_USER_ROLE);
+    const currentRole = useCurrentRole();
+    const canManage = canManageKnowledge(currentRole);
 
     const [editingId, setEditingId] = useState<Id<"agents"> | null>(null);
     const [name, setName] = useState("");
@@ -51,7 +53,7 @@ export default function AgentsPage() {
                 role,
                 status,
                 organizationId: DEFAULT_ORG_ID,
-                actorRole: CURRENT_USER_ROLE,
+                actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
             });
             setEditingId(null);
@@ -62,7 +64,7 @@ export default function AgentsPage() {
                 role,
                 status,
                 organizationId: DEFAULT_ORG_ID,
-                actorRole: CURRENT_USER_ROLE,
+                actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
             });
         }
@@ -301,7 +303,7 @@ export default function AgentsPage() {
                                                     type="button"
                                                     onClick={() => deleteAgent({
                                                         id: agent._id,
-                                                        actorRole: CURRENT_USER_ROLE,
+                                                        actorRole: currentRole,
                                                         actorEmail: user?.email ?? "unknown-user",
                                                     })}
                                                     className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
