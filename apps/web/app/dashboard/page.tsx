@@ -121,6 +121,67 @@ export default function DashboardPage() {
             </div>
           </div>
         </section>
+
+        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+          <div>
+            <h2 className="text-xl font-semibold">Quick actions</h2>
+            <p className="mt-1 text-sm text-neutral-400">
+              Jump into the most important workspace areas.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <Link
+              href="/knowledge"
+              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+            >
+              <h3 className="font-medium">Manage Knowledge</h3>
+              <p className="mt-1 text-sm text-neutral-400">
+                Create, review, and organize trusted agent knowledge.
+              </p>
+            </Link>
+
+            <Link
+              href="/agents"
+              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+            >
+              <h3 className="font-medium">Manage Agents</h3>
+              <p className="mt-1 text-sm text-neutral-400">
+                Create agents and control which knowledge they can access.
+              </p>
+            </Link>
+
+            <Link
+              href="/approvals"
+              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+            >
+              <h3 className="font-medium">Review Approvals</h3>
+              <p className="mt-1 text-sm text-neutral-400">
+                Review knowledge that requires approval before agents act.
+              </p>
+            </Link>
+
+            <Link
+              href="/audit"
+              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+            >
+              <h3 className="font-medium">View Audit Logs</h3>
+              <p className="mt-1 text-sm text-neutral-400">
+                Track changes made to knowledge and agents.
+              </p>
+            </Link>
+
+            <Link
+              href="/settings"
+              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+            >
+              <h3 className="font-medium">Workspace Settings</h3>
+              <p className="mt-1 text-sm text-neutral-400">
+                View organization, user, role, and auth details.
+              </p>
+            </Link>
+          </div>
+        </section>
       </div>
     </AppShell>
   );
