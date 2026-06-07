@@ -16,13 +16,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const upsertCurrentUser = useMutation(api.users.upsertCurrentUser);
 
-    const organizationId =
+  const organizationId =
     "organizationId" in auth ? auth.organizationId : undefined;
 
   const switchToOrganization =
     "switchToOrganization" in auth ? auth.switchToOrganization : undefined;
 
-      const currentOrgId = getCurrentOrgId(organizationId);
+  const currentOrgId = getCurrentOrgId(organizationId);
 
   const membershipData = useQuery(
     api.users.getMembershipByWorkosUser,
@@ -114,7 +114,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="mt-8 border-t border-neutral-800 pt-6">
               <p className="text-xs text-neutral-500">Signed in as</p>
               <p className="mt-1 truncate text-sm text-neutral-300">
-                {user?.email ?? "Unknown user"}
+                {user?.email ?? "Loading user..."}
               </p>
 
               <p className="mt-3 text-xs text-neutral-500">Role</p>

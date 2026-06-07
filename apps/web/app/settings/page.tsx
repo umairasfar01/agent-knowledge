@@ -34,7 +34,7 @@ export default function SettingsPage() {
             <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
               <p className="text-neutral-500">Current user</p>
               <p className="mt-1 text-neutral-200">
-                {user?.email ?? "Unknown user"}
+                {user?.email ?? "Loading user..."}
               </p>
             </div>
 
