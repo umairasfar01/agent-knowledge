@@ -2,11 +2,20 @@
 
 import Link from "next/link";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
-import { DEFAULT_ORG_ID } from "@/lib/org";
+import { getCurrentOrgId } from "@/lib/org";
 import { usePathname } from "next/navigation";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { user, signOut } = useAuth();
+  const auth = useAuth();
+  const { user, signOut } = auth;
+
+  const organizationId =
+    "organizationId" in auth ? auth.organizationId : undefined;
+
+  const switchToOrganization =
+    "switchToOrganization" in auth ? auth.switchToOrganization : undefined;
+
+  const currentOrgId = getCurrentOrgId(organizationId);
   const pathname = usePathname();
 
   function navClass(href: string) {
@@ -59,8 +68,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="mt-8 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
               <p className="text-xs text-neutral-500">Organization</p>
               <p className="mt-1 text-sm font-medium text-neutral-300">
-                {DEFAULT_ORG_ID}
+                {currentOrgId}
               </p>
+
+              {switchToOrganization && (
+                <button
+                  type="button"
+                  onClick={() => switchToOrganization(currentOrgId)}
+                  className="mt-3 rounded-lg border border-neutral-700 px-3 py-2 text-xs text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                >
+                  Use WorkOS organization
+                </button>
+              )}
             </div>
 
             <div className="mt-8 border-t border-neutral-800 pt-6">
