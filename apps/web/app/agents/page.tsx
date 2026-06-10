@@ -55,9 +55,11 @@ export default function AgentsPage() {
                 organizationId: DEFAULT_ORG_ID,
                 actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
+                workosUserId: user?.id ?? "",
             });
             setEditingId(null);
         } else {
+            console.log("CREATE AGENT USER:", user);
             await createAgent({
                 name,
                 description,
@@ -66,6 +68,7 @@ export default function AgentsPage() {
                 organizationId: DEFAULT_ORG_ID,
                 actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
+                workosUserId: user?.id ?? "",
             });
         }
 
@@ -305,6 +308,7 @@ export default function AgentsPage() {
                                                         id: agent._id,
                                                         actorRole: currentRole,
                                                         actorEmail: user?.email ?? "unknown-user",
+                                                        workosUserId: user?.id ?? "",
                                                     })}
                                                     className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
                                                 >

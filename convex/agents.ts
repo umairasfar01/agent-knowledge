@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdminForWorkosUser } from "./permissions";
 
 export const createAgent = mutation({
   args: {
@@ -7,15 +8,15 @@ export const createAgent = mutation({
     description: v.string(),
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
-    organizationId: v.optional(v.string()),
+    organizationId: v.string(),
     actorRole: v.string(),
     actorEmail: v.optional(v.string()),
+    workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
 
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
     const now = Date.now();
 
     const agentId = await ctx.db.insert("agents", {
@@ -84,14 +85,13 @@ export const updateAgent = mutation({
     description: v.string(),
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
-    organizationId: v.optional(v.string()),
+    organizationId: v.string(),
     actorRole: v.string(),
     actorEmail: v.optional(v.string()),
+    workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
     await ctx.db.patch(args.id, {
       name: args.name,
       description: args.description,
@@ -118,13 +118,20 @@ export const deleteAgent = mutation({
     id: v.id("agents"),
     actorRole: v.string(),
     actorEmail: v.optional(v.string()),
+    workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
+    const agent = await ctx.db.get(args.id);
+
+    if (!agent) {
+      throw new Error("Agent not found");
     }
 
-    const agent = await ctx.db.get(args.id);
+    if (!agent.organizationId) {
+      throw new Error("Agent is missing organizationId");
+    }
+
+    await requireAdminForWorkosUser(ctx, args.workosUserId, agent.organizationId);
 
     await ctx.db.delete(args.id);
 
