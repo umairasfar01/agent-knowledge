@@ -107,19 +107,26 @@ export const deleteKnowledge = mutation({
     organizationId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
     const item = await ctx.db.get(args.id);
+
+    if (!item) {
+      throw new Error("Knowledge item not found");
+    }
+
+    const organizationId = item.organizationId ?? args.organizationId;
+
+    await requireAdminForWorkosUser(ctx, args.workosUserId, organizationId);
 
     await ctx.db.delete(args.id);
 
     await ctx.db.insert("auditLogs", {
       action: "deleted",
       knowledgeId: undefined,
-      knowledgeTitle: item?.title ?? "Unknown knowledge item",
+      knowledgeTitle: item.title ?? "Unknown knowledge item",
       actorId: "demo-user",
-      createdAt: Date.now(),
       actorEmail: args.actorEmail,
-      organizationId: args.organizationId,
+      organizationId,
+      createdAt: Date.now(),
     });
   },
 });
@@ -141,6 +148,7 @@ export const updateKnowledge = mutation({
     actorRole: v.string(),
     workosUserId: v.string(),
     organizationId: v.string(),
+    ownerEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (args.actorRole !== "admin") {
@@ -158,6 +166,7 @@ export const updateKnowledge = mutation({
       lastReviewedAt: args.lastReviewedAt,
       updatedAt: Date.now(),
       allowedAgentIds: args.allowedAgentIds,
+      ownerEmail: args.ownerEmail,
     });
     await ctx.db.insert("auditLogs", {
       action: "updated",
