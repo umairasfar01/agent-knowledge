@@ -70,9 +70,13 @@ export default function KnowledgePage() {
         : undefined,
       allowedAgentIds,
       actorEmail: user?.email ?? "unknown-user",
+      ownerEmail: user?.email ?? "unknown-user",
       organizationId: DEFAULT_ORG_ID,
       actorRole: currentRole,
+      workosUserId: user?.id ?? "",
     };
+
+    console.log("CREATE PAYLOAD:", payload);
 
     if (editingId) {
       await updateKnowledge({
@@ -80,7 +84,7 @@ export default function KnowledgePage() {
         ...payload,
       });
 
-      setEditingId(null);
+
     } else {
       await createKnowledge(payload);
     }

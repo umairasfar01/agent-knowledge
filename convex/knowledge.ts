@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdminForWorkosUser } from "./permissions";
 
 export const createKnowledge = mutation({
   args: {
@@ -15,15 +16,14 @@ export const createKnowledge = mutation({
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
     actorEmail: v.optional(v.string()),
     ownerEmail: v.optional(v.string()),
-    organizationId: v.optional(v.string()),
-    actorRole: v.string()
+    organizationId: v.string(),
+    actorRole: v.string(),
+    workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
 
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
 
     const knowledgeId = await ctx.db.insert("knowledge", {
       title: args.title,
