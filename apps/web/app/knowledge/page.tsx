@@ -449,6 +449,7 @@ export default function KnowledgePage() {
                                 actorEmail: user?.email ?? "unknown-user",
                                 organizationId: "default-org",
                                 actorRole: currentRole,
+                                workosUserId: user?.id ?? "",
                               })
                             }
                             className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"

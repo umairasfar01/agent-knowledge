@@ -102,13 +102,12 @@ export const deleteKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
-    organizationId: v.optional(v.string()),
     actorRole: v.string(),
+    workosUserId: v.string(),
+    organizationId: v.string(),
   },
   handler: async (ctx, args) => {
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
     const item = await ctx.db.get(args.id);
 
     await ctx.db.delete(args.id);
@@ -139,8 +138,9 @@ export const updateKnowledge = mutation({
     lastReviewedAt: v.optional(v.number()),
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
     actorEmail: v.optional(v.string()),
-    organizationId: v.optional(v.string()),
     actorRole: v.string(),
+    workosUserId: v.string(),
+    organizationId: v.string(),
   },
   handler: async (ctx, args) => {
     if (args.actorRole !== "admin") {
@@ -252,13 +252,12 @@ export const approveKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
-    organizationId: v.optional(v.string()),
     actorRole: v.string(),
+    workosUserId: v.string(),
+    organizationId: v.string(),
   },
   handler: async (ctx, args) => {
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
     const item = await ctx.db.get(args.id);
     await ctx.db.patch(args.id, {
       requiresApproval: false,
