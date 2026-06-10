@@ -57,10 +57,10 @@ export default function AgentsPage() {
                 actorEmail: user?.email ?? "unknown-user",
                 workosUserId: user?.id ?? "",
             });
+
             setEditingId(null);
         } else {
-            console.log("CREATE AGENT USER:", user);
-            await createAgent({
+            const createPayload = {
                 name,
                 description,
                 role,
@@ -69,7 +69,9 @@ export default function AgentsPage() {
                 actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
                 workosUserId: user?.id ?? "",
-            });
+            };
+
+            await createAgent(createPayload);
         }
 
         setName("");
