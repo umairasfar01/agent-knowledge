@@ -9,7 +9,6 @@ export const createAgent = mutation({
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
     organizationId: v.string(),
-    actorRole: v.string(),
     actorEmail: v.optional(v.string()),
     workosUserId: v.string(),
   },
@@ -86,7 +85,6 @@ export const updateAgent = mutation({
     role: v.string(),
     status: v.union(v.literal("active"), v.literal("disabled")),
     organizationId: v.string(),
-    actorRole: v.string(),
     actorEmail: v.optional(v.string()),
     workosUserId: v.string(),
   },
@@ -116,7 +114,6 @@ export const updateAgent = mutation({
 export const deleteAgent = mutation({
   args: {
     id: v.id("agents"),
-    actorRole: v.string(),
     actorEmail: v.optional(v.string()),
     workosUserId: v.string(),
   },

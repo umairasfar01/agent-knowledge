@@ -72,7 +72,6 @@ export default function KnowledgePage() {
       actorEmail: user?.email ?? "unknown-user",
       ownerEmail: user?.email ?? "unknown-user",
       organizationId: DEFAULT_ORG_ID,
-      actorRole: currentRole,
       workosUserId: user?.id ?? "",
     };
 
@@ -448,7 +447,6 @@ export default function KnowledgePage() {
                                 id: item._id,
                                 actorEmail: user?.email ?? "unknown-user",
                                 organizationId: "default-org",
-                                actorRole: currentRole,
                                 workosUserId: user?.id ?? "",
                               })
                             }

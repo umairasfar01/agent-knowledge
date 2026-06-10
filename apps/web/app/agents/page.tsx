@@ -53,7 +53,6 @@ export default function AgentsPage() {
                 role,
                 status,
                 organizationId: DEFAULT_ORG_ID,
-                actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
                 workosUserId: user?.id ?? "",
             });
@@ -66,7 +65,6 @@ export default function AgentsPage() {
                 role,
                 status,
                 organizationId: DEFAULT_ORG_ID,
-                actorRole: currentRole,
                 actorEmail: user?.email ?? "unknown-user",
                 workosUserId: user?.id ?? "",
             };
@@ -308,7 +306,6 @@ export default function AgentsPage() {
                                                     type="button"
                                                     onClick={() => deleteAgent({
                                                         id: agent._id,
-                                                        actorRole: currentRole,
                                                         actorEmail: user?.email ?? "unknown-user",
                                                         workosUserId: user?.id ?? "",
                                                     })}

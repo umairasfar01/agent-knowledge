@@ -93,7 +93,6 @@ export default function ApprovalsPage() {
                                                         id: item._id,
                                                         actorEmail: user?.email ?? "unknown-user",
                                                         organizationId: DEFAULT_ORG_ID,
-                                                        actorRole: currentRole,
                                                         workosUserId: user?.id ?? "",
                                                     })
                                                 }

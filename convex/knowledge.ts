@@ -17,7 +17,6 @@ export const createKnowledge = mutation({
     actorEmail: v.optional(v.string()),
     ownerEmail: v.optional(v.string()),
     organizationId: v.string(),
-    actorRole: v.string(),
     workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -102,7 +101,6 @@ export const deleteKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
-    actorRole: v.string(),
     workosUserId: v.string(),
     organizationId: v.string(),
   },
@@ -145,15 +143,13 @@ export const updateKnowledge = mutation({
     lastReviewedAt: v.optional(v.number()),
     allowedAgentIds: v.optional(v.array(v.id("agents"))),
     actorEmail: v.optional(v.string()),
-    actorRole: v.string(),
     workosUserId: v.string(),
     organizationId: v.string(),
     ownerEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    if (args.actorRole !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
     await ctx.db.patch(args.id, {
       title: args.title,
       content: args.content,
@@ -261,7 +257,6 @@ export const approveKnowledge = mutation({
   args: {
     id: v.id("knowledge"),
     actorEmail: v.optional(v.string()),
-    actorRole: v.string(),
     workosUserId: v.string(),
     organizationId: v.string(),
   },
