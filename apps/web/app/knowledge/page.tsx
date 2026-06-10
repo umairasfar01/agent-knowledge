@@ -76,7 +76,6 @@ export default function KnowledgePage() {
       workosUserId: user?.id ?? "",
     };
 
-    console.log("CREATE PAYLOAD:", payload);
 
     if (editingId) {
       await updateKnowledge({
