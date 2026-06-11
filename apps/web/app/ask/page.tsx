@@ -80,6 +80,17 @@ export default function AskPage() {
                                 placeholder="Example: refund policy"
                             />
                         </div>
+
+                        <div className="mt-5 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+                            <p className="text-sm font-medium text-neutral-300">
+                                Retrieval policy
+                            </p>
+                            <p className="mt-1 text-sm text-neutral-500">
+                                This search only returns knowledge that is verified, assigned to the
+                                selected agent, allowed for answers, and part of the current organization.
+                            </p>
+                        </div>
+                        
                     </div>
                 </section>
 
