@@ -114,6 +114,18 @@ export default function AskPage() {
                                 </div>
                             )}
 
+                            {results.some((item) => item.canUseToAct === false) && (
+                                <div className="mt-4 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+                                    <p className="text-sm font-medium text-neutral-300">
+                                        Action limitation
+                                    </p>
+                                    <p className="mt-1 text-sm text-neutral-500">
+                                        Some retrieved knowledge can be used to answer, but not to take action.
+                                        The agent should not perform tool actions based on this knowledge.
+                                    </p>
+                                </div>
+                            )}
+
                             <p className="mt-4 whitespace-pre-wrap text-neutral-300">
                                 Based on the allowed knowledge for this agent, here are the most relevant
                                 points:
