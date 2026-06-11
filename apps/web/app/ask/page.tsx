@@ -28,7 +28,26 @@ export default function AskPage() {
                 question,
             }
             : "skip"
+
     );
+
+    function getDraftAnswerText() {
+        if (!results || results.length === 0) return "";
+
+        return [
+            "Based on the allowed knowledge for this agent, here are the most relevant points:",
+            "",
+            ...results.slice(0, 3).map((item) => `${item.title}: ${item.content}`),
+        ].join("\n");
+    }
+
+    async function copyDraftAnswer() {
+        const text = getDraftAnswerText();
+
+        if (!text) return;
+
+        await navigator.clipboard.writeText(text);
+    }
 
     return (
         <AppShell>
@@ -99,7 +118,17 @@ export default function AskPage() {
 
                     {results && results.length > 0 && (
                         <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-                            <h2 className="text-xl font-semibold">Draft answer</h2>
+                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                <h2 className="text-xl font-semibold">Draft answer</h2>
+
+                                <button
+                                    type="button"
+                                    onClick={copyDraftAnswer}
+                                    className="w-fit rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                                >
+                                    Copy draft
+                                </button>
+                            </div>
 
                             {results.some((item) => item.requiresApproval) && (
                                 <div className="mt-4 rounded-xl border border-yellow-900/60 bg-yellow-950/20 p-4">
