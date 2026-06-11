@@ -152,11 +152,11 @@ export default function AskPage() {
                     ) : results.length === 0 ? (
                         <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
                             <p className="font-medium text-neutral-200">
-                                No matching allowed knowledge found.
+                                No answer can be drafted.
                             </p>
                             <p className="mt-1 text-sm text-neutral-500">
-                                This agent may not have verified knowledge that matches your
-                                question.
+                                No allowed, verified knowledge was found for this agent and question.
+                                The agent should not answer without an approved source.
                             </p>
                         </div>
                     ) : (
