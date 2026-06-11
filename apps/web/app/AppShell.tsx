@@ -73,6 +73,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               Dashboard
             </Link>
 
+            <Link href="/ask" className={navClass("/ask")}>
+              Ask
+            </Link>
+
             <Link href="/knowledge" className={navClass("/knowledge")}>
               Knowledge
             </Link>

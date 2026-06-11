@@ -278,3 +278,48 @@ export const approveKnowledge = mutation({
     });
   },
 });
+
+export const searchKnowledgeForAgent = query({
+  args: {
+    organizationId: v.string(),
+    agentId: v.id("agents"),
+    question: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const items = await ctx.db.query("knowledge").order("desc").collect();
+
+    const question = args.question.toLowerCase().trim();
+
+    if (!question) {
+      return [];
+    }
+
+    return items
+      .filter((item) => {
+        const matchesOrganization =
+          item.organizationId === args.organizationId ||
+          item.organizationId === undefined;
+
+        const isAllowedForAgent =
+          item.allowedAgentIds?.includes(args.agentId) ?? false;
+
+        const isVerified = item.status === "verified";
+
+        const canAnswer = item.canUseToAnswer === true;
+
+        const matchesQuestion =
+          item.title.toLowerCase().includes(question) ||
+          item.content.toLowerCase().includes(question) ||
+          item.category.toLowerCase().includes(question);
+
+        return (
+          matchesOrganization &&
+          isAllowedForAgent &&
+          isVerified &&
+          canAnswer &&
+          matchesQuestion
+        );
+      })
+      .slice(0, 10);
+  },
+});
