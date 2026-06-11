@@ -95,10 +95,19 @@ export default function AskPage() {
                                 points:
                             </p>
 
-                            <ul className="mt-4 list-disc space-y-2 pl-5 text-neutral-300">
+                            <ul className="mt-4 list-disc space-y-3 pl-5 text-neutral-300">
                                 {results.slice(0, 3).map((item) => (
                                     <li key={item._id}>
                                         <span className="font-medium">{item.title}:</span> {item.content}
+
+                                        <div className="mt-1">
+                                            <Link
+                                                href={`/knowledge/${item._id}`}
+                                                className="text-sm text-neutral-400 underline hover:text-white"
+                                            >
+                                                Source: {item.title}
+                                            </Link>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
