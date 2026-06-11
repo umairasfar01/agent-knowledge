@@ -11,6 +11,7 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 export default function AskPage() {
     const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | "">("");
     const [question, setQuestion] = useState("");
+    const [copied, setCopied] = useState(false);
 
     const agents = useQuery(api.agents.listAgents, {
         organizationId: DEFAULT_ORG_ID,
@@ -47,6 +48,12 @@ export default function AskPage() {
         if (!text) return;
 
         await navigator.clipboard.writeText(text);
+
+        setCopied(true);
+
+        setTimeout(() => {
+            setCopied(false);
+        }, 2000);
     }
 
     return (
@@ -126,7 +133,7 @@ export default function AskPage() {
                                     onClick={copyDraftAnswer}
                                     className="w-fit rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
                                 >
-                                    Copy draft
+                                    {copied ? "Copied!" : "Copy draft"}
                                 </button>
                             </div>
 
