@@ -90,7 +90,7 @@ export default function AskPage() {
                                 selected agent, allowed for answers, and part of the current organization.
                             </p>
                         </div>
-                        
+
                     </div>
                 </section>
 
@@ -100,6 +100,19 @@ export default function AskPage() {
                     {results && results.length > 0 && (
                         <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
                             <h2 className="text-xl font-semibold">Draft answer</h2>
+
+                            {results.some((item) => item.requiresApproval) && (
+                                <div className="mt-4 rounded-xl border border-yellow-900/60 bg-yellow-950/20 p-4">
+                                    <p className="text-sm font-medium text-yellow-300">
+                                        Approval warning
+                                    </p>
+                                    <p className="mt-1 text-sm text-yellow-200/80">
+                                        Some retrieved knowledge requires approval before action. The agent may
+                                        use approved answerable knowledge to respond, but should not take action
+                                        without approval.
+                                    </p>
+                                </div>
+                            )}
 
                             <p className="mt-4 whitespace-pre-wrap text-neutral-300">
                                 Based on the allowed knowledge for this agent, here are the most relevant
