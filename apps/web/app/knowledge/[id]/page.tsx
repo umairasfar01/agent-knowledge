@@ -22,6 +22,11 @@ export default function KnowledgeDetailPage() {
         organizationId: DEFAULT_ORG_ID,
     });
 
+    const versions = useQuery(api.knowledge.listVersionsForKnowledge, {
+        knowledgeId: id,
+        organizationId: DEFAULT_ORG_ID,
+    });
+
     return (
         <AppShell>
             <div className="mx-auto max-w-4xl space-y-8">
@@ -139,6 +144,65 @@ export default function KnowledgeDetailPage() {
                                                 <p className="mt-1 text-sm text-neutral-500">
                                                     {new Date(log.createdAt).toLocaleString()}
                                                 </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </section>
+
+                            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                                <h2 className="text-xl font-semibold">Version history</h2>
+
+                                {versions === undefined ? (
+                                    <p className="mt-3 text-neutral-400">Loading version history...</p>
+                                ) : versions.length === 0 ? (
+                                    <p className="mt-3 text-neutral-400">
+                                        No versions found for this knowledge item.
+                                    </p>
+                                ) : (
+                                    <div className="mt-5 space-y-3">
+                                        {versions.map((version, index) => (
+                                            <div
+                                                key={version._id}
+                                                className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+                                            >
+                                                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                                    <div>
+                                                        <p className="font-medium">
+                                                            Version {versions.length - index}
+                                                        </p>
+                                                        <p className="mt-1 text-sm text-neutral-400">
+                                                            {version.changedByEmail ?? "Unknown user"}
+                                                        </p>
+                                                    </div>
+
+                                                    <p className="text-sm text-neutral-500">
+                                                        {new Date(version.createdAt).toLocaleString()}
+                                                    </p>
+                                                </div>
+
+                                                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                                                    <div>
+                                                        <p className="text-xs text-neutral-500">Title</p>
+                                                        <p className="mt-1 text-sm text-neutral-300">
+                                                            {version.title}
+                                                        </p>
+                                                    </div>
+
+                                                    <div>
+                                                        <p className="text-xs text-neutral-500">Status</p>
+                                                        <p className="mt-1 text-sm text-neutral-300">
+                                                            {version.status}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="md:col-span-2">
+                                                        <p className="text-xs text-neutral-500">Content snapshot</p>
+                                                        <p className="mt-1 whitespace-pre-wrap text-sm text-neutral-300">
+                                                            {version.content}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

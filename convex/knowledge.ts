@@ -52,6 +52,17 @@ export const createKnowledge = mutation({
       organizationId: args.organizationId,
     });
 
+    await ctx.db.insert("knowledgeVersions", {
+      knowledgeId,
+      title: args.title,
+      content: args.content,
+      category: args.category,
+      status: args.status,
+      changedByEmail: args.actorEmail,
+      organizationId: args.organizationId,
+      createdAt: now,
+    });
+
     return knowledgeId;
   },
 });
@@ -170,6 +181,17 @@ export const updateKnowledge = mutation({
       knowledgeTitle: args.title,
       actorId: "demo-user",
       actorEmail: args.actorEmail,
+      createdAt: Date.now(),
+    });
+
+    await ctx.db.insert("knowledgeVersions", {
+      knowledgeId: args.id,
+      title: args.title,
+      content: args.content,
+      category: args.category,
+      status: args.status,
+      changedByEmail: args.actorEmail,
+      organizationId: args.organizationId,
       createdAt: Date.now(),
     });
   },
@@ -321,5 +343,27 @@ export const searchKnowledgeForAgent = query({
         );
       })
       .slice(0, 10);
+  },
+});
+
+export const listVersionsForKnowledge = query({
+  args: {
+    knowledgeId: v.id("knowledge"),
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const versions = await ctx.db
+      .query("knowledgeVersions")
+      .order("desc")
+      .collect();
+
+    return versions
+      .filter(
+        (version) =>
+          version.knowledgeId === args.knowledgeId &&
+          (version.organizationId === args.organizationId ||
+            version.organizationId === undefined)
+      )
+      .slice(0, 20);
   },
 });

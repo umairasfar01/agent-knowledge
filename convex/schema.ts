@@ -90,4 +90,15 @@ export default defineSchema({
     updatedAt: v.number(),
   }),
 
+  knowledgeVersions: defineTable({
+    knowledgeId: v.id("knowledge"),
+    title: v.string(),
+    content: v.string(),
+    category: v.string(),
+    status: v.union(v.literal("draft"), v.literal("verified")),
+    changedByEmail: v.optional(v.string()),
+    organizationId: v.optional(v.string()),
+    createdAt: v.number(),
+  }),
+
 });
