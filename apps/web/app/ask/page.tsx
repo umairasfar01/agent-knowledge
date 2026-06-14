@@ -12,9 +12,6 @@ export default function AskPage() {
     const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | "">("");
     const [question, setQuestion] = useState("");
     const [copied, setCopied] = useState(false);
-    const [aiAnswer, setAiAnswer] = useState("");
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [aiError, setAiError] = useState("");
 
     const agents = useQuery(api.agents.listAgents, {
         organizationId: DEFAULT_ORG_ID,
@@ -59,44 +56,6 @@ export default function AskPage() {
         }, 2000);
     }
 
-    async function generateAiAnswer() {
-        if (!results || results.length === 0) return;
-
-        setIsGenerating(true);
-        setAiError("");
-        setAiAnswer("");
-
-        try {
-            const response = await fetch("/api/answer", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    question,
-                    sources: results.slice(0, 5).map((item) => ({
-                        title: item.title,
-                        content: item.content,
-                        category: item.category,
-                    })),
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error ?? "Failed to generate answer.");
-            }
-
-            setAiAnswer(data.answer ?? "");
-        } catch (error) {
-            setAiError(
-                error instanceof Error ? error.message : "Failed to generate answer."
-            );
-        } finally {
-            setIsGenerating(false);
-        }
-    }
 
     return (
         <AppShell>
@@ -177,7 +136,8 @@ export default function AskPage() {
                                 >
                                     {copied ? "Copied!" : "Copy draft"}
                                 </button>
-
+                                
+                                {/* Future: enable this when OPENAI_API_KEY billing/quota is ready. */}
                                 <button
                                     type="button"
                                     disabled
@@ -233,19 +193,6 @@ export default function AskPage() {
                                     </li>
                                 ))}
                             </ul>
-
-                            {aiError && (
-                                <div className="mt-5 rounded-xl border border-red-900/60 bg-red-950/20 p-4">
-                                    <p className="text-sm text-red-300">{aiError}</p>
-                                </div>
-                            )}
-
-                            {aiAnswer && (
-                                <div className="mt-5 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
-                                    <p className="text-sm font-medium text-neutral-300">AI answer</p>
-                                    <p className="mt-3 whitespace-pre-wrap text-neutral-200">{aiAnswer}</p>
-                                </div>
-                            )}
 
                             <p className="mt-4 text-sm text-neutral-500">
                                 This is a retrieval-based draft. AI generation can be added next.
