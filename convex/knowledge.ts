@@ -367,3 +367,60 @@ export const listVersionsForKnowledge = query({
       .slice(0, 20);
   },
 });
+
+export const restoreKnowledgeVersion = mutation({
+  args: {
+    versionId: v.id("knowledgeVersions"),
+    actorEmail: v.optional(v.string()),
+    organizationId: v.string(),
+    workosUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const version = await ctx.db.get(args.versionId);
+
+    if (!version) {
+      throw new Error("Version not found");
+    }
+
+    const organizationId = version.organizationId ?? args.organizationId;
+
+    await requireAdminForWorkosUser(ctx, args.workosUserId, organizationId);
+
+    const knowledge = await ctx.db.get(version.knowledgeId);
+
+    if (!knowledge) {
+      throw new Error("Knowledge item not found");
+    }
+
+    const now = Date.now();
+
+    await ctx.db.patch(version.knowledgeId, {
+      title: version.title,
+      content: version.content,
+      category: version.category,
+      status: version.status,
+      updatedAt: now,
+    });
+
+    await ctx.db.insert("knowledgeVersions", {
+      knowledgeId: version.knowledgeId,
+      title: version.title,
+      content: version.content,
+      category: version.category,
+      status: version.status,
+      changedByEmail: args.actorEmail,
+      organizationId,
+      createdAt: now,
+    });
+
+    await ctx.db.insert("auditLogs", {
+      action: "updated",
+      knowledgeId: version.knowledgeId,
+      knowledgeTitle: version.title,
+      actorId: "demo-user",
+      actorEmail: args.actorEmail,
+      organizationId,
+      createdAt: now,
+    });
+  },
+});

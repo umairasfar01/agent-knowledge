@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { AppShell } from "../../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { useCurrentRole } from "@/lib/useCurrentRole";
+import { canManageKnowledge } from "@/lib/role";
 
 export default function KnowledgeDetailPage() {
     const params = useParams();
@@ -26,6 +29,14 @@ export default function KnowledgeDetailPage() {
         knowledgeId: id,
         organizationId: DEFAULT_ORG_ID,
     });
+
+    const { user } = useAuth();
+    const currentRole = useCurrentRole();
+    const canManage = canManageKnowledge(currentRole);
+
+    const restoreKnowledgeVersion = useMutation(
+        api.knowledge.restoreKnowledgeVersion
+    );
 
     return (
         <AppShell>
@@ -171,6 +182,7 @@ export default function KnowledgeDetailPage() {
                                                         <p className="font-medium">
                                                             Version {versions.length - index}
                                                         </p>
+
                                                         <p className="mt-1 text-sm text-neutral-400">
                                                             {version.changedByEmail ?? "Unknown user"}
                                                         </p>
@@ -179,6 +191,16 @@ export default function KnowledgeDetailPage() {
                                                     <p className="text-sm text-neutral-500">
                                                         {new Date(version.createdAt).toLocaleString()}
                                                     </p>
+
+                                                    {canManage && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRestoreVersion(version._id)}
+                                                            className="w-fit rounded-lg border border-neutral-700 px-3 py-2 text-xs text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                                                        >
+                                                            Restore this version
+                                                        </button>
+                                                    )}
                                                 </div>
 
                                                 <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -254,4 +276,18 @@ export default function KnowledgeDetailPage() {
             </div>
         </AppShell>
     );
+    async function handleRestoreVersion(versionId: Id<"knowledgeVersions">) {
+        const confirmed = window.confirm(
+            "Restore this version? This will replace the current title, content, category, and status."
+        );
+
+        if (!confirmed) return;
+
+        await restoreKnowledgeVersion({
+            versionId,
+            actorEmail: user?.email ?? "unknown-user",
+            organizationId: DEFAULT_ORG_ID,
+            workosUserId: user?.id ?? "",
+        });
+    }
 }
