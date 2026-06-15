@@ -36,7 +36,7 @@ export default defineSchema({
 
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  }).index("by_workosUserId", ["workosUserId"]),
 
   memberships: defineTable({
     userId: v.id("users"),
@@ -48,7 +48,9 @@ export default defineSchema({
     ),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  })
+    .index("by_user_org", ["userId", "organizationId"])
+    .index("by_organization", ["organizationId"]),
 
   auditLogs: defineTable({
     action: v.union(

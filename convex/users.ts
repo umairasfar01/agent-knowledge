@@ -15,7 +15,9 @@ export const upsertCurrentUser = mutation({
 
         const existingUser = await ctx.db
             .query("users")
-            .filter((q) => q.eq(q.field("workosUserId"), args.workosUserId))
+            .withIndex("by_workosUserId", (q) =>
+                q.eq("workosUserId", args.workosUserId)
+            )
             .first();
 
         let userId;
@@ -39,11 +41,8 @@ export const upsertCurrentUser = mutation({
         }
         const existingMembership = await ctx.db
             .query("memberships")
-            .filter((q) =>
-                q.and(
-                    q.eq(q.field("userId"), userId),
-                    q.eq(q.field("organizationId"), args.organizationId)
-                )
+            .withIndex("by_user_org", (q) =>
+                q.eq("userId", userId).eq("organizationId", args.organizationId)
             )
             .first();
 
@@ -73,18 +72,17 @@ export const getMembershipByWorkosUser = query({
     handler: async (ctx, args) => {
         const user = await ctx.db
             .query("users")
-            .filter((q) => q.eq(q.field("workosUserId"), args.workosUserId))
+            .withIndex("by_workosUserId", (q) =>
+                q.eq("workosUserId", args.workosUserId)
+            )
             .first();
 
         if (!user) return null;
 
         const membership = await ctx.db
             .query("memberships")
-            .filter((q) =>
-                q.and(
-                    q.eq(q.field("userId"), user._id),
-                    q.eq(q.field("organizationId"), args.organizationId)
-                )
+            .withIndex("by_user_org", (q) =>
+                q.eq("userId", user._id).eq("organizationId", args.organizationId)
             )
             .first();
 
@@ -104,15 +102,14 @@ export const listMembers = query({
     handler: async (ctx, args) => {
         const memberships = await ctx.db
             .query("memberships")
+            .withIndex("by_organization", (q) =>
+                q.eq("organizationId", args.organizationId)
+            )
             .order("desc")
             .collect();
 
-        const orgMemberships = memberships.filter(
-            (membership) => membership.organizationId === args.organizationId
-        );
-
         const members = await Promise.all(
-            orgMemberships.map(async (membership) => {
+            memberships.map(async (membership) => {
                 const user = await ctx.db.get(membership.userId);
 
                 return {
@@ -159,11 +156,15 @@ export const updateMemberRole = mutation({
         const isNewRoleNonPrivileged = args.role === "member";
 
         if (isCurrentRolePrivileged && isNewRoleNonPrivileged) {
-            const allMemberships = await ctx.db.query("memberships").collect();
+            const orgMemberships = await ctx.db
+                .query("memberships")
+                .withIndex("by_organization", (q) =>
+                    q.eq("organizationId", args.organizationId)
+                )
+                .collect();
 
-            const privilegedMemberships = allMemberships.filter(
+            const privilegedMemberships = orgMemberships.filter(
                 (item) =>
-                    item.organizationId === args.organizationId &&
                     (item.role === "owner" || item.role === "admin")
             );
 
@@ -219,11 +220,15 @@ export const removeMember = mutation({
             membership.role === "owner" || membership.role === "admin";
 
         if (isPrivileged) {
-            const allMemberships = await ctx.db.query("memberships").collect();
+            const orgMemberships = await ctx.db
+                .query("memberships")
+                .withIndex("by_organization", (q) =>
+                    q.eq("organizationId", args.organizationId)
+                )
+                .collect();
 
-            const privilegedMemberships = allMemberships.filter(
+            const privilegedMemberships = orgMemberships.filter(
                 (item) =>
-                    item.organizationId === args.organizationId &&
                     (item.role === "owner" || item.role === "admin")
             );
 

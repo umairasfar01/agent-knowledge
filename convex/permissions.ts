@@ -9,18 +9,15 @@ export async function getMembershipForWorkosUser(
 ) {
   const user = await ctx.db
     .query("users")
-    .filter((q) => q.eq(q.field("workosUserId"), workosUserId))
+    .withIndex("by_workosUserId", (q) => q.eq("workosUserId", workosUserId))
     .first();
 
   if (!user) return null;
 
   const membership = await ctx.db
     .query("memberships")
-    .filter((q) =>
-      q.and(
-        q.eq(q.field("userId"), user._id),
-        q.eq(q.field("organizationId"), organizationId)
-      )
+    .withIndex("by_user_org", (q) =>
+      q.eq("userId", user._id).eq("organizationId", organizationId)
     )
     .first();
 
