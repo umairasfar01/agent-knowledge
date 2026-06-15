@@ -20,6 +20,7 @@ export default function MembersPage() {
     const canManage = canManageKnowledge(currentRole);
 
     const updateMemberRole = useMutation(api.users.updateMemberRole);
+    const removeMember = useMutation(api.users.removeMember);
 
     async function handleRoleChange(
         membershipId: Id<"memberships">,
@@ -28,6 +29,20 @@ export default function MembersPage() {
         await updateMemberRole({
             membershipId,
             role,
+            organizationId: DEFAULT_ORG_ID,
+            workosUserId: user?.id ?? "",
+        });
+    }
+
+    async function handleRemoveMember(membershipId: Id<"memberships">) {
+        const confirmed = window.confirm(
+            "Remove this member from the organization?"
+        );
+
+        if (!confirmed) return;
+
+        await removeMember({
+            membershipId,
             organizationId: DEFAULT_ORG_ID,
             workosUserId: user?.id ?? "",
         });
@@ -75,6 +90,7 @@ export default function MembersPage() {
                                         <th className="px-4 py-3 font-medium">Role</th>
                                         <th className="px-4 py-3 font-medium">Organization</th>
                                         <th className="px-4 py-3 font-medium">Joined</th>
+                                        <th className="px-4 py-3 font-medium">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -121,6 +137,20 @@ export default function MembersPage() {
 
                                             <td className="px-4 py-3 text-neutral-400">
                                                 {new Date(member.createdAt).toLocaleDateString()}
+                                            </td>
+
+                                            <td className="px-4 py-3">
+                                                {canManage ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveMember(member._id)}
+                                                        className="rounded-lg border border-red-900/60 px-3 py-2 text-xs text-red-300 hover:bg-red-950/30"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-xs text-neutral-500">—</span>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}

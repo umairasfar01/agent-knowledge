@@ -178,3 +178,45 @@ export const updateMemberRole = mutation({
         });
     },
 });
+
+export const removeMember = mutation({
+    args: {
+        membershipId: v.id("memberships"),
+        organizationId: v.string(),
+        workosUserId: v.string(),
+    },
+    handler: async (ctx, args) => {
+        await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
+        const membership = await ctx.db.get(args.membershipId);
+
+        if (!membership) {
+            throw new Error("Membership not found");
+        }
+
+        if (membership.organizationId !== args.organizationId) {
+            throw new Error("Membership does not belong to this organization");
+        }
+
+        const isPrivileged =
+            membership.role === "owner" || membership.role === "admin";
+
+        if (isPrivileged) {
+            const allMemberships = await ctx.db.query("memberships").collect();
+
+            const privilegedMemberships = allMemberships.filter(
+                (item) =>
+                    item.organizationId === args.organizationId &&
+                    (item.role === "owner" || item.role === "admin")
+            );
+
+            if (privilegedMemberships.length <= 1) {
+                throw new Error(
+                    "Cannot remove the last owner/admin from this organization"
+                );
+            }
+        }
+
+        await ctx.db.delete(args.membershipId);
+    },
+});
