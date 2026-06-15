@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdminForWorkosUser } from "./permissions";
 
 export const upsertCurrentUser = mutation({
     args: {
@@ -96,36 +97,63 @@ export const getMembershipByWorkosUser = query({
 });
 
 export const listMembers = query({
-  args: {
-    organizationId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const memberships = await ctx.db
-      .query("memberships")
-      .order("desc")
-      .collect();
+    args: {
+        organizationId: v.string(),
+    },
+    handler: async (ctx, args) => {
+        const memberships = await ctx.db
+            .query("memberships")
+            .order("desc")
+            .collect();
 
-    const orgMemberships = memberships.filter(
-      (membership) => membership.organizationId === args.organizationId
-    );
+        const orgMemberships = memberships.filter(
+            (membership) => membership.organizationId === args.organizationId
+        );
 
-    const members = await Promise.all(
-      orgMemberships.map(async (membership) => {
-        const user = await ctx.db.get(membership.userId);
+        const members = await Promise.all(
+            orgMemberships.map(async (membership) => {
+                const user = await ctx.db.get(membership.userId);
 
-        return {
-          _id: membership._id,
-          role: membership.role,
-          organizationId: membership.organizationId,
-          createdAt: membership.createdAt,
-          updatedAt: membership.updatedAt,
-          userEmail: user?.email ?? "Unknown user",
-          userName: user?.name ?? "",
-          workosUserId: user?.workosUserId ?? "",
-        };
-      })
-    );
+                return {
+                    _id: membership._id,
+                    role: membership.role,
+                    organizationId: membership.organizationId,
+                    createdAt: membership.createdAt,
+                    updatedAt: membership.updatedAt,
+                    userEmail: user?.email ?? "Unknown user",
+                    userName: user?.name ?? "",
+                    workosUserId: user?.workosUserId ?? "",
+                };
+            })
+        );
 
-    return members;
-  },
+        return members;
+    },
+});
+
+export const updateMemberRole = mutation({
+    args: {
+        membershipId: v.id("memberships"),
+        role: v.union(v.literal("owner"), v.literal("admin"), v.literal("member")),
+        organizationId: v.string(),
+        workosUserId: v.string(),
+    },
+    handler: async (ctx, args) => {
+        await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
+        const membership = await ctx.db.get(args.membershipId);
+
+        if (!membership) {
+            throw new Error("Membership not found");
+        }
+
+        if (membership.organizationId !== args.organizationId) {
+            throw new Error("Membership does not belong to this organization");
+        }
+
+        await ctx.db.patch(args.membershipId, {
+            role: args.role,
+            updatedAt: Date.now(),
+        });
+    },
 });
