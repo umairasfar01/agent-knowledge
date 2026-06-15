@@ -171,3 +171,16 @@ export const listAuditLogsForAgent = query({
       .slice(0, 10);
   },
 });
+
+export const listAuditLogs = query({
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const logs = await ctx.db.query("auditLogs").order("desc").collect();
+
+    return logs
+      .filter((log) => log.organizationId === args.organizationId)
+      .slice(0, 50);
+  },
+});

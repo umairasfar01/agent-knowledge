@@ -6,9 +6,45 @@ import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function AuditPage() {
-    const auditLogs = useQuery(api.knowledge.listAuditLogs, {
+    const auditLogs = useQuery(api.agents.listAuditLogs, {
         organizationId: DEFAULT_ORG_ID,
     });
+
+    function getAuditDescription(log: {
+        action: string;
+        actorEmail?: string;
+        actorId?: string;
+        actorUserId?: string;
+    }) {
+        const actor =
+            log.actorEmail ?? log.actorId ?? log.actorUserId ?? "Unknown user";
+
+        if (log.action === "seed.demo_created") {
+            return `${actor} created this knowledge item`;
+        }
+
+        if (log.action === "agent.created") {
+            return `${actor} created this agent`;
+        }
+
+        if (log.action === "agent.updated") {
+            return `${actor} updated this agent`;
+        }
+
+        if (log.action === "agent.deleted") {
+            return `${actor} deleted this agent`;
+        }
+
+        if (log.action === "member_role_updated") {
+            return `${actor} changed a member role`;
+        }
+
+        if (log.action === "member_removed") {
+            return `${actor} removed a member`;
+        }
+
+        return `${actor} ${log.action} this knowledge item`;
+    }
 
     return (
         <AppShell>
@@ -43,16 +79,7 @@ export default function AuditPage() {
                                                 "Unknown item"}
                                         </p>
                                         <p className="text-sm text-neutral-400">
-                                            {log.actorEmail ?? log.actorId ?? log.actorUserId ?? "demo-user"}{" "}
-                                            {log.action === "seed.demo_created"
-                                                ? "created this knowledge item"
-                                                : log.action === "agent.created"
-                                                    ? "created this agent"
-                                                    : log.action === "agent.updated"
-                                                        ? "updated this agent"
-                                                        : log.action === "agent.deleted"
-                                                            ? "deleted this agent"
-                                                            : `${log.action} this knowledge item`}
+                                            {getAuditDescription(log)}
                                         </p>
                                     </div>
 
