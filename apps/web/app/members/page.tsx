@@ -18,12 +18,23 @@ export default function MembersPage() {
 
     const { user } = useAuth();
     const currentRole = useCurrentRole();
-    const canManage = canManageKnowledge(currentRole);
+    const canManage =
+        currentRole !== "loading" && canManageKnowledge(currentRole);
 
     const updateMemberRole = useMutation(api.users.updateMemberRole);
     const removeMember = useMutation(api.users.removeMember);
 
     const [memberError, setMemberError] = useState("");
+
+    const [inviteEmail, setInviteEmail] = useState("");
+    const [inviteName, setInviteName] = useState("");
+    const [inviteRole, setInviteRole] = useState<"owner" | "admin" | "member">(
+        "member"
+    );
+    const [inviteError, setInviteError] = useState("");
+    const [inviteSuccess, setInviteSuccess] = useState("");
+
+    const inviteMember = useMutation(api.users.inviteMember);
 
     async function handleRoleChange(
         membershipId: Id<"memberships">,
@@ -66,9 +77,117 @@ export default function MembersPage() {
         }
     }
 
+    async function handleInviteMember(e: React.FormEvent) {
+        e.preventDefault();
+
+        setInviteError("");
+        setInviteSuccess("");
+
+        try {
+            await inviteMember({
+                email: inviteEmail,
+                name: inviteName || undefined,
+                role: inviteRole,
+                organizationId: DEFAULT_ORG_ID,
+                workosUserId: user?.id ?? "",
+                actorEmail: user?.email ?? "unknown-user",
+            });
+
+            setInviteSuccess(`Added ${inviteEmail} as ${inviteRole}.`);
+            setInviteEmail("");
+            setInviteName("");
+            setInviteRole("member");
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : "Failed to add member.";
+
+            setInviteError(
+                message.includes("already in the organization")
+                    ? "This member is already in the organization."
+                    : message.includes("Email is required")
+                        ? "Email is required."
+                        : "Failed to add member."
+            );
+        }
+    }
+
     return (
         <AppShell>
             <div className="mx-auto max-w-5xl space-y-8">
+
+                {currentRole === "loading" && (
+                    <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <p className="text-neutral-300">Loading your workspace access...</p>
+                    </div>
+                )}
+
+                {canManage && (
+                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <h2 className="text-xl font-semibold">Add member</h2>
+                        <p className="mt-1 text-sm text-neutral-500">
+                            Add a member to this organization. Email sending can be connected later.
+                        </p>
+
+                        <form onSubmit={handleInviteMember} className="mt-5 grid gap-4 md:grid-cols-4">
+                            <div className="md:col-span-2">
+                                <label className="text-sm text-neutral-300">Email</label>
+                                <input
+                                    value={inviteEmail}
+                                    onChange={(e) => setInviteEmail(e.target.value)}
+                                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                    placeholder="teammate@example.com"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-sm text-neutral-300">Name</label>
+                                <input
+                                    value={inviteName}
+                                    onChange={(e) => setInviteName(e.target.value)}
+                                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                    placeholder="Optional"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-sm text-neutral-300">Role</label>
+                                <select
+                                    value={inviteRole}
+                                    onChange={(e) =>
+                                        setInviteRole(e.target.value as "owner" | "admin" | "member")
+                                    }
+                                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                >
+                                    <option value="member">member</option>
+                                    <option value="admin">admin</option>
+                                    <option value="owner">owner</option>
+                                </select>
+                            </div>
+
+                            <div className="md:col-span-4">
+                                <button
+                                    type="submit"
+                                    className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                                >
+                                    Add member
+                                </button>
+                            </div>
+                        </form>
+
+                        {inviteError && (
+                            <div className="mt-4 rounded-xl border border-red-900/60 bg-red-950/20 p-4">
+                                <p className="text-sm text-red-300">{inviteError}</p>
+                            </div>
+                        )}
+
+                        {inviteSuccess && (
+                            <div className="mt-4 rounded-xl border border-green-900/60 bg-green-950/20 p-4">
+                                <p className="text-sm text-green-300">{inviteSuccess}</p>
+                            </div>
+                        )}
+                    </section>
+                )}
+
                 <header>
                     <p className="text-sm font-medium text-neutral-400">Workspace</p>
                     <h1 className="mt-2 text-3xl font-bold">Members</h1>

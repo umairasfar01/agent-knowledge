@@ -62,7 +62,8 @@ export default defineSchema({
       v.literal("agent.updated"),
       v.literal("agent.deleted"),
       v.literal("member_role_updated"),
-      v.literal("member_removed")
+      v.literal("member_removed"),
+      v.literal("member_invited")
     ),
 
     knowledgeId: v.optional(v.id("knowledge")),

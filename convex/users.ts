@@ -256,3 +256,79 @@ export const removeMember = mutation({
         await ctx.db.delete(args.membershipId);
     },
 });
+
+export const inviteMember = mutation({
+  args: {
+    email: v.string(),
+    name: v.optional(v.string()),
+    role: v.union(v.literal("owner"), v.literal("admin"), v.literal("member")),
+    organizationId: v.string(),
+    workosUserId: v.string(),
+    actorEmail: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
+    const now = Date.now();
+    const normalizedEmail = args.email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      throw new Error("Email is required");
+    }
+
+    let user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), normalizedEmail))
+      .first();
+
+    let userId = user?._id;
+
+    if (!userId) {
+      userId = await ctx.db.insert("users", {
+        email: normalizedEmail,
+        name: args.name?.trim() || normalizedEmail,
+        workosUserId: undefined,
+        createdAt: now,
+        updatedAt: now,
+      });
+    } else {
+      await ctx.db.patch(userId, {
+        updatedAt: now,
+      });
+    }
+
+    const existingMembership = await ctx.db
+      .query("memberships")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("userId"), userId),
+          q.eq(q.field("organizationId"), args.organizationId)
+        )
+      )
+      .first();
+
+    if (existingMembership) {
+      throw new Error("This member is already in the organization");
+    }
+
+    await ctx.db.insert("memberships", {
+      userId,
+      organizationId: args.organizationId,
+      role: args.role,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await ctx.db.insert("auditLogs", {
+      action: "member_invited",
+      knowledgeId: undefined,
+      knowledgeTitle: `Invited member ${normalizedEmail} as ${args.role}`,
+      actorId: "demo-user",
+      actorEmail: args.actorEmail,
+      organizationId: args.organizationId,
+      createdAt: now,
+    });
+
+    return userId;
+  },
+});

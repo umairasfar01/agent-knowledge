@@ -43,6 +43,10 @@ export default function AuditPage() {
             return `${actor} removed a member`;
         }
 
+        if (log.action === "member_invited") {
+            return `${actor} added a member`;
+        }
+
         return `${actor} ${log.action} this knowledge item`;
     }
 
