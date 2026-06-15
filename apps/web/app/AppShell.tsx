@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { usePathname } from "next/navigation";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { getCurrentOrgId } from "@/lib/org";
+import { useCurrentRole } from "@/lib/useCurrentRole";
 
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -23,18 +24,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     "switchToOrganization" in auth ? auth.switchToOrganization : undefined;
 
   const currentOrgId = getCurrentOrgId(organizationId);
-
-  const membershipData = useQuery(
-    api.users.getMembershipByWorkosUser,
-    user?.id
-      ? {
-        workosUserId: user.id,
-        organizationId: currentOrgId,
-      }
-      : "skip"
-  );
-
-  const currentRole = membershipData?.membership.role ?? "member";
+  
+  const currentRole = useCurrentRole();
 
   useEffect(() => {
     if (!user?.id || !user?.email || !currentOrgId) return;
@@ -126,7 +117,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </p>
 
               <p className="mt-3 text-xs text-neutral-500">Role</p>
-              <p className="mt-1 text-sm text-neutral-300">{currentRole}</p>
+              <p className="mt-1 text-sm text-neutral-300">
+                {currentRole === "loading" ? "Loading..." : currentRole}
+              </p>
 
               <button
                 type="button"
