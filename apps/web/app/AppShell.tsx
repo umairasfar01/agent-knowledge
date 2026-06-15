@@ -89,6 +89,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               Approvals
             </Link>
 
+            <Link href="/members" className={navClass("/members")}>
+              Members
+            </Link>
+
             <Link href="/audit" className={navClass("/audit")}>
               Audit Logs
             </Link>

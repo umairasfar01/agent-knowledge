@@ -94,3 +94,38 @@ export const getMembershipByWorkosUser = query({
         };
     },
 });
+
+export const listMembers = query({
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const memberships = await ctx.db
+      .query("memberships")
+      .order("desc")
+      .collect();
+
+    const orgMemberships = memberships.filter(
+      (membership) => membership.organizationId === args.organizationId
+    );
+
+    const members = await Promise.all(
+      orgMemberships.map(async (membership) => {
+        const user = await ctx.db.get(membership.userId);
+
+        return {
+          _id: membership._id,
+          role: membership.role,
+          organizationId: membership.organizationId,
+          createdAt: membership.createdAt,
+          updatedAt: membership.updatedAt,
+          userEmail: user?.email ?? "Unknown user",
+          userName: user?.name ?? "",
+          workosUserId: user?.workosUserId ?? "",
+        };
+      })
+    );
+
+    return members;
+  },
+});
