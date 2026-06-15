@@ -151,6 +151,27 @@ export const updateMemberRole = mutation({
             throw new Error("Membership does not belong to this organization");
         }
 
+        const isCurrentRolePrivileged =
+            membership.role === "owner" || membership.role === "admin";
+
+        const isNewRoleNonPrivileged = args.role === "member";
+
+        if (isCurrentRolePrivileged && isNewRoleNonPrivileged) {
+            const allMemberships = await ctx.db.query("memberships").collect();
+
+            const privilegedMemberships = allMemberships.filter(
+                (item) =>
+                    item.organizationId === args.organizationId &&
+                    (item.role === "owner" || item.role === "admin")
+            );
+
+            if (privilegedMemberships.length <= 1) {
+                throw new Error(
+                    "Cannot remove the last owner/admin from this organization"
+                );
+            }
+        }
+
         await ctx.db.patch(args.membershipId, {
             role: args.role,
             updatedAt: Date.now(),
