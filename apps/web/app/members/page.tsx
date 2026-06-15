@@ -6,6 +6,7 @@ import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useState } from "react";
 
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
@@ -22,6 +23,8 @@ export default function MembersPage() {
     const updateMemberRole = useMutation(api.users.updateMemberRole);
     const removeMember = useMutation(api.users.removeMember);
 
+    const [memberError, setMemberError] = useState("");
+
     async function handleRoleChange(
         membershipId: Id<"memberships">,
         role: "owner" | "admin" | "member"
@@ -35,17 +38,25 @@ export default function MembersPage() {
     }
 
     async function handleRemoveMember(membershipId: Id<"memberships">) {
-        const confirmed = window.confirm(
-            "Remove this member from the organization?"
-        );
+        const confirmed = window.confirm("Remove this member from the organization?");
 
         if (!confirmed) return;
 
-        await removeMember({
-            membershipId,
-            organizationId: DEFAULT_ORG_ID,
-            workosUserId: user?.id ?? "",
-        });
+        setMemberError("");
+
+        try {
+            await removeMember({
+                membershipId,
+                organizationId: DEFAULT_ORG_ID,
+                workosUserId: user?.id ?? "",
+            });
+        } catch (error) {
+            setMemberError(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to remove member."
+            );
+        }
     }
 
     return (
@@ -61,6 +72,12 @@ export default function MembersPage() {
 
                 <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
                     <h2 className="text-xl font-semibold">Organization members</h2>
+
+                    {memberError && (
+                        <div className="mt-4 rounded-xl border border-red-900/60 bg-red-950/20 p-4">
+                            <p className="text-sm text-red-300">{memberError}</p>
+                        </div>
+                    )}
 
                     {members === undefined ? (
                         <div className="mt-5 space-y-3">
