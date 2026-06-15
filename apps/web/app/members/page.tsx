@@ -34,6 +34,7 @@ export default function MembersPage() {
             role,
             organizationId: DEFAULT_ORG_ID,
             workosUserId: user?.id ?? "",
+            actorEmail: user?.email ?? "unknown-user",
         });
     }
 
@@ -49,6 +50,7 @@ export default function MembersPage() {
                 membershipId,
                 organizationId: DEFAULT_ORG_ID,
                 workosUserId: user?.id ?? "",
+                actorEmail: user?.email ?? "unknown-user",
             });
         } catch (error) {
             const message =

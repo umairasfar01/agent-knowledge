@@ -8,6 +8,7 @@ export const upsertCurrentUser = mutation({
         email: v.string(),
         name: v.optional(v.string()),
         organizationId: v.string(),
+        actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         const now = Date.now();
@@ -137,6 +138,7 @@ export const updateMemberRole = mutation({
         role: v.union(v.literal("owner"), v.literal("admin"), v.literal("member")),
         organizationId: v.string(),
         workosUserId: v.string(),
+        actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
@@ -176,6 +178,20 @@ export const updateMemberRole = mutation({
             role: args.role,
             updatedAt: Date.now(),
         });
+
+        const user = await ctx.db.get(membership.userId);
+
+        await ctx.db.insert("auditLogs", {
+            action: "member_role_updated",
+            knowledgeId: undefined,
+            knowledgeTitle: user?.email
+                ? `Changed member role for ${user.email} to ${args.role}`
+                : `Changed member role to ${args.role}`,
+            actorId: "demo-user",
+            actorEmail: args.actorEmail,
+            organizationId: args.organizationId,
+            createdAt: Date.now(),
+        });
     },
 });
 
@@ -184,6 +200,7 @@ export const removeMember = mutation({
         membershipId: v.id("memberships"),
         organizationId: v.string(),
         workosUserId: v.string(),
+        actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
@@ -216,6 +233,20 @@ export const removeMember = mutation({
                 );
             }
         }
+
+        const user = await ctx.db.get(membership.userId);
+
+        await ctx.db.insert("auditLogs", {
+            action: "member_removed",
+            knowledgeId: undefined,
+            knowledgeTitle: user?.email
+                ? `Removed member ${user.email}`
+                : "Removed member",
+            actorId: "demo-user",
+            actorEmail: args.actorEmail,
+            organizationId: args.organizationId,
+            createdAt: Date.now(),
+        });
 
         await ctx.db.delete(args.membershipId);
     },

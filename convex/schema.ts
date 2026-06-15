@@ -58,8 +58,9 @@ export default defineSchema({
       v.literal("seed.demo_created"),
       v.literal("agent.created"),
       v.literal("agent.updated"),
-      v.literal("agent.deleted")
-
+      v.literal("agent.deleted"),
+      v.literal("member_role_updated"),
+      v.literal("member_removed")
     ),
 
     knowledgeId: v.optional(v.id("knowledge")),
