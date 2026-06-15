@@ -51,11 +51,16 @@ export default function MembersPage() {
                 workosUserId: user?.id ?? "",
             });
         } catch (error) {
-            setMemberError(
-                error instanceof Error
-                    ? error.message
-                    : "Failed to remove member."
-            );
+            const message =
+                error instanceof Error ? error.message : "Failed to remove member.";
+
+            const cleanMessage = message.includes(
+                "Cannot remove the last owner/admin from this organization"
+            )
+                ? "Cannot remove the last owner/admin from this organization."
+                : "Failed to remove member.";
+
+            setMemberError(cleanMessage);
         }
     }
 
