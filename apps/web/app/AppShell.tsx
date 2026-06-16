@@ -12,7 +12,7 @@ import { useCurrentRole } from "@/lib/useCurrentRole";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const auth = useAuth({ ensureSignedIn: true });
-  const { user, signOut } = auth;
+  const { user, signOut, loading } = auth;
 
   const pathname = usePathname();
   const upsertCurrentUser = useMutation(api.users.upsertCurrentUser);
@@ -28,7 +28,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const currentRole = useCurrentRole();
 
   useEffect(() => {
-    if (!user?.id || !user?.email || !currentOrgId) return;
+    if (loading || !user?.id || !user?.email || !currentOrgId) return;
 
     void upsertCurrentUser({
       workosUserId: user.id,

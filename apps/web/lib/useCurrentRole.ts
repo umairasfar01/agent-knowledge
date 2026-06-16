@@ -9,7 +9,7 @@ export type CurrentRole = "loading" | "owner" | "admin" | "member";
 
 export function useCurrentRole(): CurrentRole {
   const auth = useAuth({ ensureSignedIn: true });
-  const { user } = auth;
+  const { user, loading } = auth;
 
   const organizationId =
     "organizationId" in auth ? auth.organizationId : undefined;
@@ -18,7 +18,7 @@ export function useCurrentRole(): CurrentRole {
 
   const membershipData = useQuery(
     api.users.getMembershipByWorkosUser,
-    user?.id
+    !loading && user?.id
       ? {
           workosUserId: user.id,
           organizationId: currentOrgId,
@@ -26,6 +26,7 @@ export function useCurrentRole(): CurrentRole {
       : "skip"
   );
 
+  if (loading) return "loading";
   if (!user?.id) return "loading";
   if (membershipData === undefined) return "loading";
 
