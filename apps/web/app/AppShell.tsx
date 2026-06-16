@@ -11,7 +11,7 @@ import { useCurrentRole } from "@/lib/useCurrentRole";
 
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const auth = useAuth();
+  const auth = useAuth({ ensureSignedIn: true });
   const { user, signOut } = auth;
 
   const pathname = usePathname();

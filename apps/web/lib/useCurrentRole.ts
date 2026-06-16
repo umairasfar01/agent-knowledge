@@ -8,7 +8,7 @@ import { getCurrentOrgId } from "@/lib/org";
 export type CurrentRole = "loading" | "owner" | "admin" | "member";
 
 export function useCurrentRole(): CurrentRole {
-  const auth = useAuth();
+  const auth = useAuth({ ensureSignedIn: true });
   const { user } = auth;
 
   const organizationId =
