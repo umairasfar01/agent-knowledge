@@ -59,27 +59,27 @@ export default function AskPage() {
 
     return (
         <AppShell>
-            <div className="mx-auto max-w-5xl space-y-8">
+            <div className="ak-page">
                 <header>
-                    <p className="text-sm font-medium text-neutral-400">
+                    <p className="ak-header-eyebrow">
                         Agent Retrieval
                     </p>
-                    <h1 className="mt-2 text-3xl font-bold">Ask Agent Knowledge</h1>
-                    <p className="mt-2 text-neutral-400">
+                    <h1 className="ak-header-title">Ask Agent Knowledge</h1>
+                    <p className="ak-header-description">
                         Select an agent and search only the knowledge that agent is allowed
                         to use.
                     </p>
                 </header>
 
-                <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                <section className="ak-card">
                     <div className="grid gap-5 md:grid-cols-2">
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-medium text-neutral-300">
+                            <label className="ak-label">
                                 Agent
                             </label>
 
                             <select
-                                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                className="ak-select"
                                 value={selectedAgentId}
                                 onChange={(e) =>
                                     setSelectedAgentId(e.target.value as Id<"agents">)
@@ -96,19 +96,19 @@ export default function AskPage() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-medium text-neutral-300">
+                            <label className="ak-label">
                                 Question
                             </label>
 
                             <input
-                                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                                className="ak-input"
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
                                 placeholder="Example: refund policy"
                             />
                         </div>
 
-                        <div className="mt-5 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+                        <div className="ak-panel md:col-span-2">
                             <p className="text-sm font-medium text-neutral-300">
                                 Retrieval policy
                             </p>
@@ -125,14 +125,14 @@ export default function AskPage() {
                     <h2 className="text-xl font-semibold">Matching knowledge</h2>
 
                     {results && results.length > 0 && (
-                        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <section className="ak-card">
                             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                                 <h2 className="text-xl font-semibold">Draft answer</h2>
 
                                 <button
                                     type="button"
                                     onClick={copyDraftAnswer}
-                                    className="w-fit rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                                    className="ak-button-secondary w-fit"
                                 >
                                     {copied ? "Copied!" : "Copy draft"}
                                 </button>
@@ -141,18 +141,18 @@ export default function AskPage() {
                                 <button
                                     type="button"
                                     disabled
-                                    className="w-fit cursor-not-allowed rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-500 opacity-60"
+                                    className="ak-button-secondary w-fit opacity-60"
                                 >
                                     AI answer coming soon
                                 </button>
                             </div>
 
                             {results.some((item) => item.requiresApproval) && (
-                                <div className="mt-4 rounded-xl border border-yellow-900/60 bg-yellow-950/20 p-4">
-                                    <p className="text-sm font-medium text-yellow-300">
+                                <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+                                    <p className="text-sm font-medium text-amber-300">
                                         Approval warning
                                     </p>
-                                    <p className="mt-1 text-sm text-yellow-200/80">
+                                    <p className="mt-1 text-sm text-amber-200/80">
                                         Some retrieved knowledge requires approval before action. The agent may
                                         use approved answerable knowledge to respond, but should not take action
                                         without approval.
@@ -161,7 +161,7 @@ export default function AskPage() {
                             )}
 
                             {results.some((item) => item.canUseToAct === false) && (
-                                <div className="mt-4 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+                                <div className="ak-panel mt-4">
                                     <p className="text-sm font-medium text-neutral-300">
                                         Action limitation
                                     </p>
@@ -201,14 +201,14 @@ export default function AskPage() {
                     )}
 
                     {!selectedAgentId ? (
-                        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <div className="ak-card">
                             <p className="text-neutral-300">Select an agent first.</p>
                             <p className="mt-1 text-sm text-neutral-500">
                                 Results will only include knowledge assigned to that agent.
                             </p>
                         </div>
                     ) : !question.trim() ? (
-                        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <div className="ak-card">
                             <p className="text-neutral-300">Type a question or keyword.</p>
                             <p className="mt-1 text-sm text-neutral-500">
                                 Try searching for something like “refund”, “billing”, or
@@ -220,7 +220,7 @@ export default function AskPage() {
                             {[1, 2, 3].map((item) => (
                                 <div
                                     key={item}
-                                    className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                                    className="ak-card"
                                 >
                                     <div className="h-5 w-1/3 rounded bg-neutral-800" />
                                     <div className="mt-3 h-4 w-1/4 rounded bg-neutral-800" />
@@ -232,7 +232,7 @@ export default function AskPage() {
                             ))}
                         </div>
                     ) : results.length === 0 ? (
-                        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <div className="ak-card">
                             <p className="font-medium text-neutral-200">
                                 No answer can be drafted.
                             </p>
@@ -246,7 +246,7 @@ export default function AskPage() {
                             {results.map((item) => (
                                 <article
                                     key={item._id}
-                                    className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                                    className="ak-card-hover"
                                 >
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
@@ -258,7 +258,7 @@ export default function AskPage() {
                                             </h3>
                                         </div>
 
-                                        <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                        <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
                                             {item.status}
                                         </span>
                                     </div>
@@ -268,19 +268,19 @@ export default function AskPage() {
                                     </p>
 
                                     <div className="mt-5 flex flex-wrap gap-2">
-                                        <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                        <span className="ak-status-neutral">
                                             Can answer
                                         </span>
 
                                         {item.requiresApproval && (
-                                            <span className="rounded-full border border-yellow-900/60 px-3 py-1 text-xs text-yellow-300">
+                                            <span className="ak-status-warning">
                                                 Approval required
                                             </span>
                                         )}
 
                                         <Link
                                             href={`/knowledge/${item._id}`}
-                                            className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
+                                            className="ak-button-secondary px-3 py-1 text-xs"
                                         >
                                             Open
                                         </Link>

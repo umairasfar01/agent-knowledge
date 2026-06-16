@@ -31,89 +31,89 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-6xl space-y-8">
-        <header className="flex items-start justify-between gap-4">
+      <div className="ak-page">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-medium text-neutral-400">
+            <p className="ak-header-eyebrow">
               Agent Knowledge
             </p>
-            <h1 className="mt-2 text-3xl font-bold">Dashboard</h1>
-            <p className="mt-2 text-neutral-400">
+            <h1 className="ak-header-title">Dashboard</h1>
+            <p className="ak-header-description">
               Overview of your company knowledge workspace.
             </p>
           </div>
 
           <Link
             href="/knowledge"
-            className="rounded-lg bg-white px-4 py-2 font-medium text-black hover:bg-neutral-200"
+            className="ak-button-primary w-fit"
           >
             Manage Knowledge
           </Link>
         </header>
 
         <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Total Knowledge</p>
+          <div className="ak-card">
+            <p className="ak-muted">Total knowledge</p>
             <p className="mt-3 text-4xl font-bold">{total}</p>
           </div>
 
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Draft Items</p>
+          <div className="ak-card">
+            <p className="ak-muted">Draft items</p>
             <p className="mt-3 text-4xl font-bold">{drafts}</p>
           </div>
 
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Verified Items</p>
+          <div className="ak-card">
+            <p className="ak-muted">Verified items</p>
             <p className="mt-3 text-4xl font-bold">{verified}</p>
           </div>
 
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Total Agents</p>
+          <div className="ak-card">
+            <p className="ak-muted">Total agents</p>
             <p className="mt-3 text-4xl font-bold">{totalAgents}</p>
           </div>
 
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Active Agents</p>
+          <div className="ak-card">
+            <p className="ak-muted">Active agents</p>
             <p className="mt-3 text-4xl font-bold">{activeAgents}</p>
           </div>
 
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Needs Approval</p>
+          <div className="ak-card">
+            <p className="ak-muted">Needs approval</p>
             <p className="mt-3 text-4xl font-bold">{requiresApproval}</p>
           </div>
 
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <p className="text-sm text-neutral-400">Can Take Action</p>
+          <div className="ak-card">
+            <p className="ak-muted">Can take action</p>
             <p className="mt-3 text-4xl font-bold">{canAct}</p>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+        <section className="ak-card">
           <h2 className="text-xl font-semibold">Next product areas</h2>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+            <div className="ak-panel">
               <h3 className="font-medium">Agent permissions</h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Decide which agents can use each knowledge item.
               </p>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+            <div className="ak-panel">
               <h3 className="font-medium">Approval rules</h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Mark whether knowledge can be used to answer or take action.
               </p>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+            <div className="ak-panel">
               <h3 className="font-medium">Sources</h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Track where each knowledge record came from.
               </p>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+            <div className="ak-panel">
               <h3 className="font-medium">Audit trail</h3>
               <p className="mt-1 text-sm text-neutral-400">
                 Record who changed knowledge and when.
@@ -122,7 +122,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+        <section className="ak-card">
           <div>
             <h2 className="text-xl font-semibold">Quick actions</h2>
             <p className="mt-1 text-sm text-neutral-400">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
           <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             <Link
               href="/knowledge"
-              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
             >
               <h3 className="font-medium">Manage Knowledge</h3>
               <p className="mt-1 text-sm text-neutral-400">
@@ -143,7 +143,7 @@ export default function DashboardPage() {
 
             <Link
               href="/agents"
-              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
             >
               <h3 className="font-medium">Manage Agents</h3>
               <p className="mt-1 text-sm text-neutral-400">
@@ -153,7 +153,7 @@ export default function DashboardPage() {
 
             <Link
               href="/approvals"
-              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
             >
               <h3 className="font-medium">Review Approvals</h3>
               <p className="mt-1 text-sm text-neutral-400">
@@ -163,7 +163,7 @@ export default function DashboardPage() {
 
             <Link
               href="/audit"
-              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
             >
               <h3 className="font-medium">View Audit Logs</h3>
               <p className="mt-1 text-sm text-neutral-400">
@@ -173,7 +173,7 @@ export default function DashboardPage() {
 
             <Link
               href="/settings"
-              className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
             >
               <h3 className="font-medium">Workspace Settings</h3>
               <p className="mt-1 text-sm text-neutral-400">

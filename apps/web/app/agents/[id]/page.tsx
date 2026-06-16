@@ -26,23 +26,28 @@ export default function AgentDetailPage() {
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-5xl space-y-8">
+      <div className="ak-page">
         <div>
           <Link
             href="/agents"
-            className="text-sm text-neutral-400 hover:text-white"
+            className="ak-button-ghost px-0"
           >
             ← Back to Agents
           </Link>
         </div>
 
         {agent === undefined ? (
-          <p className="text-neutral-400">Loading...</p>
+          <div className="ak-card">
+            <div className="h-6 w-1/3 rounded bg-neutral-800" />
+            <div className="mt-4 h-4 w-2/3 rounded bg-neutral-800" />
+          </div>
         ) : agent === null ? (
-          <p className="text-neutral-400">Agent not found.</p>
+          <div className="ak-card">
+            <p className="text-neutral-300">Agent not found.</p>
+          </div>
         ) : (
           <>
-            <header className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <header className="ak-card">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm text-neutral-400">
@@ -54,13 +59,13 @@ export default function AgentDetailPage() {
                   </p>
                 </div>
 
-                <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                <span className={agent.status === "active" ? "ak-status-success" : "ak-status-neutral"}>
                   {agent.status}
                 </span>
               </div>
             </header>
 
-            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <section className="ak-card">
               <h2 className="text-xl font-semibold">
                 Knowledge this agent can access
               </h2>
@@ -77,7 +82,7 @@ export default function AgentDetailPage() {
                     <Link
                       key={item._id}
                       href={`/knowledge/${item._id}`}
-                      className="block rounded-xl border border-neutral-800 bg-neutral-950 p-4 hover:bg-neutral-900"
+                      className="ak-panel block transition hover:border-neutral-700 hover:bg-neutral-900"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div>
@@ -87,7 +92,7 @@ export default function AgentDetailPage() {
                           </p>
                         </div>
 
-                        <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                        <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
                           {item.status}
                         </span>
                       </div>
@@ -101,7 +106,7 @@ export default function AgentDetailPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <section className="ak-card">
               <h2 className="text-xl font-semibold">Audit history</h2>
 
               {auditLogs === undefined ? (
@@ -115,7 +120,7 @@ export default function AgentDetailPage() {
                   {auditLogs.map((log) => (
                     <div
                       key={log._id}
-                      className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+                      className="ak-panel"
                     >
                       <p className="font-medium">
                         {log.action === "agent.created"

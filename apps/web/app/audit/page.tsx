@@ -52,28 +52,40 @@ export default function AuditPage() {
 
     return (
         <AppShell>
-            <div className="mx-auto max-w-6xl space-y-8">
+            <div className="ak-page">
                 <header>
-                    <p className="text-sm font-medium text-neutral-400">
+                    <p className="ak-header-eyebrow">
                         Governance
                     </p>
-                    <h1 className="mt-2 text-3xl font-bold">Audit Logs</h1>
-                    <p className="mt-2 text-neutral-400">
+                    <h1 className="ak-header-title">Audit Logs</h1>
+                    <p className="ak-header-description">
                         Track knowledge changes made inside the workspace.
                     </p>
                 </header>
 
-                <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                <section className="ak-card">
                     {auditLogs === undefined ? (
-                        <p className="text-neutral-400">Loading...</p>
+                        <div className="space-y-3">
+                            {[1, 2, 3].map((item) => (
+                                <div key={item} className="ak-panel">
+                                    <div className="h-4 w-1/3 rounded bg-neutral-800" />
+                                    <div className="mt-3 h-3 w-1/2 rounded bg-neutral-800" />
+                                </div>
+                            ))}
+                        </div>
                     ) : auditLogs.length === 0 ? (
-                        <p className="text-neutral-400">No audit logs yet.</p>
+                        <div className="ak-panel">
+                            <p className="font-medium text-neutral-200">No audit logs yet.</p>
+                            <p className="mt-1 text-sm text-neutral-500">
+                                Changes to knowledge, agents, and members will appear here.
+                            </p>
+                        </div>
                     ) : (
                         <div className="space-y-3">
                             {auditLogs.map((log) => (
                                 <div
                                     key={log._id}
-                                    className="flex flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-950 p-4 md:flex-row md:items-center md:justify-between"
+                                    className="ak-panel flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
                                 >
                                     <div>
                                         <p className="font-medium">

@@ -40,36 +40,41 @@ export default function KnowledgeDetailPage() {
 
     return (
         <AppShell>
-            <div className="mx-auto max-w-4xl space-y-8">
+            <div className="ak-page">
                 <div>
                     <Link
                         href="/knowledge"
-                        className="text-sm text-neutral-400 hover:text-white"
+                        className="ak-button-ghost px-0"
                     >
                         ← Back to Knowledge
                     </Link>
                 </div>
 
                 {item === undefined ? (
-                    <p className="text-neutral-400">Loading...</p>
+                    <div className="ak-card">
+                        <div className="h-6 w-1/3 rounded bg-neutral-800" />
+                        <div className="mt-4 h-4 w-2/3 rounded bg-neutral-800" />
+                    </div>
                 ) : item === null ? (
-                    <p className="text-neutral-400">Knowledge item not found.</p>
+                    <div className="ak-card">
+                        <p className="text-neutral-300">Knowledge item not found.</p>
+                    </div>
                 ) : (
                     <>
-                        <header className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <header className="ak-card">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
                                     <p className="text-sm text-neutral-400">{item.category}</p>
                                     <h1 className="mt-2 text-3xl font-bold">{item.title}</h1>
                                 </div>
 
-                                <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
                                     {item.status}
                                 </span>
                             </div>
                         </header>
 
-                        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <section className="ak-card">
                             <h2 className="text-lg font-semibold">Content</h2>
                             <p className="mt-4 whitespace-pre-wrap text-neutral-200">
                                 {item.content}
@@ -77,21 +82,21 @@ export default function KnowledgeDetailPage() {
                         </section>
 
                         <section className="grid gap-4 md:grid-cols-3">
-                            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
+                            <div className="ak-card">
                                 <p className="text-sm text-neutral-400">Can answer</p>
                                 <p className="mt-2 text-xl font-semibold">
                                     {item.canUseToAnswer ? "Yes" : "No"}
                                 </p>
                             </div>
 
-                            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
+                            <div className="ak-card">
                                 <p className="text-sm text-neutral-400">Can act</p>
                                 <p className="mt-2 text-xl font-semibold">
                                     {item.canUseToAct ? "Yes" : "No"}
                                 </p>
                             </div>
 
-                            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
+                            <div className="ak-card">
                                 <p className="text-sm text-neutral-400">Approval required</p>
                                 <p className="mt-2 text-xl font-semibold">
                                     {item.requiresApproval ? "Yes" : "No"}
@@ -99,7 +104,7 @@ export default function KnowledgeDetailPage() {
                             </div>
                         </section>
 
-                        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <section className="ak-card">
                             <h2 className="text-lg font-semibold">Allowed agents</h2>
 
                             {!item.allowedAgentIds || item.allowedAgentIds.length === 0 ? (
@@ -114,7 +119,7 @@ export default function KnowledgeDetailPage() {
                                         return (
                                             <span
                                                 key={agentId}
-                                                className="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300"
+                                            className="ak-status-neutral"
                                             >
                                                 {agent?.name ?? "Unknown agent"}
                                             </span>
@@ -124,10 +129,10 @@ export default function KnowledgeDetailPage() {
                             )}
                         </section>
 
-                        <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <section className="ak-card">
                             <h2 className="text-lg font-semibold">Trust metadata</h2>
 
-                            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                            <section className="ak-panel">
                                 <h2 className="text-lg font-semibold">Audit history</h2>
 
                                 {auditLogs === undefined ? (
@@ -141,7 +146,7 @@ export default function KnowledgeDetailPage() {
                                         {auditLogs.map((log) => (
                                             <div
                                                 key={log._id}
-                                                className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+                                                className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
                                             >
                                                 <p className="font-medium">
                                                     {log.action === "seed.demo_created" ? "created" : log.action}
@@ -161,7 +166,7 @@ export default function KnowledgeDetailPage() {
                                 )}
                             </section>
 
-                            <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                            <section className="ak-panel mt-4">
                                 <h2 className="text-xl font-semibold">Version history</h2>
 
                                 {versions === undefined ? (
@@ -175,7 +180,7 @@ export default function KnowledgeDetailPage() {
                                         {versions.map((version, index) => (
                                             <div
                                                 key={version._id}
-                                                className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+                                                className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
                                             >
                                                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                                                     <div>
@@ -196,7 +201,7 @@ export default function KnowledgeDetailPage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => handleRestoreVersion(version._id)}
-                                                            className="w-fit rounded-lg border border-neutral-700 px-3 py-2 text-xs text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                                                            className="ak-button-secondary w-fit px-3 py-2 text-xs"
                                                         >
                                                             Restore this version
                                                         </button>

@@ -94,13 +94,13 @@ export default function AgentsPage() {
 
     return (
         <AppShell>
-            <div className="mx-auto max-w-6xl space-y-8">
+            <div className="ak-page">
                 <header>
-                    <p className="text-sm font-medium text-neutral-400">
+                    <p className="ak-header-eyebrow">
                         Agent Registry
                     </p>
-                    <h1 className="mt-2 text-3xl font-bold">Agents</h1>
-                    <p className="mt-2 text-neutral-400">
+                    <h1 className="ak-header-title">Agents</h1>
+                    <p className="ak-header-description">
                         Create and manage the AI agents that will use your company
                         knowledge.
                     </p>
@@ -110,15 +110,15 @@ export default function AgentsPage() {
 
                     <form
                         onSubmit={handleSubmit}
-                        className="flex flex-col gap-5 rounded-2xl border border-neutral-800 bg-neutral-900 p-6"
+                        className="ak-card flex flex-col gap-5"
                     >
                         <div className="grid gap-5 md:grid-cols-2">
                             <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-neutral-300">
+                                <label className="ak-label">
                                     Agent name
                                 </label>
                                 <input
-                                    className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                                    className="ak-input"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Customer Support Agent"
@@ -126,11 +126,11 @@ export default function AgentsPage() {
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-neutral-300">
+                                <label className="ak-label">
                                     Role
                                 </label>
                                 <select
-                                    className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                    className="ak-select"
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
                                 >
@@ -143,11 +143,11 @@ export default function AgentsPage() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-medium text-neutral-300">
+                            <label className="ak-label">
                                 Description
                             </label>
                             <textarea
-                                className="min-h-28 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                                className="ak-textarea min-h-28"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Explain what this agent does..."
@@ -155,11 +155,11 @@ export default function AgentsPage() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-medium text-neutral-300">
+                            <label className="ak-label">
                                 Status
                             </label>
                             <select
-                                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none md:w-72"
+                                className="ak-select md:w-72"
                                 value={status}
                                 onChange={(e) =>
                                     setStatus(e.target.value as "active" | "disabled")
@@ -173,7 +173,7 @@ export default function AgentsPage() {
                         <div className="flex gap-3">
                             <button
                                 type="submit"
-                                className="w-fit rounded-lg bg-white px-4 py-2 font-medium text-black hover:bg-neutral-200"
+                                className="ak-button-primary w-fit"
                             >
                                 {editingId ? "Update Agent" : "Create Agent"}
                             </button>
@@ -188,7 +188,7 @@ export default function AgentsPage() {
                                         setRole("Support Agent");
                                         setStatus("active");
                                     }}
-                                    className="w-fit rounded-lg border border-neutral-700 px-4 py-2 font-medium text-neutral-200 hover:bg-neutral-800"
+                                    className="ak-button-secondary w-fit"
                                 >
                                     Cancel Edit
                                 </button>
@@ -204,14 +204,14 @@ export default function AgentsPage() {
 
                         <div className="flex flex-col gap-3 md:flex-row">
                             <input
-                                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none placeholder:text-neutral-500 md:w-72"
+                                className="ak-input md:w-72"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search agents..."
                             />
 
                             <select
-                                className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none"
+                                className="ak-select"
                                 value={statusFilter}
                                 onChange={(e) =>
                                     setStatusFilter(e.target.value as "all" | "active" | "disabled")
@@ -223,7 +223,7 @@ export default function AgentsPage() {
                             </select>
 
                             <select
-                                className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none"
+                                className="ak-select"
                                 value={roleFilter}
                                 onChange={(e) => setRoleFilter(e.target.value)}
                             >
@@ -241,7 +241,7 @@ export default function AgentsPage() {
                             {[1, 2, 3, 4].map((item) => (
                                 <div
                                     key={item}
-                                    className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                                    className="ak-card"
                                 >
                                     <div className="h-5 w-1/2 rounded bg-neutral-800" />
                                     <div className="mt-3 h-4 w-1/3 rounded bg-neutral-800" />
@@ -253,7 +253,7 @@ export default function AgentsPage() {
                             ))}
                         </div>
                     ) : agents.length === 0 ? (
-                        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <div className="ak-card">
                             <p className="font-medium text-neutral-200">No matching agents found.</p>
                             <p className="mt-1 text-sm text-neutral-500">
                                 Try changing your search, status, or role filters.
@@ -264,7 +264,7 @@ export default function AgentsPage() {
                             {agents.map((agent) => (
                                 <article
                                     key={agent._id}
-                                    className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                                    className="ak-card-hover"
                                 >
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
@@ -274,7 +274,7 @@ export default function AgentsPage() {
                                             </p>
                                         </div>
 
-                                        <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                        <span className={agent.status === "active" ? "ak-status-success" : "ak-status-neutral"}>
                                             {agent.status}
                                         </span>
                                     </div>
@@ -286,7 +286,7 @@ export default function AgentsPage() {
                                     <div className="mt-5 flex flex-wrap gap-2">
                                         <Link
                                             href={`/agents/${agent._id}`}
-                                            className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
+                                            className="ak-button-secondary px-3 py-1 text-xs"
                                         >
                                             Open
                                         </Link>
@@ -297,7 +297,7 @@ export default function AgentsPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleEdit(agent)}
-                                                    className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
+                                                    className="ak-button-secondary px-3 py-1 text-xs"
                                                 >
                                                     Edit
                                                 </button>
@@ -309,7 +309,7 @@ export default function AgentsPage() {
                                                         actorEmail: user?.email ?? "unknown-user",
                                                         workosUserId: user?.id ?? "",
                                                     })}
-                                                    className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
+                                                    className="ak-button-danger px-3 py-1 text-xs"
                                                 >
                                                     Delete
                                                 </button>

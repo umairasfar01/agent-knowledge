@@ -21,20 +21,28 @@ export default function ApprovalsPage() {
 
     return (
         <AppShell>
-            <div className="mx-auto max-w-6xl space-y-8">
+            <div className="ak-page">
                 <header>
-                    <p className="text-sm font-medium text-neutral-400">Governance</p>
-                    <h1 className="mt-2 text-3xl font-bold">Approval Queue</h1>
-                    <p className="mt-2 text-neutral-400">
+                    <p className="ak-header-eyebrow">Governance</p>
+                    <h1 className="ak-header-title">Approval Queue</h1>
+                    <p className="ak-header-description">
                         Review knowledge records that require approval before agents can act.
                     </p>
                 </header>
 
                 <section className="space-y-4">
                     {approvalItems === undefined ? (
-                        <p className="text-neutral-400">Loading approvals...</p>
+                        <div className="space-y-3">
+                            {[1, 2, 3].map((item) => (
+                                <div key={item} className="ak-card">
+                                    <div className="h-5 w-1/3 rounded bg-neutral-800" />
+                                    <div className="mt-4 h-4 w-full rounded bg-neutral-800" />
+                                    <div className="mt-2 h-4 w-2/3 rounded bg-neutral-800" />
+                                </div>
+                            ))}
+                        </div>
                     ) : approvalItems.length === 0 ? (
-                        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                        <div className="ak-card">
                             <p className="text-neutral-300">No approval items right now.</p>
                             <p className="mt-1 text-sm text-neutral-500">
                                 Knowledge records marked “Requires approval” will appear here.
@@ -45,7 +53,7 @@ export default function ApprovalsPage() {
                             {approvalItems.map((item) => (
                                 <article
                                     key={item._id}
-                                    className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                                    className="ak-card-hover"
                                 >
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
@@ -57,7 +65,7 @@ export default function ApprovalsPage() {
                                             </h2>
                                         </div>
 
-                                        <span className="rounded-full border border-yellow-900/60 px-3 py-1 text-xs text-yellow-300">
+                                        <span className="ak-status-warning">
                                             Approval required
                                         </span>
                                     </div>
@@ -67,19 +75,19 @@ export default function ApprovalsPage() {
                                     </p>
 
                                     <div className="mt-5 flex flex-wrap gap-2">
-                                        <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                        <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
                                             {item.status}
                                         </span>
 
                                         {item.canUseToAct && (
-                                            <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                            <span className="ak-status-neutral">
                                                 Can act
                                             </span>
                                         )}
 
                                         <Link
                                             href={`/knowledge/${item._id}`}
-                                            className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
+                                            className="ak-button-secondary px-3 py-1 text-xs"
                                         >
                                             Open
                                         </Link>
@@ -96,7 +104,7 @@ export default function ApprovalsPage() {
                                                         workosUserId: user?.id ?? "",
                                                     })
                                                 }
-                                                className="rounded-full border border-green-900/60 px-3 py-1 text-xs text-green-300 hover:bg-green-950"
+                                                className="ak-button-primary px-3 py-1 text-xs"
                                             >
                                                 Mark as approved
                                             </button>

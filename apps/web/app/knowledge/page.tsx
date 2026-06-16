@@ -136,15 +136,15 @@ export default function KnowledgePage() {
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-5xl space-y-8">
+      <div className="ak-page">
         <header>
-          <p className="text-sm font-medium text-neutral-400">
+          <p className="ak-header-eyebrow">
             Knowledge Workspace
           </p>
-          <h1 className="mt-2 text-3xl font-bold">
+          <h1 className="ak-header-title">
             Trusted knowledge records
           </h1>
-          <p className="mt-2 text-neutral-400">
+          <p className="ak-header-description">
             Create knowledge that agents can later retrieve, follow, and act on.
           </p>
         </header>
@@ -152,15 +152,15 @@ export default function KnowledgePage() {
         {canManage && (
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-5 rounded-2xl border border-neutral-800 bg-neutral-900 p-6"
+            className="ak-card flex flex-col gap-5"
           >
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-neutral-300">
+              <label className="ak-label">
                 Title
               </label>
               <input
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                className="ak-input"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Refund policy"
@@ -168,11 +168,11 @@ export default function KnowledgePage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-neutral-300">
+              <label className="ak-label">
                 Content
               </label>
               <textarea
-                className="min-h-32 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                className="ak-textarea min-h-32"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Write the knowledge agents should use..."
@@ -182,11 +182,11 @@ export default function KnowledgePage() {
 
             <div className="grid gap-5 md:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-300">
+                <label className="ak-label">
                   Category
                 </label>
                 <select
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  className="ak-select"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
@@ -199,11 +199,11 @@ export default function KnowledgePage() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-300">
+                <label className="ak-label">
                   Status
                 </label>
                 <select
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  className="ak-select"
                   value={status}
                   onChange={(e) =>
                     setStatus(e.target.value as "draft" | "verified")
@@ -215,7 +215,7 @@ export default function KnowledgePage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+            <div className="ak-panel">
               <p className="text-sm font-medium text-neutral-300">
                 Agent usage rules
               </p>
@@ -250,7 +250,7 @@ export default function KnowledgePage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+            <div className="ak-panel">
               <p className="text-sm font-medium text-neutral-300">
                 Allowed agents
               </p>
@@ -269,7 +269,7 @@ export default function KnowledgePage() {
                   agents.map((agent) => (
                     <label
                       key={agent._id}
-                      className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-neutral-300"
+                      className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-sm text-neutral-300 transition hover:border-neutral-700"
                     >
                       <input
                         type="checkbox"
@@ -293,11 +293,11 @@ export default function KnowledgePage() {
 
             <div className="grid gap-5 md:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-300">
+                <label className="ak-label">
                   Source URL
                 </label>
                 <input
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-500"
+                  className="ak-input"
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
                   placeholder="https://company.com/policy"
@@ -305,12 +305,12 @@ export default function KnowledgePage() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-300">
+                <label className="ak-label">
                   Last reviewed date
                 </label>
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                  className="ak-input"
                   value={lastReviewedAt}
                   onChange={(e) => setLastReviewedAt(e.target.value)}
                 />
@@ -320,7 +320,7 @@ export default function KnowledgePage() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="w-fit rounded-lg bg-white px-4 py-2 font-medium text-black hover:bg-neutral-200"
+                className="ak-button-primary w-fit"
               >
                 {editingId ? "Update Knowledge" : "Create Knowledge"}
               </button>
@@ -332,7 +332,7 @@ export default function KnowledgePage() {
                     setEditingId(null);
                     resetForm();
                   }}
-                  className="w-fit rounded-lg border border-neutral-700 px-4 py-2 font-medium text-neutral-200 hover:bg-neutral-800"
+                  className="ak-button-secondary w-fit"
                 >
                   Cancel Edit
                 </button>
@@ -347,14 +347,14 @@ export default function KnowledgePage() {
 
             <div className="flex flex-col gap-3 md:flex-row">
               <input
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none placeholder:text-neutral-500 md:w-72"
+                className="ak-input md:w-72"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search title or content..."
               />
 
               <select
-                className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none"
+                className="ak-select"
                 value={statusFilter}
                 onChange={(e) =>
                   setStatusFilter(
@@ -368,7 +368,7 @@ export default function KnowledgePage() {
               </select>
 
               <select
-                className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none"
+                className="ak-select"
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
@@ -387,7 +387,7 @@ export default function KnowledgePage() {
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
-                  className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                  className="ak-card"
                 >
                   <div className="h-5 w-1/3 rounded bg-neutral-800" />
                   <div className="mt-3 h-4 w-1/4 rounded bg-neutral-800" />
@@ -399,7 +399,7 @@ export default function KnowledgePage() {
               ))}
             </div>
           ) : knowledgeItems.length === 0 ? (
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <div className="ak-card">
               <p className="font-medium text-neutral-200">
                 No matching knowledge found.
               </p>
@@ -412,128 +412,159 @@ export default function KnowledgePage() {
               {knowledgeItems.map((item) => (
                 <article
                   key={item._id}
-                  className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5"
+                  className="ak-card-hover"
                 >
                   <div className="flex items-center justify-between gap-4">
                     <h3 className="text-lg font-semibold">{item.title}</h3>
 
                     <div className="flex items-center gap-2">
-                      <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                      <span
+                        className={
+                          item.status === "verified"
+                            ? "ak-status-success"
+                            : "ak-status-warning"
+                        }
+                      >
                         {item.status}
                       </span>
+                    </div>
+                  </div>
 
-                      <Link
-                        href={`/knowledge/${item._id}`}
-                        className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
-                      >
-                        Open
-                      </Link>
+                      <div className="mt-5 flex flex-col gap-3 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                            Status
+                          </span>
 
-                      {canManage && (
-                        <>
-
-                          <button
-                            type="button"
-                            onClick={() => handleEdit(item)}
-                            className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 hover:bg-neutral-800"
-                          >
-                            Edit
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              deleteKnowledge({
-                                id: item._id,
-                                actorEmail: user?.email ?? "unknown-user",
-                                organizationId: "default-org",
-                                workosUserId: user?.id ?? "",
-                              })
+                          <span
+                            className={
+                              item.status === "verified"
+                                ? "ak-status-success"
+                                : "ak-status-warning"
                             }
-                            className="rounded-full border border-red-900/60 px-3 py-1 text-xs text-red-300 hover:bg-red-950"
                           >
-                            Delete
-                          </button>
-                        </>
+                            <span
+                              className={
+                                item.status === "verified"
+                                  ? "mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-300"
+                                  : "mr-1.5 h-1.5 w-1.5 rounded-full bg-amber-300"
+                              }
+                            />
+                            {item.status === "verified" ? "Verified" : "Draft"}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Link
+                            href={`/knowledge/${item._id}`}
+                            className="ak-button-primary px-3.5 py-2"
+                          >
+                            Open
+                          </Link>
+
+                          {canManage && (
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(item)}
+                              className="ak-button-secondary px-3.5 py-2"
+                            >
+                              Edit
+                            </button>
+                          )}
+
+                          {canManage && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                deleteKnowledge({
+                                  id: item._id,
+                                  actorEmail: user?.email ?? "unknown-user",
+                                  organizationId: "default-org",
+                                  workosUserId: user?.id ?? "",
+                                })
+                              }
+                              className="ak-button-danger px-3.5 py-2"
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="mt-1 text-sm text-neutral-400">
+                        {item.category}
+                      </p>
+
+                      <p className="mt-4 text-neutral-200">{item.content}</p>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {item.canUseToAnswer && (
+                          <span className="ak-status-neutral">
+                            Can answer
+                          </span>
+                        )}
+
+                        {item.canUseToAct && (
+                          <span className="ak-status-neutral">
+                            Can act
+                          </span>
+                        )}
+
+                        {item.requiresApproval && (
+                          <span className="ak-status-warning">
+                            Approval required
+                          </span>
+                        )}
+                      </div>
+
+                      {item.sourceUrl && (
+                        <p className="mt-4 text-sm text-neutral-400">
+                          Source:{" "}
+                          <a
+                            href={item.sourceUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-neutral-200 underline"
+                          >
+                            {item.sourceUrl}
+                          </a>
+                        </p>
                       )}
 
-                    </div>
-                  </div>
+                      {item.lastReviewedAt && (
+                        <p className="mt-1 text-sm text-neutral-400">
+                          Last reviewed:{" "}
+                          {new Date(item.lastReviewedAt).toLocaleDateString()}
+                        </p>
+                      )}
 
-                  <p className="mt-1 text-sm text-neutral-400">
-                    {item.category}
-                  </p>
+                      {item.allowedAgentIds && item.allowedAgentIds.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm text-neutral-400">
+                            Allowed agents:
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {item.allowedAgentIds.map((agentId) => {
+                              const agent = agents?.find((a) => a._id === agentId);
 
-                  <p className="mt-4 text-neutral-200">{item.content}</p>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {item.canUseToAnswer && (
-                      <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
-                        Can answer
-                      </span>
-                    )}
-
-                    {item.canUseToAct && (
-                      <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
-                        Can act
-                      </span>
-                    )}
-
-                    {item.requiresApproval && (
-                      <span className="rounded-full border border-yellow-900/60 px-3 py-1 text-xs text-yellow-300">
-                        Approval required
-                      </span>
-                    )}
-                  </div>
-
-                  {item.sourceUrl && (
-                    <p className="mt-4 text-sm text-neutral-400">
-                      Source:{" "}
-                      <a
-                        href={item.sourceUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-neutral-200 underline"
-                      >
-                        {item.sourceUrl}
-                      </a>
-                    </p>
-                  )}
-
-                  {item.lastReviewedAt && (
-                    <p className="mt-1 text-sm text-neutral-400">
-                      Last reviewed:{" "}
-                      {new Date(item.lastReviewedAt).toLocaleDateString()}
-                    </p>
-                  )}
-
-                  {item.allowedAgentIds && item.allowedAgentIds.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-sm text-neutral-400">
-                        Allowed agents:
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {item.allowedAgentIds.map((agentId) => {
-                          const agent = agents?.find((a) => a._id === agentId);
-
-                          return (
-                            <span
-                              key={agentId}
-                              className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300"
-                            >
-                              {agent?.name ?? "Unknown agent"}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </article>
+                              return (
+                                <span
+                                  key={agentId}
+                                  className="ak-status-neutral"
+                                >
+                                  {agent?.name ?? "Unknown agent"}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </article>
               ))}
-            </div>
+                  </div>
           )}
-        </section>
+                </section>
       </div>
     </AppShell>
-  );
+        );
 }

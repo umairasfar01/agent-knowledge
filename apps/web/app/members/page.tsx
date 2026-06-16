@@ -117,50 +117,50 @@ export default function MembersPage() {
 
     return (
         <AppShell>
-            <div className="mx-auto max-w-5xl space-y-8">
+            <div className="ak-page">
 
                 {currentRole === "loading" && (
-                    <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                    <div className="ak-card">
                         <p className="text-neutral-300">Loading your workspace access...</p>
                     </div>
                 )}
 
                 {canManage && (
-                    <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                    <section className="ak-card">
                         <h2 className="text-xl font-semibold">Add member</h2>
                         <p className="mt-1 text-sm text-neutral-500">
-                            Add a member to this organization. Email sending can be connected later.
+                            Add a teammate to this organization and assign their starting role.
                         </p>
 
                         <form onSubmit={handleInviteMember} className="mt-5 grid gap-4 md:grid-cols-4">
                             <div className="md:col-span-2">
-                                <label className="text-sm text-neutral-300">Email</label>
+                                <label className="ak-label">Email</label>
                                 <input
                                     value={inviteEmail}
                                     onChange={(e) => setInviteEmail(e.target.value)}
-                                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                    className="ak-input mt-2"
                                     placeholder="teammate@example.com"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-sm text-neutral-300">Name</label>
+                                <label className="ak-label">Name</label>
                                 <input
                                     value={inviteName}
                                     onChange={(e) => setInviteName(e.target.value)}
-                                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                    className="ak-input mt-2"
                                     placeholder="Optional"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-sm text-neutral-300">Role</label>
+                                <label className="ak-label">Role</label>
                                 <select
                                     value={inviteRole}
                                     onChange={(e) =>
                                         setInviteRole(e.target.value as "owner" | "admin" | "member")
                                     }
-                                    className="mt-2 w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none"
+                                    className="ak-select mt-2"
                                 >
                                     <option value="member">member</option>
                                     <option value="admin">admin</option>
@@ -171,7 +171,7 @@ export default function MembersPage() {
                             <div className="md:col-span-4">
                                 <button
                                     type="submit"
-                                    className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                                    className="ak-button-primary"
                                 >
                                     Add member
                                 </button>
@@ -179,32 +179,32 @@ export default function MembersPage() {
                         </form>
 
                         {inviteError && (
-                            <div className="mt-4 rounded-xl border border-red-900/60 bg-red-950/20 p-4">
+                            <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
                                 <p className="text-sm text-red-300">{inviteError}</p>
                             </div>
                         )}
 
                         {inviteSuccess && (
-                            <div className="mt-4 rounded-xl border border-green-900/60 bg-green-950/20 p-4">
-                                <p className="text-sm text-green-300">{inviteSuccess}</p>
+                            <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                                <p className="text-sm text-emerald-300">{inviteSuccess}</p>
                             </div>
                         )}
                     </section>
                 )}
 
                 <header>
-                    <p className="text-sm font-medium text-neutral-400">Workspace</p>
-                    <h1 className="mt-2 text-3xl font-bold">Members</h1>
-                    <p className="mt-2 text-neutral-400">
+                    <p className="ak-header-eyebrow">Workspace</p>
+                    <h1 className="ak-header-title">Members</h1>
+                    <p className="ak-header-description">
                         View users and roles for the current organization.
                     </p>
                 </header>
 
-                <section className="rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+                <section className="ak-card">
                     <h2 className="text-xl font-semibold">Organization members</h2>
 
                     {memberError && (
-                        <div className="mt-4 rounded-xl border border-red-900/60 bg-red-950/20 p-4">
+                        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
                             <p className="text-sm text-red-300">{memberError}</p>
                         </div>
                     )}
@@ -214,7 +214,7 @@ export default function MembersPage() {
                             {[1, 2, 3].map((item) => (
                                 <div
                                     key={item}
-                                    className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+                                    className="ak-panel"
                                 >
                                     <div className="h-5 w-1/3 rounded bg-neutral-800" />
                                     <div className="mt-3 h-4 w-1/4 rounded bg-neutral-800" />
@@ -222,29 +222,29 @@ export default function MembersPage() {
                             ))}
                         </div>
                     ) : members.length === 0 ? (
-                        <div className="mt-5 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+                        <div className="ak-panel mt-5">
                             <p className="text-neutral-300">No members found.</p>
                             <p className="mt-1 text-sm text-neutral-500">
                                 Members will appear here after they sign in and are synced.
                             </p>
                         </div>
                     ) : (
-                        <div className="mt-5 overflow-hidden rounded-xl border border-neutral-800">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-950 text-neutral-400">
+                        <div className="ak-table-wrap mt-5">
+                            <table className="ak-table">
+                                <thead className="ak-table-head">
                                     <tr>
-                                        <th className="px-4 py-3 font-medium">User</th>
-                                        <th className="px-4 py-3 font-medium">Role</th>
-                                        <th className="px-4 py-3 font-medium">Organization</th>
-                                        <th className="px-4 py-3 font-medium">Joined</th>
-                                        <th className="px-4 py-3 font-medium">Actions</th>
+                                        <th className="ak-table-th">User</th>
+                                        <th className="ak-table-th">Role</th>
+                                        <th className="ak-table-th">Organization</th>
+                                        <th className="ak-table-th">Joined</th>
+                                        <th className="ak-table-th">Actions</th>
                                     </tr>
                                 </thead>
 
-                                <tbody className="divide-y divide-neutral-800">
+                                <tbody>
                                     {members.map((member) => (
-                                        <tr key={member._id} className="bg-neutral-900">
-                                            <td className="px-4 py-3">
+                                        <tr key={member._id} className="ak-table-row">
+                                            <td className="ak-table-td">
                                                 <p className="font-medium text-neutral-200">
                                                     {member.userEmail}
                                                 </p>
@@ -255,10 +255,10 @@ export default function MembersPage() {
                                                 )}
                                             </td>
 
-                                            <td className="px-4 py-3">
+                                            <td className="ak-table-td">
                                                 {canManage ? (
                                                     <select
-                                                        className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-xs text-neutral-300 outline-none"
+                                                        className="ak-select max-w-36 text-xs"
                                                         value={member.role}
                                                         onChange={(e) =>
                                                             handleRoleChange(
@@ -272,31 +272,31 @@ export default function MembersPage() {
                                                         <option value="member">member</option>
                                                     </select>
                                                 ) : (
-                                                    <span className="rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300">
+                                                    <span className="ak-status-neutral">
                                                         {member.role}
                                                     </span>
                                                 )}
                                             </td>
 
-                                            <td className="px-4 py-3 font-mono text-xs text-neutral-400">
+                                            <td className="ak-table-td font-mono text-xs text-neutral-400">
                                                 {member.organizationId}
                                             </td>
 
-                                            <td className="px-4 py-3 text-neutral-400">
+                                            <td className="ak-table-td text-neutral-400">
                                                 {new Date(member.createdAt).toLocaleDateString()}
                                             </td>
 
-                                            <td className="px-4 py-3">
+                                            <td className="ak-table-td">
                                                 {canManage ? (
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemoveMember(member._id)}
-                                                        className="rounded-lg border border-red-900/60 px-3 py-2 text-xs text-red-300 hover:bg-red-950/30"
+                                                        className="ak-button-danger px-3 py-1.5 text-xs"
                                                     >
                                                         Remove
                                                     </button>
                                                 ) : (
-                                                    <span className="text-xs text-neutral-500">—</span>
+                                                    <span className="text-xs text-neutral-500">-</span>
                                                 )}
                                             </td>
                                         </tr>
