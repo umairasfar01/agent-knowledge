@@ -21,3 +21,109 @@ select,
 button {
   font: inherit;
 }
+
+@layer components {
+  .ak-page {
+    @apply mx-auto max-w-6xl space-y-8;
+  }
+
+  .ak-page-wide {
+    @apply mx-auto max-w-7xl space-y-8;
+  }
+
+  .ak-header-eyebrow {
+    @apply text-sm font-medium text-neutral-400;
+  }
+
+  .ak-header-title {
+    @apply mt-2 text-3xl font-bold tracking-tight text-white;
+  }
+
+  .ak-header-description {
+    @apply mt-2 max-w-2xl text-sm leading-6 text-neutral-400;
+  }
+
+  .ak-card {
+    @apply rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 shadow-sm;
+  }
+
+  .ak-card-hover {
+    @apply rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 shadow-sm transition hover:border-neutral-700 hover:bg-neutral-900;
+  }
+
+  .ak-panel {
+    @apply rounded-xl border border-neutral-800 bg-neutral-950/70 p-4;
+  }
+
+  .ak-label {
+    @apply text-sm font-medium text-neutral-300;
+  }
+
+  .ak-input {
+    @apply w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none transition placeholder:text-neutral-500 focus:border-neutral-500;
+  }
+
+  .ak-textarea {
+    @apply w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none transition placeholder:text-neutral-500 focus:border-neutral-500;
+  }
+
+  .ak-select {
+    @apply w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none transition focus:border-neutral-500;
+  }
+
+  .ak-button-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 text-sm font-medium text-neutral-950 shadow-sm transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .ak-button-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:border-neutral-600 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .ak-button-danger {
+    @apply inline-flex items-center justify-center rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition hover:border-red-500/50 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .ak-button-ghost {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-neutral-400 transition hover:bg-neutral-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .ak-status-success {
+    @apply inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 ring-1 ring-inset ring-emerald-500/20;
+  }
+
+  .ak-status-warning {
+    @apply inline-flex items-center rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20;
+  }
+
+  .ak-status-neutral {
+    @apply inline-flex items-center rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium text-neutral-300 ring-1 ring-inset ring-neutral-700;
+  }
+
+  .ak-muted {
+    @apply text-sm text-neutral-500;
+  }
+
+  .ak-table-wrap {
+    @apply overflow-hidden rounded-2xl border border-neutral-800;
+  }
+
+  .ak-table {
+    @apply w-full text-left text-sm;
+  }
+
+  .ak-table-head {
+    @apply bg-neutral-950 text-xs uppercase tracking-wide text-neutral-500;
+  }
+
+  .ak-table-th {
+    @apply px-4 py-3 font-medium;
+  }
+
+  .ak-table-row {
+    @apply border-t border-neutral-800 bg-neutral-900 transition hover:bg-neutral-800/60;
+  }
+
+  .ak-table-td {
+    @apply px-4 py-3;
+  }
+}

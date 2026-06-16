@@ -48,25 +48,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   function navClass(href: string) {
     const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
-    return `block rounded-lg px-3 py-2 text-sm ${isActive
-      ? "bg-neutral-800 text-white"
-      : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+    return `block rounded-xl px-3 py-2.5 text-sm font-medium transition ${isActive
+        ? "bg-white text-neutral-950 shadow-sm"
+        : "text-neutral-400 hover:bg-neutral-900/80 hover:text-white"
       }`;
   }
 
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-white">
-      <div className="grid min-h-screen md:grid-cols-[260px_1fr]">
-        <aside className="border-r border-neutral-800 bg-neutral-900 p-6">
-          <div>
-            <p className="text-sm font-medium text-neutral-400">
+    <main className="min-h-screen bg-neutral-950 bg-[radial-gradient(circle_at_top_left,_rgba(64,64,64,0.24),_transparent_34%)] text-white">
+      <div className="grid min-h-screen md:grid-cols-[280px_1fr]">
+        <aside className="sticky top-0 h-screen overflow-y-auto border-r border-neutral-800 bg-neutral-950/95 p-6 backdrop-blur">
+          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
               Agent Knowledge
             </p>
-            <h1 className="mt-1 text-xl font-bold">Company Brain</h1>
+            <h1 className="mt-1 text-xl font-bold tracking-tight text-white">
+              Company Brain
+            </h1>
+            <p className="mt-2 text-xs leading-5 text-neutral-500">
+              Trusted knowledge for agents
+            </p>
           </div>
 
-          <nav className="mt-8 space-y-2">
+          <nav className="mt-6 space-y-1.5">
             <Link href="/dashboard" prefetch={false} className={navClass("/dashboard")}>
               Dashboard
             </Link>
@@ -100,9 +105,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
 
 
-            <div className="mt-8 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
-              <p className="text-xs text-neutral-500">Organization</p>
-              <p className="mt-1 text-sm font-medium text-neutral-300">
+            <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                Organization
+              </p>
+              <p className="mt-2 break-all text-sm font-medium text-neutral-200">
                 {currentOrgId}
               </p>
 
@@ -110,28 +117,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   onClick={() => switchToOrganization(currentOrgId)}
-                  className="mt-3 rounded-lg border border-neutral-700 px-3 py-2 text-xs text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950/60 px-3 py-2 text-xs font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
                 >
                   Use WorkOS organization
                 </button>
               )}
             </div>
 
-            <div className="mt-8 border-t border-neutral-800 pt-6">
-              <p className="text-xs text-neutral-500">Signed in as</p>
-              <p className="mt-1 truncate text-sm text-neutral-300">
+            <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                Signed in as
+              </p>
+              <p className="mt-2 truncate text-sm font-medium text-neutral-200">
                 {user?.email ?? "Loading user..."}
               </p>
 
-              <p className="mt-3 text-xs text-neutral-500">Role</p>
-              <p className="mt-1 text-sm text-neutral-300">
+              <p className="mt-4 text-xs font-medium uppercase tracking-wide text-neutral-500">
+                Role
+              </p>
+              <p className="mt-2 text-sm text-neutral-300">
                 {currentRole === "loading" ? "Loading..." : currentRole}
               </p>
 
               <button
                 type="button"
                 onClick={() => signOut()}
-                className="mt-4 w-full rounded-lg border border-neutral-700 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950/60 px-3 py-2 text-sm font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
               >
                 Sign out
               </button>
@@ -140,7 +151,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
         </aside>
 
-        <section className="px-6 py-10">{children}</section>
+        <section className="min-w-0 px-5 py-8 md:px-8 lg:px-10">
+          {children}
+        </section>
       </div>
     </main>
   );
