@@ -60,35 +60,35 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <nav className="mt-8 space-y-2">
-            <Link href="/dashboard" className={navClass("/dashboard")}>
+            <Link href="/dashboard" prefetch={false} className={navClass("/dashboard")}>
               Dashboard
             </Link>
 
-            <Link href="/ask" className={navClass("/ask")}>
+            <Link href="/ask" prefetch={false} className={navClass("/ask")}>
               Ask
             </Link>
 
-            <Link href="/knowledge" className={navClass("/knowledge")}>
+            <Link href="/knowledge" prefetch={false} className={navClass("/knowledge")}>
               Knowledge
             </Link>
 
-            <Link href="/agents" className={navClass("/agents")}>
+            <Link href="/agents" prefetch={false} className={navClass("/agents")}>
               Agents
             </Link>
 
-            <Link href="/approvals" className={navClass("/approvals")}>
+            <Link href="/approvals" prefetch={false} className={navClass("/approvals")}>
               Approvals
             </Link>
 
-            <Link href="/members" className={navClass("/members")}>
+            <Link href="/members" prefetch={false} className={navClass("/members")}>
               Members
             </Link>
 
-            <Link href="/audit" className={navClass("/audit")}>
+            <Link href="/audit" prefetch={false} className={navClass("/audit")}>
               Audit Logs
             </Link>
 
-            <Link href="/settings" className={navClass("/settings")}>
+            <Link href="/settings" prefetch={false} className={navClass("/settings")}>
               Settings
             </Link>
 
