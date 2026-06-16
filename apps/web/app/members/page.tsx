@@ -154,7 +154,7 @@ export default function MembersPage() {
                             </div>
 
                             <div>
-                                <label className="ak-label">Role</label>
+                                <label className="ak-label">Starting role</label>
                                 <select
                                     value={inviteRole}
                                     onChange={(e) =>
@@ -162,9 +162,9 @@ export default function MembersPage() {
                                     }
                                     className="ak-select mt-2"
                                 >
-                                    <option value="member">member</option>
-                                    <option value="admin">admin</option>
-                                    <option value="owner">owner</option>
+                                    <option value="member">Member</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="owner">Owner</option>
                                 </select>
                             </div>
 
@@ -258,7 +258,8 @@ export default function MembersPage() {
                                             <td className="ak-table-td">
                                                 {canManage ? (
                                                     <select
-                                                        className="ak-select max-w-36 text-xs"
+                                                        aria-label={`Role for ${member.userEmail}`}
+                                                        className="ak-select min-w-32 max-w-40 py-1.5 text-xs capitalize"
                                                         value={member.role}
                                                         onChange={(e) =>
                                                             handleRoleChange(
@@ -267,12 +268,12 @@ export default function MembersPage() {
                                                             )
                                                         }
                                                     >
-                                                        <option value="owner">owner</option>
-                                                        <option value="admin">admin</option>
-                                                        <option value="member">member</option>
+                                                        <option value="owner">Owner</option>
+                                                        <option value="admin">Admin</option>
+                                                        <option value="member">Member</option>
                                                     </select>
                                                 ) : (
-                                                    <span className="ak-status-neutral">
+                                                    <span className="ak-status-neutral capitalize">
                                                         {member.role}
                                                     </span>
                                                 )}
