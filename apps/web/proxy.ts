@@ -15,5 +15,8 @@ export const config = {
     "/members/:path*",
     "/audit/:path*",
     "/settings/:path*",
+
+    "/api/workos/invite",
+    "/api/workos/invite/:path*",
   ],
 };

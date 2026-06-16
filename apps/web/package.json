@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@workos-inc/authkit-nextjs": "^4.1.1",
+    "@workos-inc/node": "^10.2.0",
     "convex": "^1.39.1",
     "next": "16.2.6",
     "openai": "^6.42.0",

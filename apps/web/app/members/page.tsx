@@ -34,7 +34,6 @@ export default function MembersPage() {
     const [inviteError, setInviteError] = useState("");
     const [inviteSuccess, setInviteSuccess] = useState("");
 
-    const inviteMember = useMutation(api.users.inviteMember);
 
     async function handleRoleChange(
         membershipId: Id<"memberships">,
@@ -84,30 +83,35 @@ export default function MembersPage() {
         setInviteSuccess("");
 
         try {
-            await inviteMember({
-                email: inviteEmail,
-                name: inviteName || undefined,
-                role: inviteRole,
-                organizationId: DEFAULT_ORG_ID,
-                workosUserId: user?.id ?? "",
-                actorEmail: user?.email ?? "unknown-user",
+            const response = await fetch("/api/workos/invite", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: inviteEmail,
+                    name: inviteName || undefined,
+                    role: inviteRole,
+                    organizationId: DEFAULT_ORG_ID,
+                }),
             });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error ?? "Failed to send invitation.");
+            }
 
             setInviteSuccess(`Added ${inviteEmail} as ${inviteRole}.`);
             setInviteEmail("");
             setInviteName("");
             setInviteRole("member");
+            
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : "Failed to add member.";
 
-            setInviteError(
-                message.includes("already in the organization")
-                    ? "This member is already in the organization."
-                    : message.includes("Email is required")
-                        ? "Email is required."
-                        : "Failed to add member."
-            );
+            setInviteError(message);
         }
     }
 
