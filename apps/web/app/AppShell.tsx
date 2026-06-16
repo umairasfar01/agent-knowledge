@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     "switchToOrganization" in auth ? auth.switchToOrganization : undefined;
 
   const currentOrgId = getCurrentOrgId(organizationId);
-  
+
   const currentRole = useCurrentRole();
 
   useEffect(() => {
@@ -36,7 +36,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       name: user.firstName ?? undefined,
       organizationId: currentOrgId,
     });
-  }, [user?.id, user?.email, user?.firstName, currentOrgId, upsertCurrentUser]);
+  }, [
+    loading,
+    user?.id,
+    user?.email,
+    user?.firstName,
+    currentOrgId,
+    upsertCurrentUser,
+  ]);
 
   function navClass(href: string) {
     const isActive = pathname === href || pathname.startsWith(`${href}/`);
