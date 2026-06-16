@@ -303,46 +303,97 @@ export const approveKnowledge = mutation({
 
 export const searchKnowledgeForAgent = query({
   args: {
-    organizationId: v.string(),
     agentId: v.id("agents"),
+    organizationId: v.string(),
     question: v.string(),
   },
   handler: async (ctx, args) => {
-    const items = await ctx.db.query("knowledge").order("desc").collect();
-
-    const question = args.question.toLowerCase().trim();
+    const question = args.question.trim().toLowerCase();
 
     if (!question) {
       return [];
     }
 
-    return items
-      .filter((item) => {
-        const matchesOrganization =
-          item.organizationId === args.organizationId ||
-          item.organizationId === undefined;
+    const terms = Array.from(
+      new Set(
+        question
+          .split(/[^a-z0-9]+/i)
+          .map((term) => term.trim().toLowerCase())
+          .filter((term) => term.length >= 2)
+      )
+    );
 
-        const isAllowedForAgent =
-          item.allowedAgentIds?.includes(args.agentId) ?? false;
+    const knowledgeItems = await ctx.db.query("knowledge").collect();
 
-        const isVerified = item.status === "verified";
+    const allowedItems = knowledgeItems.filter((item) => {
+      const allowedAgentIds = item.allowedAgentIds ?? [];
 
-        const canAnswer = item.canUseToAnswer === true;
+      return (
+        (item.organizationId === args.organizationId || item.organizationId === undefined) &&
+        item.status === "verified" &&
+        item.canUseToAnswer === true &&
+        allowedAgentIds.some((agentId) => agentId.toString() === args.agentId.toString())
+      );
+    });
 
-        const matchesQuestion =
-          item.title.toLowerCase().includes(question) ||
-          item.content.toLowerCase().includes(question) ||
-          item.category.toLowerCase().includes(question);
+    const scoredItems = allowedItems
+      .map((item) => {
+        const title = item.title.toLowerCase();
+        const category = item.category.toLowerCase();
+        const content = item.content.toLowerCase();
 
-        return (
-          matchesOrganization &&
-          isAllowedForAgent &&
-          isVerified &&
-          canAnswer &&
-          matchesQuestion
-        );
+        let score = 0;
+        const matchedFields = new Set<string>();
+
+        if (title.includes(question)) {
+          score += 12;
+          matchedFields.add("title");
+        }
+
+        if (category.includes(question)) {
+          score += 8;
+          matchedFields.add("category");
+        }
+
+        if (content.includes(question)) {
+          score += 5;
+          matchedFields.add("content");
+        }
+
+        for (const term of terms) {
+          if (title.includes(term)) {
+            score += 5;
+            matchedFields.add("title");
+          }
+
+          if (category.includes(term)) {
+            score += 3;
+            matchedFields.add("category");
+          }
+
+          if (content.includes(term)) {
+            score += 1;
+            matchedFields.add("content");
+          }
+        }
+
+        const matchedFieldList = Array.from(matchedFields);
+
+        return {
+          ...item,
+          score,
+          matchedFields: matchedFieldList,
+          matchSummary:
+            matchedFieldList.length > 0
+              ? `Matched in ${matchedFieldList.join(", ")}`
+              : "No match",
+        };
       })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
       .slice(0, 10);
+      
+return scoredItems;
   },
 });
 

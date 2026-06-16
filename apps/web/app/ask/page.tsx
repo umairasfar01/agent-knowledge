@@ -24,12 +24,11 @@ export default function AskPage() {
         api.knowledge.searchKnowledgeForAgent,
         selectedAgentId && question.trim()
             ? {
-                organizationId: DEFAULT_ORG_ID,
                 agentId: selectedAgentId,
+                organizationId: DEFAULT_ORG_ID,
                 question,
             }
             : "skip"
-
     );
 
     function getDraftAnswerText() {
@@ -136,7 +135,7 @@ export default function AskPage() {
                                 >
                                     {copied ? "Copied!" : "Copy draft"}
                                 </button>
-                                
+
                                 {/* Future: enable this when OPENAI_API_KEY billing/quota is ready. */}
                                 <button
                                     type="button"
@@ -253,6 +252,13 @@ export default function AskPage() {
                                             <p className="text-sm text-neutral-400">
                                                 {item.category}
                                             </p>
+
+                                            {"matchSummary" in item && item.matchSummary && (
+                                                <p className="mt-2 text-xs text-neutral-500">
+                                                    {item.matchSummary}
+                                                </p>
+                                            )}
+
                                             <h3 className="mt-1 break-words text-lg font-semibold">
                                                 {item.title}
                                             </h3>
