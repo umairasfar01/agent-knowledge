@@ -248,17 +248,17 @@ export default function AskPage() {
                                     key={item._id}
                                     className="ak-card-hover"
                                 >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                        <div className="min-w-0">
                                             <p className="text-sm text-neutral-400">
                                                 {item.category}
                                             </p>
-                                            <h3 className="mt-1 text-lg font-semibold">
+                                            <h3 className="mt-1 break-words text-lg font-semibold">
                                                 {item.title}
                                             </h3>
                                         </div>
 
-                                        <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
+                                        <span className={`${item.status === "verified" ? "ak-status-success" : "ak-status-warning"} w-fit shrink-0`}>
                                             {item.status}
                                         </span>
                                     </div>

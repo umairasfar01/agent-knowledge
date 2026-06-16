@@ -62,13 +62,13 @@ export default function KnowledgeDetailPage() {
                 ) : (
                     <>
                         <header className="ak-card">
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                <div className="min-w-0">
                                     <p className="text-sm text-neutral-400">{item.category}</p>
-                                    <h1 className="mt-2 text-3xl font-bold">{item.title}</h1>
+                                    <h1 className="mt-2 break-words text-3xl font-bold">{item.title}</h1>
                                 </div>
 
-                                <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
+                                <span className={`${item.status === "verified" ? "ak-status-success" : "ak-status-warning"} w-fit shrink-0`}>
                                     {item.status}
                                 </span>
                             </div>

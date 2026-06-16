@@ -414,10 +414,10 @@ export default function KnowledgePage() {
                   key={item._id}
                   className="ak-card-hover"
                 >
-                  <div className="flex items-center justify-between gap-4">
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 className="min-w-0 break-words text-lg font-semibold">{item.title}</h3>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
                       <span
                         className={
                           item.status === "verified"
@@ -454,10 +454,10 @@ export default function KnowledgePage() {
                           </span>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
                           <Link
                             href={`/knowledge/${item._id}`}
-                            className="ak-button-primary px-3.5 py-2"
+                            className="ak-button-primary col-span-2 px-3.5 py-2 sm:col-span-1"
                           >
                             Open
                           </Link>

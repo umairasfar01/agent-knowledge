@@ -104,11 +104,11 @@ button {
   }
 
   .ak-table-wrap {
-    @apply overflow-hidden rounded-2xl border border-neutral-800;
+    @apply overflow-x-auto rounded-2xl border border-neutral-800;
   }
 
   .ak-table {
-    @apply w-full text-left text-sm;
+    @apply min-w-[720px] w-full text-left text-sm;
   }
 
   .ak-table-head {

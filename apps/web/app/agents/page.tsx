@@ -267,37 +267,36 @@ export default function AgentsPage() {
                                     className="ak-card-hover"
                                 >
                                     <div className="flex items-start justify-between gap-4">
-                                        <div>
-                                            <h3 className="text-lg font-semibold">{agent.name}</h3>
+                                        <div className="min-w-0">
+                                            <h3 className="break-words text-lg font-semibold">{agent.name}</h3>
                                             <p className="mt-1 text-sm text-neutral-400">
                                                 {agent.role ?? "Support Agent"}
                                             </p>
                                         </div>
 
-                                        <span className={agent.status === "active" ? "ak-status-success" : "ak-status-neutral"}>
+                                        <span className={`${agent.status === "active" ? "ak-status-success" : "ak-status-neutral"} shrink-0`}>
                                             {agent.status}
                                         </span>
                                     </div>
 
-                                    <p className="mt-4 text-neutral-200">{agent.description}</p>
+                                    <p className="mt-4 text-sm leading-6 text-neutral-300">
+                                        {agent.description}
+                                    </p>
 
-
-
-                                    <div className="mt-5 flex flex-wrap gap-2">
+                                    <div className="mt-5 flex flex-col gap-3 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
                                         <Link
                                             href={`/agents/${agent._id}`}
-                                            className="ak-button-secondary px-3 py-1 text-xs"
+                                            className="ak-button-primary w-full px-3.5 py-2 sm:w-fit"
                                         >
-                                            Open
+                                            Open agent
                                         </Link>
 
                                         {canManage && (
-                                            <>
-
+                                            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                                                 <button
                                                     type="button"
                                                     onClick={() => handleEdit(agent)}
-                                                    className="ak-button-secondary px-3 py-1 text-xs"
+                                                    className="ak-button-secondary px-3.5 py-2"
                                                 >
                                                     Edit
                                                 </button>
@@ -309,11 +308,11 @@ export default function AgentsPage() {
                                                         actorEmail: user?.email ?? "unknown-user",
                                                         workosUserId: user?.id ?? "",
                                                     })}
-                                                    className="ak-button-danger px-3 py-1 text-xs"
+                                                    className="ak-button-danger px-3.5 py-2"
                                                 >
                                                     Delete
                                                 </button>
-                                            </>
+                                            </div>
                                         )}
                                     </div>
                                 </article>

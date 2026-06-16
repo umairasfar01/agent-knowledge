@@ -55,17 +55,17 @@ export default function ApprovalsPage() {
                                     key={item._id}
                                     className="ak-card-hover"
                                 >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                        <div className="min-w-0">
                                             <p className="text-sm text-neutral-400">
                                                 {item.category}
                                             </p>
-                                            <h2 className="mt-1 text-xl font-semibold">
+                                            <h2 className="mt-1 break-words text-xl font-semibold">
                                                 {item.title}
                                             </h2>
                                         </div>
 
-                                        <span className="ak-status-warning">
+                                        <span className="ak-status-warning w-fit shrink-0">
                                             Approval required
                                         </span>
                                     </div>

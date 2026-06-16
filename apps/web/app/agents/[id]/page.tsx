@@ -48,18 +48,18 @@ export default function AgentDetailPage() {
         ) : (
           <>
             <header className="ak-card">
-              <div className="flex items-start justify-between gap-4">
-                <div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
                   <p className="text-sm text-neutral-400">
                     {agent.role ?? "Support Agent"}
                   </p>
-                  <h1 className="mt-2 text-3xl font-bold">{agent.name}</h1>
+                  <h1 className="mt-2 break-words text-3xl font-bold">{agent.name}</h1>
                   <p className="mt-3 max-w-2xl text-neutral-300">
                     {agent.description}
                   </p>
                 </div>
 
-                <span className={agent.status === "active" ? "ak-status-success" : "ak-status-neutral"}>
+                <span className={`${agent.status === "active" ? "ak-status-success" : "ak-status-neutral"} w-fit shrink-0`}>
                   {agent.status}
                 </span>
               </div>
@@ -84,15 +84,15 @@ export default function AgentDetailPage() {
                       href={`/knowledge/${item._id}`}
                       className="ak-panel block transition hover:border-neutral-700 hover:bg-neutral-900"
                     >
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <h3 className="font-medium">{item.title}</h3>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
+                          <h3 className="break-words font-medium">{item.title}</h3>
                           <p className="mt-1 text-sm text-neutral-400">
                             {item.category}
                           </p>
                         </div>
 
-                        <span className={item.status === "verified" ? "ak-status-success" : "ak-status-warning"}>
+                        <span className={`${item.status === "verified" ? "ak-status-success" : "ak-status-warning"} w-fit shrink-0`}>
                           {item.status}
                         </span>
                       </div>

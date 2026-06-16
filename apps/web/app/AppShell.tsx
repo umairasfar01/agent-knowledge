@@ -58,7 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-screen bg-neutral-950 bg-[radial-gradient(circle_at_top_left,_rgba(64,64,64,0.24),_transparent_34%)] text-white">
       <div className="grid min-h-screen md:grid-cols-[280px_1fr]">
-        <aside className="sticky top-0 h-screen overflow-y-auto border-r border-neutral-800 bg-neutral-950/95 p-6 backdrop-blur">
+        <aside className="border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur md:sticky md:top-0 md:h-screen md:overflow-y-auto md:border-b-0 md:border-r md:p-6">
           <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
               Agent Knowledge
@@ -71,7 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </p>
           </div>
 
-          <nav className="mt-6 space-y-1.5">
+          <nav className="mt-5 grid grid-cols-2 gap-1.5 md:mt-6 md:block md:space-y-1.5">
             <Link href="/dashboard" prefetch={false} className={navClass("/dashboard")}>
               Dashboard
             </Link>
@@ -105,7 +105,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
 
 
-            <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm">
+            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm md:mt-6">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                 Organization
               </p>
@@ -124,7 +124,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
             </div>
 
-            <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm">
+            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm md:mt-6">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                 Signed in as
               </p>
@@ -151,7 +151,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
         </aside>
 
-        <section className="min-w-0 px-5 py-8 md:px-8 lg:px-10">
+        <section className="min-w-0 px-4 py-6 sm:px-5 md:px-8 md:py-8 lg:px-10">
           {children}
         </section>
       </div>
