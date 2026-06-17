@@ -7,181 +7,203 @@ import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
 export default function DashboardPage() {
-  const knowledgeItems = useQuery(api.knowledge.listKnowledge, {
-    organizationId: DEFAULT_ORG_ID,
-  });
-  const agents = useQuery(api.agents.listAgents, {
+  const metrics = useQuery(api.dashboard.getDashboardMetrics, {
     organizationId: DEFAULT_ORG_ID,
   });
 
-  const total = knowledgeItems?.length ?? 0;
-  const drafts = knowledgeItems?.filter((item) => item.status === "draft").length ?? 0;
-  const verified =
-    knowledgeItems?.filter((item) => item.status === "verified").length ?? 0;
-
-  const totalAgents = agents?.length ?? 0;
-  const activeAgents =
-    agents?.filter((agent) => agent.status === "active").length ?? 0;
-
-  const requiresApproval =
-    knowledgeItems?.filter((item) => item.requiresApproval).length ?? 0;
-
-  const canAct =
-    knowledgeItems?.filter((item) => item.canUseToAct).length ?? 0;
+  const statCards = metrics
+    ? [
+        {
+          label: "Knowledge items",
+          value: metrics.totalKnowledge,
+          detail: `${metrics.verifiedKnowledge} verified · ${metrics.draftKnowledge} draft`,
+          href: "/knowledge",
+        },
+        {
+          label: "Answerable sources",
+          value: metrics.answerableKnowledge,
+          detail: "Allowed for agent answers",
+          href: "/knowledge",
+        },
+        {
+          label: "Agents",
+          value: metrics.totalAgents,
+          detail: `${metrics.activeAgents} active`,
+          href: "/agents",
+        },
+        {
+          label: "Members",
+          value: metrics.totalMembers,
+          detail: "Workspace users",
+          href: "/members",
+        },
+        {
+          label: "Retrievals",
+          value: metrics.totalRetrievals,
+          detail: `${metrics.retrievalsLast7Days} in the last 7 days`,
+          href: "/retrieval-history",
+        },
+        {
+          label: "Audit events",
+          value: metrics.totalAuditEvents,
+          detail: "Governance activity",
+          href: "/audit",
+        },
+      ]
+    : [];
 
   return (
     <AppShell>
-      <div className="ak-page">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="ak-page-wide">
+        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="ak-header-eyebrow">
-              Agent Knowledge
-            </p>
+            <p className="ak-header-eyebrow">Workspace overview</p>
             <h1 className="ak-header-title">Dashboard</h1>
             <p className="ak-header-description">
-              Overview of your company knowledge workspace.
+              Monitor knowledge coverage, agent activity, retrieval usage, and governance signals.
             </p>
           </div>
 
-          <Link
-            href="/knowledge"
-            className="ak-button-primary w-fit"
-          >
-            Manage Knowledge
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/knowledge" className="ak-button-primary">
+              Add knowledge
+            </Link>
+            <Link href="/ask" className="ak-button-secondary">
+              Ask agent
+            </Link>
+          </div>
         </header>
 
-        <section className="grid gap-4 md:grid-cols-3">
-          <div className="ak-card">
-            <p className="ak-muted">Total knowledge</p>
-            <p className="mt-3 text-4xl font-bold">{total}</p>
-          </div>
+        {metrics === undefined ? (
+          <section className="ak-card">
+            <p className="ak-muted">Loading dashboard metrics...</p>
+          </section>
+        ) : (
+          <>
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {statCards.map((card) => (
+                <Link
+                  key={card.label}
+                  href={card.href}
+                  className="ak-card-hover block"
+                >
+                  <p className="text-sm font-medium text-neutral-400">
+                    {card.label}
+                  </p>
+                  <p className="mt-3 text-3xl font-bold tracking-tight text-white">
+                    {card.value}
+                  </p>
+                  <p className="mt-2 text-sm text-neutral-500">{card.detail}</p>
+                </Link>
+              ))}
+            </section>
 
-          <div className="ak-card">
-            <p className="ak-muted">Draft items</p>
-            <p className="mt-3 text-4xl font-bold">{drafts}</p>
-          </div>
+            <section className="grid gap-6 xl:grid-cols-2">
+              <div className="ak-card">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="ak-header-eyebrow">Recent retrievals</p>
+                    <h2 className="mt-2 text-xl font-semibold text-white">
+                      Agent questions
+                    </h2>
+                  </div>
 
-          <div className="ak-card">
-            <p className="ak-muted">Verified items</p>
-            <p className="mt-3 text-4xl font-bold">{verified}</p>
-          </div>
+                  <Link href="/retrieval-history" className="ak-button-ghost">
+                    View all
+                  </Link>
+                </div>
 
-          <div className="ak-card">
-            <p className="ak-muted">Total agents</p>
-            <p className="mt-3 text-4xl font-bold">{totalAgents}</p>
-          </div>
+                {metrics.recentRetrievalLogs.length === 0 ? (
+                  <div className="ak-panel mt-5">
+                    <p className="text-sm text-neutral-400">
+                      No retrieval searches yet. Use the Ask page to start building history.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-3">
+                    {metrics.recentRetrievalLogs.map((log) => (
+                      <article
+                        key={log._id}
+                        className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                      >
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="ak-status-neutral">
+                            {log.agentName ?? "Unknown agent"}
+                          </span>
+                          <span
+                            className={
+                              log.resultCount > 0
+                                ? "ak-status-success"
+                                : "ak-status-warning"
+                            }
+                          >
+                            {log.resultCount} result
+                            {log.resultCount === 1 ? "" : "s"}
+                          </span>
+                        </div>
 
-          <div className="ak-card">
-            <p className="ak-muted">Active agents</p>
-            <p className="mt-3 text-4xl font-bold">{activeAgents}</p>
-          </div>
+                        <p className="mt-3 font-medium text-white">
+                          {log.question}
+                        </p>
+                        <p className="mt-2 text-sm text-neutral-500">
+                          {new Date(log.createdAt).toLocaleString()}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-          <div className="ak-card">
-            <p className="ak-muted">Needs approval</p>
-            <p className="mt-3 text-4xl font-bold">{requiresApproval}</p>
-          </div>
+              <div className="ak-card">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="ak-header-eyebrow">Recent audit activity</p>
+                    <h2 className="mt-2 text-xl font-semibold text-white">
+                      Governance events
+                    </h2>
+                  </div>
 
-          <div className="ak-card">
-            <p className="ak-muted">Can take action</p>
-            <p className="mt-3 text-4xl font-bold">{canAct}</p>
-          </div>
-        </section>
+                  <Link href="/audit" className="ak-button-ghost">
+                    View all
+                  </Link>
+                </div>
 
-        <section className="ak-card">
-          <h2 className="text-xl font-semibold">Next product areas</h2>
+                {metrics.recentAuditLogs.length === 0 ? (
+                  <div className="ak-panel mt-5">
+                    <p className="text-sm text-neutral-400">
+                      No audit activity yet.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-3">
+                    {metrics.recentAuditLogs.map((log) => (
+                      <article
+                        key={log._id}
+                        className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                      >
+                        <p className="font-medium text-white">
+                          {log.knowledgeTitle ??
+                            log.agentName ??
+                            log.metadata?.title ??
+                            "Workspace event"}
+                        </p>
 
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="ak-panel">
-              <h3 className="font-medium">Agent permissions</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Decide which agents can use each knowledge item.
-              </p>
-            </div>
+                        <p className="mt-2 text-sm text-neutral-500">
+                          {log.actorEmail ?? log.actorId ?? "Unknown user"} ·{" "}
+                          {log.action}
+                        </p>
 
-            <div className="ak-panel">
-              <h3 className="font-medium">Approval rules</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Mark whether knowledge can be used to answer or take action.
-              </p>
-            </div>
-
-            <div className="ak-panel">
-              <h3 className="font-medium">Sources</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Track where each knowledge record came from.
-              </p>
-            </div>
-
-            <div className="ak-panel">
-              <h3 className="font-medium">Audit trail</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Record who changed knowledge and when.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="ak-card">
-          <div>
-            <h2 className="text-xl font-semibold">Quick actions</h2>
-            <p className="mt-1 text-sm text-neutral-400">
-              Jump into the most important workspace areas.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            <Link
-              href="/knowledge"
-              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
-            >
-              <h3 className="font-medium">Manage Knowledge</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Create, review, and organize trusted agent knowledge.
-              </p>
-            </Link>
-
-            <Link
-              href="/agents"
-              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
-            >
-              <h3 className="font-medium">Manage Agents</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Create agents and control which knowledge they can access.
-              </p>
-            </Link>
-
-            <Link
-              href="/approvals"
-              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
-            >
-              <h3 className="font-medium">Review Approvals</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Review knowledge that requires approval before agents act.
-              </p>
-            </Link>
-
-            <Link
-              href="/audit"
-              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
-            >
-              <h3 className="font-medium">View Audit Logs</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                Track changes made to knowledge and agents.
-              </p>
-            </Link>
-
-            <Link
-              href="/settings"
-              className="ak-panel transition hover:border-neutral-700 hover:bg-neutral-900"
-            >
-              <h3 className="font-medium">Workspace Settings</h3>
-              <p className="mt-1 text-sm text-neutral-400">
-                View organization, user, role, and auth details.
-              </p>
-            </Link>
-          </div>
-        </section>
+                        <p className="mt-2 text-sm text-neutral-500">
+                          {new Date(log.createdAt).toLocaleString()}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </AppShell>
   );

@@ -9,6 +9,7 @@
  */
 
 import type * as agents from "../agents.js";
+import type * as dashboard from "../dashboard.js";
 import type * as knowledge from "../knowledge.js";
 import type * as permissions from "../permissions.js";
 import type * as users from "../users.js";
@@ -21,6 +22,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   agents: typeof agents;
+  dashboard: typeof dashboard;
   knowledge: typeof knowledge;
   permissions: typeof permissions;
   users: typeof users;
