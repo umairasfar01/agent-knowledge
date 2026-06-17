@@ -84,6 +84,19 @@ export default defineSchema({
 
   }),
 
+    retrievalLogs: defineTable({
+    organizationId: v.string(),
+    agentId: v.id("agents"),
+    agentName: v.optional(v.string()),
+    question: v.string(),
+    resultCount: v.number(),
+    sourceTitles: v.array(v.string()),
+    actorEmail: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_organization", ["organizationId"])
+    .index("by_agent", ["agentId"]),
+
   agents: defineTable({
     name: v.string(),
     description: v.string(),

@@ -519,6 +519,36 @@ export const searchKnowledgeForAgent = query({
   },
 });
 
+export const logRetrievalSearch = mutation({
+  args: {
+    organizationId: v.string(),
+    agentId: v.id("agents"),
+    agentName: v.optional(v.string()),
+    question: v.string(),
+    resultCount: v.number(),
+    sourceTitles: v.array(v.string()),
+    actorEmail: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const question = args.question.trim();
+
+    if (!question) {
+      return null;
+    }
+
+    return await ctx.db.insert("retrievalLogs", {
+      organizationId: args.organizationId,
+      agentId: args.agentId,
+      agentName: args.agentName,
+      question,
+      resultCount: args.resultCount,
+      sourceTitles: args.sourceTitles,
+      actorEmail: args.actorEmail,
+      createdAt: Date.now(),
+    });
+  },
+});
+
 export const listVersionsForKnowledge = query({
   args: {
     knowledgeId: v.id("knowledge"),
@@ -597,3 +627,4 @@ export const restoreKnowledgeVersion = mutation({
     });
   },
 });
+

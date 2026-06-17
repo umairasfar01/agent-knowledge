@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
+
+
 
 
 export default function AskPage() {
@@ -14,12 +17,17 @@ export default function AskPage() {
     const [question, setQuestion] = useState("");
     const [copied, setCopied] = useState(false);
 
+
     const agents = useQuery(api.agents.listAgents, {
         organizationId: DEFAULT_ORG_ID,
         search: "",
         status: "all",
         role: "all",
     });
+
+    const { user } = useAuth();
+
+    const selectedAgent = agents?.find((agent) => agent._id === selectedAgentId);
 
     const results = useQuery(
         api.knowledge.searchKnowledgeForAgent,
@@ -31,6 +39,34 @@ export default function AskPage() {
             }
             : "skip"
     );
+
+    const logRetrievalSearch = useMutation(api.knowledge.logRetrievalSearch);
+
+    useEffect(() => {
+        if (!selectedAgentId || !question.trim() || !results) return;
+
+        const timeout = window.setTimeout(() => {
+            void logRetrievalSearch({
+                organizationId: DEFAULT_ORG_ID,
+                agentId: selectedAgentId,
+                agentName: selectedAgent?.name,
+                question,
+                resultCount: results.length,
+                sourceTitles: results.map((item) => item.title).slice(0, 5),
+                actorEmail: user?.email ?? undefined,
+            });
+        }, 800);
+
+        return () => window.clearTimeout(timeout);
+    }, [
+        selectedAgentId,
+        selectedAgent?.name,
+        question,
+        results,
+        user?.email,
+        logRetrievalSearch,
+    ]);
+
 
     function getDraftAnswerText() {
         if (!results || results.length === 0) return "";
@@ -55,6 +91,7 @@ export default function AskPage() {
             setCopied(false);
         }, 2000);
     }
+
 
 
     return (
