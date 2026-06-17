@@ -71,7 +71,7 @@ export default function RetrievalHistoryPage() {
                                                     </p>
 
                                                     <div className="mt-2 flex flex-wrap gap-2">
-                                                        {log.sourceTitles.map((title, index) => (
+                                                        {Array.from(new Set(log.sourceTitles)).map((title, index) => (
                                                             <span
                                                                 key={`${title}-${index}`}
                                                                 className="rounded-lg border border-neutral-800 bg-neutral-900 px-2.5 py-1 text-xs text-neutral-300"

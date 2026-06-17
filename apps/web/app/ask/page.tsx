@@ -52,7 +52,7 @@ export default function AskPage() {
                 agentName: selectedAgent?.name,
                 question,
                 resultCount: results.length,
-                sourceTitles: results.map((item) => item.title).slice(0, 5),
+                sourceTitles: Array.from(new Set(results.map((item) => item.title))).slice(0, 5),
                 actorEmail: user?.email ?? undefined,
             });
         }, 800);
