@@ -58,6 +58,8 @@ export default function KnowledgePage() {
   const [importError, setImportError] = useState("");
   const [importSuccess, setImportSuccess] = useState("");
 
+  const [importAllowedAgentIds, setImportAllowedAgentIds] = useState<Id<"agents">[]>([]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -177,6 +179,14 @@ export default function KnowledgePage() {
 
   const importPreview = splitImportedKnowledge(importText);
 
+  function toggleImportAgent(agentId: Id<"agents">) {
+    setImportAllowedAgentIds((current) =>
+      current.includes(agentId)
+        ? current.filter((id) => id !== agentId)
+        : [...current, agentId]
+    );
+  }
+
   async function handleImportKnowledge(e: React.FormEvent) {
     e.preventDefault();
 
@@ -202,7 +212,7 @@ export default function KnowledgePage() {
           requiresApproval: importStatus === "draft",
           sourceUrl: "",
           lastReviewedAt: undefined,
-          allowedAgentIds,
+          allowedAgentIds: importAllowedAgentIds,
           organizationId: DEFAULT_ORG_ID,
           workosUserId: user?.id ?? "",
           actorEmail: user?.email ?? "unknown-user",
@@ -210,6 +220,7 @@ export default function KnowledgePage() {
       }
 
       setImportSuccess(`Imported ${items.length} knowledge item${items.length === 1 ? "" : "s"}.`);
+      setImportAllowedAgentIds([]);
       setImportText("");
     } catch (error) {
       setImportError(
@@ -321,6 +332,46 @@ export default function KnowledgePage() {
                     <option value="verified">Verified</option>
                   </select>
                 </div>
+
+                <div>
+                  <label className="ak-label">Assign to agents</label>
+
+                  <div className="mt-2 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
+                    {agents === undefined ? (
+                      <p className="text-sm text-neutral-500">Loading agents...</p>
+                    ) : agents.length === 0 ? (
+                      <p className="text-sm text-neutral-500">
+                        No agents yet. Create an agent before importing assigned knowledge.
+                      </p>
+                    ) : (
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {agents.map((agent) => (
+                          <label
+                            key={agent._id}
+                            className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/70 p-3 text-sm text-neutral-300 transition hover:border-neutral-700 hover:bg-neutral-900"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={importAllowedAgentIds.includes(agent._id)}
+                              onChange={() => toggleImportAgent(agent._id)}
+                              className="h-4 w-4 rounded border-neutral-700 bg-neutral-950"
+                            />
+                            <span>
+                              <span className="block font-medium text-white">{agent.name}</span>
+                              <span className="block text-xs text-neutral-500">{agent.role}</span>
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="mt-2 text-sm text-neutral-500">
+                    Imported items will be assigned to {importAllowedAgentIds.length} agent
+                    {importAllowedAgentIds.length === 1 ? "" : "s"}.
+                  </p>
+                </div>
+
               </div>
 
               {importError && (
