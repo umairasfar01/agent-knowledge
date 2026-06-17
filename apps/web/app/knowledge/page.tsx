@@ -32,47 +32,6 @@ export default function KnowledgePage() {
 
   const createKnowledge = useMutation(api.knowledge.createKnowledge);
 
-  async function handleImportKnowledge(e: React.FormEvent) {
-    e.preventDefault();
-
-    setImportError("");
-    setImportSuccess("");
-
-    const items = splitImportedKnowledge(importText);
-
-    if (items.length === 0) {
-      setImportError("Paste some Markdown or text to import.");
-      return;
-    }
-
-    try {
-      for (const item of items) {
-        await createKnowledge({
-          title: item.title,
-          content: item.content,
-          category: importCategory,
-          status: importStatus,
-          canUseToAnswer: true,
-          canUseToAct: false,
-          requiresApproval: importStatus === "draft",
-          sourceUrl: "",
-          lastReviewedAt: undefined,
-          allowedAgentIds,
-          organizationId: DEFAULT_ORG_ID,
-          workosUserId: user?.id ?? "",
-          actorEmail: user?.email ?? "unknown-user",
-        });
-      }
-
-      setImportSuccess(`Imported ${items.length} knowledge item${items.length === 1 ? "" : "s"}.`);
-      setImportText("");
-    } catch (error) {
-      setImportError(
-        error instanceof Error ? error.message : "Failed to import knowledge."
-      );
-    }
-  }
-
   const deleteKnowledge = useMutation(api.knowledge.deleteKnowledge);
   const updateKnowledge = useMutation(api.knowledge.updateKnowledge);
 
@@ -216,6 +175,49 @@ export default function KnowledgePage() {
     });
   }
 
+  const importPreview = splitImportedKnowledge(importText);
+
+  async function handleImportKnowledge(e: React.FormEvent) {
+    e.preventDefault();
+
+    setImportError("");
+    setImportSuccess("");
+
+    const items = importPreview;
+
+    if (items.length === 0) {
+      setImportError("Paste some Markdown or text to import.");
+      return;
+    }
+
+    try {
+      for (const item of items) {
+        await createKnowledge({
+          title: item.title,
+          content: item.content,
+          category: importCategory,
+          status: importStatus,
+          canUseToAnswer: true,
+          canUseToAct: false,
+          requiresApproval: importStatus === "draft",
+          sourceUrl: "",
+          lastReviewedAt: undefined,
+          allowedAgentIds,
+          organizationId: DEFAULT_ORG_ID,
+          workosUserId: user?.id ?? "",
+          actorEmail: user?.email ?? "unknown-user",
+        });
+      }
+
+      setImportSuccess(`Imported ${items.length} knowledge item${items.length === 1 ? "" : "s"}.`);
+      setImportText("");
+    } catch (error) {
+      setImportError(
+        error instanceof Error ? error.message : "Failed to import knowledge."
+      );
+    }
+  }
+
 
   return (
     <AppShell>
@@ -253,6 +255,46 @@ export default function KnowledgePage() {
                   className="ak-textarea mt-2 min-h-48"
                   placeholder={`# Refund Policy\nCustomers can request a refund within 7 days.\n\n# Email Rules\nAgents may draft emails for review.`}
                 />
+
+                {importText.trim() && (
+                  <div className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-white">Import preview</p>
+                        <p className="mt-1 text-sm text-neutral-500">
+                          {importPreview.length} item{importPreview.length === 1 ? "" : "s"} will be created.
+                        </p>
+                      </div>
+
+                      <span className="ak-status-neutral">
+                        Preview only
+                      </span>
+                    </div>
+
+                    {importPreview.length === 0 ? (
+                      <p className="mt-4 text-sm text-neutral-500">
+                        No valid knowledge items found yet.
+                      </p>
+                    ) : (
+                      <div className="mt-4 space-y-3">
+                        {importPreview.map((item, index) => (
+                          <div
+                            key={`${item.title}-${index}`}
+                            className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
+                          >
+                            <p className="text-sm font-medium text-white">
+                              {index + 1}. {item.title}
+                            </p>
+                            <p className="mt-2 line-clamp-3 text-sm leading-6 text-neutral-400">
+                              {item.content}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -294,8 +336,13 @@ export default function KnowledgePage() {
               )}
 
               <div>
-                <button type="submit" className="ak-button-primary">
-                  Import knowledge
+                <button
+                  type="submit"
+                  disabled={importPreview.length === 0}
+                  className="ak-button-primary"
+                >
+                  Import {importPreview.length > 0 ? importPreview.length : ""} knowledge item
+                  {importPreview.length === 1 ? "" : "s"}
                 </button>
               </div>
             </form>
