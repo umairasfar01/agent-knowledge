@@ -308,20 +308,93 @@ export const searchKnowledgeForAgent = query({
     question: v.string(),
   },
   handler: async (ctx, args) => {
-    const question = args.question.trim().toLowerCase();
+    const rawQuestion = args.question.trim();
+    const question = rawQuestion.toLowerCase();
 
     if (!question) {
       return [];
     }
 
-    const terms = Array.from(
+    const stopWords = new Set([
+      "a",
+      "an",
+      "and",
+      "are",
+      "as",
+      "at",
+      "be",
+      "by",
+      "can",
+      "do",
+      "does",
+      "for",
+      "from",
+      "get",
+      "how",
+      "i",
+      "in",
+      "is",
+      "it",
+      "of",
+      "on",
+      "or",
+      "our",
+      "the",
+      "to",
+      "we",
+      "what",
+      "when",
+      "where",
+      "who",
+      "why",
+      "with",
+    ]);
+
+    const synonymMap: Record<string, string[]> = {
+      refund: ["refund", "return", "reimburse", "reimbursement", "money", "back"],
+      return: ["return", "refund", "money", "back"],
+      money: ["money", "refund", "reimburse", "back"],
+      cancel: ["cancel", "cancellation", "stop"],
+      order: ["order", "purchase", "transaction"],
+      customer: ["customer", "client", "user"],
+      email: ["email", "message", "mail"],
+      support: ["support", "help", "service"],
+      policy: ["policy", "rule", "rules", "guideline"],
+    };
+
+    function tokenize(value: string) {
+      return value
+        .toLowerCase()
+        .split(/[^a-z0-9]+/i)
+        .map((term) => term.trim())
+        .filter((term) => term.length >= 2 && !stopWords.has(term));
+    }
+
+    function getPhrases(tokens: string[]) {
+      const phrases: string[] = [];
+
+      for (let index = 0; index < tokens.length - 1; index += 1) {
+        phrases.push(`${tokens[index]} ${tokens[index + 1]}`);
+      }
+
+      for (let index = 0; index < tokens.length - 2; index += 1) {
+        phrases.push(`${tokens[index]} ${tokens[index + 1]} ${tokens[index + 2]}`);
+      }
+
+      return phrases;
+    }
+
+    const baseTerms = Array.from(new Set(tokenize(question)));
+
+    const expandedTerms = Array.from(
       new Set(
-        question
-          .split(/[^a-z0-9]+/i)
-          .map((term) => term.trim().toLowerCase())
-          .filter((term) => term.length >= 2)
+        baseTerms.flatMap((term) => {
+          return synonymMap[term] ?? [term];
+        })
       )
     );
+
+    const phrases = getPhrases(baseTerms);
 
     const knowledgeItems = await ctx.db.query("knowledge").collect();
 
@@ -329,10 +402,13 @@ export const searchKnowledgeForAgent = query({
       const allowedAgentIds = item.allowedAgentIds ?? [];
 
       return (
-        (item.organizationId === args.organizationId || item.organizationId === undefined) &&
+        (item.organizationId === args.organizationId ||
+          item.organizationId === undefined) &&
         item.status === "verified" &&
         item.canUseToAnswer === true &&
-        allowedAgentIds.some((agentId) => agentId.toString() === args.agentId.toString())
+        allowedAgentIds.some(
+          (agentId) => agentId.toString() === args.agentId.toString()
+        )
       );
     });
 
@@ -343,48 +419,92 @@ export const searchKnowledgeForAgent = query({
         const content = item.content.toLowerCase();
 
         let score = 0;
+
         const matchedFields = new Set<string>();
+        const matchedTerms = new Set<string>();
 
         if (title.includes(question)) {
-          score += 12;
+          score += 18;
           matchedFields.add("title");
         }
 
         if (category.includes(question)) {
-          score += 8;
+          score += 10;
           matchedFields.add("category");
         }
 
         if (content.includes(question)) {
-          score += 5;
+          score += 7;
           matchedFields.add("content");
         }
 
-        for (const term of terms) {
+        for (const phrase of phrases) {
+          if (title.includes(phrase)) {
+            score += 9;
+            matchedFields.add("title");
+          }
+
+          if (category.includes(phrase)) {
+            score += 5;
+            matchedFields.add("category");
+          }
+
+          if (content.includes(phrase)) {
+            score += 3;
+            matchedFields.add("content");
+          }
+        }
+
+        for (const term of expandedTerms) {
           if (title.includes(term)) {
             score += 5;
             matchedFields.add("title");
+            matchedTerms.add(term);
           }
 
           if (category.includes(term)) {
             score += 3;
             matchedFields.add("category");
+            matchedTerms.add(term);
           }
 
           if (content.includes(term)) {
             score += 1;
             matchedFields.add("content");
+            matchedTerms.add(term);
           }
         }
 
+        const matchedBaseTerms = baseTerms.filter((term) => {
+          const relatedTerms = synonymMap[term] ?? [term];
+
+          return relatedTerms.some(
+            (relatedTerm) =>
+              title.includes(relatedTerm) ||
+              category.includes(relatedTerm) ||
+              content.includes(relatedTerm)
+          );
+        });
+
+        const coverage =
+          baseTerms.length > 0 ? matchedBaseTerms.length / baseTerms.length : 0;
+
+        score += Math.round(coverage * 6);
+
+        if (coverage === 1 && baseTerms.length >= 2) {
+          score += 6;
+        }
+
         const matchedFieldList = Array.from(matchedFields);
+        const matchedTermList = Array.from(matchedTerms).slice(0, 5);
 
         return {
           ...item,
           score,
           confidence:
-            score >= 12 ? "High" : score >= 6 ? "Medium" : "Low",
+            score >= 16 ? "High" : score >= 8 ? "Medium" : "Low",
           matchedFields: matchedFieldList,
+          matchedTerms: matchedTermList,
           matchSummary:
             matchedFieldList.length > 0
               ? `Matched in ${matchedFieldList.join(", ")}`
