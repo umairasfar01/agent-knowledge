@@ -382,6 +382,8 @@ export const searchKnowledgeForAgent = query({
         return {
           ...item,
           score,
+          confidence:
+            score >= 12 ? "High" : score >= 6 ? "Medium" : "Low",
           matchedFields: matchedFieldList,
           matchSummary:
             matchedFieldList.length > 0
@@ -392,8 +394,8 @@ export const searchKnowledgeForAgent = query({
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 10);
-      
-return scoredItems;
+
+    return scoredItems;
   },
 });
 

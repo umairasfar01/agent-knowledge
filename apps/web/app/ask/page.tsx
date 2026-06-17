@@ -267,6 +267,21 @@ export default function AskPage() {
                                         <span className={`${item.status === "verified" ? "ak-status-success" : "ak-status-warning"} w-fit shrink-0`}>
                                             {item.status}
                                         </span>
+
+                                        {"confidence" in item && item.confidence && (
+                                            <span
+                                                className={
+                                                    item.confidence === "High"
+                                                        ? "ak-status-success"
+                                                        : item.confidence === "Medium"
+                                                            ? "ak-status-warning"
+                                                            : "ak-status-neutral"
+                                                }
+                                            >
+                                                {item.confidence} confidence
+                                            </span>
+                                        )}
+                                        
                                     </div>
 
                                     <p className="mt-4 line-clamp-3 text-neutral-300">
