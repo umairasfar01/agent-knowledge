@@ -52,6 +52,18 @@ export default defineSchema({
     .index("by_user_org", ["userId", "organizationId"])
     .index("by_organization", ["organizationId"]),
 
+  organizationSettings: defineTable({
+    organizationId: v.string(),
+    displayName: v.string(),
+    defaultKnowledgeCategory: v.optional(v.string()),
+    defaultKnowledgeStatus: v.union(v.literal("draft"), v.literal("verified")),
+    defaultCanUseToAnswer: v.boolean(),
+    defaultCanUseToAct: v.boolean(),
+    updatedByEmail: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_organizationId", ["organizationId"]),
+
   auditLogs: defineTable({
     action: v.union(
       v.literal("created"),
@@ -63,7 +75,8 @@ export default defineSchema({
       v.literal("agent.deleted"),
       v.literal("member_role_updated"),
       v.literal("member_removed"),
-      v.literal("member_invited")
+      v.literal("member_invited"),
+      v.literal("organization_settings_updated")
     ),
 
     knowledgeId: v.optional(v.id("knowledge")),
@@ -84,7 +97,7 @@ export default defineSchema({
 
   }),
 
-    retrievalLogs: defineTable({
+  retrievalLogs: defineTable({
     organizationId: v.string(),
     agentId: v.id("agents"),
     agentName: v.optional(v.string()),

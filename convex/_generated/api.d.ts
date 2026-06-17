@@ -11,6 +11,7 @@
 import type * as agents from "../agents.js";
 import type * as dashboard from "../dashboard.js";
 import type * as knowledge from "../knowledge.js";
+import type * as organizations from "../organizations.js";
 import type * as permissions from "../permissions.js";
 import type * as users from "../users.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   dashboard: typeof dashboard;
   knowledge: typeof knowledge;
+  organizations: typeof organizations;
   permissions: typeof permissions;
   users: typeof users;
 }>;
