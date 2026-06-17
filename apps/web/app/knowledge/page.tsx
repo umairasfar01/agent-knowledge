@@ -31,6 +31,48 @@ export default function KnowledgePage() {
   const { user } = useAuth();
 
   const createKnowledge = useMutation(api.knowledge.createKnowledge);
+
+  async function handleImportKnowledge(e: React.FormEvent) {
+    e.preventDefault();
+
+    setImportError("");
+    setImportSuccess("");
+
+    const items = splitImportedKnowledge(importText);
+
+    if (items.length === 0) {
+      setImportError("Paste some Markdown or text to import.");
+      return;
+    }
+
+    try {
+      for (const item of items) {
+        await createKnowledge({
+          title: item.title,
+          content: item.content,
+          category: importCategory,
+          status: importStatus,
+          canUseToAnswer: true,
+          canUseToAct: false,
+          requiresApproval: importStatus === "draft",
+          sourceUrl: "",
+          lastReviewedAt: undefined,
+          allowedAgentIds,
+          organizationId: DEFAULT_ORG_ID,
+          workosUserId: user?.id ?? "",
+          actorEmail: user?.email ?? "unknown-user",
+        });
+      }
+
+      setImportSuccess(`Imported ${items.length} knowledge item${items.length === 1 ? "" : "s"}.`);
+      setImportText("");
+    } catch (error) {
+      setImportError(
+        error instanceof Error ? error.message : "Failed to import knowledge."
+      );
+    }
+  }
+
   const deleteKnowledge = useMutation(api.knowledge.deleteKnowledge);
   const updateKnowledge = useMutation(api.knowledge.updateKnowledge);
 
@@ -50,6 +92,12 @@ export default function KnowledgePage() {
 
   const currentRole = useCurrentRole();
   const canManage = canManageKnowledge(currentRole);
+
+  const [importText, setImportText] = useState("");
+  const [importCategory, setImportCategory] = useState("Company Policy");
+  const [importStatus, setImportStatus] = useState<"draft" | "verified">("draft");
+  const [importError, setImportError] = useState("");
+  const [importSuccess, setImportSuccess] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -133,6 +181,41 @@ export default function KnowledgePage() {
     setAllowedAgentIds(item.allowedAgentIds ?? []);
   }
 
+  function splitImportedKnowledge(rawText: string) {
+    const text = rawText.trim();
+
+    if (!text) return [];
+
+    const sections = text
+      .split(/\n(?=#{1,3}\s+)/g)
+      .map((section) => section.trim())
+      .filter(Boolean);
+
+    if (sections.length === 0) {
+      return [];
+    }
+
+    return sections.map((section, index) => {
+      const lines = section.split("\n");
+      const firstLine = lines[0]?.trim() ?? "";
+
+      const headingMatch = firstLine.match(/^#{1,3}\s+(.+)$/);
+
+      const title = headingMatch
+        ? headingMatch[1].trim()
+        : `Imported Knowledge ${index + 1}`;
+
+      const content = headingMatch
+        ? lines.slice(1).join("\n").trim()
+        : section;
+
+      return {
+        title,
+        content: content || section,
+      };
+    });
+  }
+
 
   return (
     <AppShell>
@@ -148,6 +231,76 @@ export default function KnowledgePage() {
             Create knowledge that agents can later retrieve, follow, and act on.
           </p>
         </header>
+
+        {canManage && (
+          <section className="ak-card">
+            <div>
+              <p className="ak-header-eyebrow">Import</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                Import knowledge from Markdown
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-neutral-400">
+                Paste Markdown or plain text. Headings become separate knowledge items.
+              </p>
+            </div>
+
+            <form onSubmit={handleImportKnowledge} className="mt-6 space-y-5">
+              <div>
+                <label className="ak-label">Markdown or text</label>
+                <textarea
+                  value={importText}
+                  onChange={(e) => setImportText(e.target.value)}
+                  className="ak-textarea mt-2 min-h-48"
+                  placeholder={`# Refund Policy\nCustomers can request a refund within 7 days.\n\n# Email Rules\nAgents may draft emails for review.`}
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="ak-label">Category</label>
+                  <input
+                    value={importCategory}
+                    onChange={(e) => setImportCategory(e.target.value)}
+                    className="ak-input mt-2"
+                    placeholder="Company Policy"
+                  />
+                </div>
+
+                <div>
+                  <label className="ak-label">Status</label>
+                  <select
+                    value={importStatus}
+                    onChange={(e) =>
+                      setImportStatus(e.target.value as "draft" | "verified")
+                    }
+                    className="ak-select mt-2"
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="verified">Verified</option>
+                  </select>
+                </div>
+              </div>
+
+              {importError && (
+                <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+                  <p className="text-sm text-red-300">{importError}</p>
+                </div>
+              )}
+
+              {importSuccess && (
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                  <p className="text-sm text-emerald-300">{importSuccess}</p>
+                </div>
+              )}
+
+              <div>
+                <button type="submit" className="ak-button-primary">
+                  Import knowledge
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
 
         {canManage && (
           <form
@@ -430,141 +583,141 @@ export default function KnowledgePage() {
                     </div>
                   </div>
 
-                      <div className="mt-5 flex flex-col gap-3 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-                            Status
-                          </span>
+                  <div className="mt-5 flex flex-col gap-3 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                        Status
+                      </span>
 
-                          <span
-                            className={
-                              item.status === "verified"
-                                ? "ak-status-success"
-                                : "ak-status-warning"
-                            }
-                          >
-                            <span
-                              className={
-                                item.status === "verified"
-                                  ? "mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-300"
-                                  : "mr-1.5 h-1.5 w-1.5 rounded-full bg-amber-300"
-                              }
-                            />
-                            {item.status === "verified" ? "Verified" : "Draft"}
-                          </span>
-                        </div>
+                      <span
+                        className={
+                          item.status === "verified"
+                            ? "ak-status-success"
+                            : "ak-status-warning"
+                        }
+                      >
+                        <span
+                          className={
+                            item.status === "verified"
+                              ? "mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-300"
+                              : "mr-1.5 h-1.5 w-1.5 rounded-full bg-amber-300"
+                          }
+                        />
+                        {item.status === "verified" ? "Verified" : "Draft"}
+                      </span>
+                    </div>
 
-                        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
-                          <Link
-                            href={`/knowledge/${item._id}`}
-                            className="ak-button-primary col-span-2 px-3.5 py-2 sm:col-span-1"
-                          >
-                            Open
-                          </Link>
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+                      <Link
+                        href={`/knowledge/${item._id}`}
+                        className="ak-button-primary col-span-2 px-3.5 py-2 sm:col-span-1"
+                      >
+                        Open
+                      </Link>
 
-                          {canManage && (
-                            <button
-                              type="button"
-                              onClick={() => handleEdit(item)}
-                              className="ak-button-secondary px-3.5 py-2"
-                            >
-                              Edit
-                            </button>
-                          )}
-
-                          {canManage && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                deleteKnowledge({
-                                  id: item._id,
-                                  actorEmail: user?.email ?? "unknown-user",
-                                  organizationId: "default-org",
-                                  workosUserId: user?.id ?? "",
-                                })
-                              }
-                              className="ak-button-danger px-3.5 py-2"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      <p className="mt-1 text-sm text-neutral-400">
-                        {item.category}
-                      </p>
-
-                      <p className="mt-4 text-neutral-200">{item.content}</p>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {item.canUseToAnswer && (
-                          <span className="ak-status-neutral">
-                            Can answer
-                          </span>
-                        )}
-
-                        {item.canUseToAct && (
-                          <span className="ak-status-neutral">
-                            Can act
-                          </span>
-                        )}
-
-                        {item.requiresApproval && (
-                          <span className="ak-status-warning">
-                            Approval required
-                          </span>
-                        )}
-                      </div>
-
-                      {item.sourceUrl && (
-                        <p className="mt-4 text-sm text-neutral-400">
-                          Source:{" "}
-                          <a
-                            href={item.sourceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-neutral-200 underline"
-                          >
-                            {item.sourceUrl}
-                          </a>
-                        </p>
+                      {canManage && (
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(item)}
+                          className="ak-button-secondary px-3.5 py-2"
+                        >
+                          Edit
+                        </button>
                       )}
 
-                      {item.lastReviewedAt && (
-                        <p className="mt-1 text-sm text-neutral-400">
-                          Last reviewed:{" "}
-                          {new Date(item.lastReviewedAt).toLocaleDateString()}
-                        </p>
+                      {canManage && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            deleteKnowledge({
+                              id: item._id,
+                              actorEmail: user?.email ?? "unknown-user",
+                              organizationId: "default-org",
+                              workosUserId: user?.id ?? "",
+                            })
+                          }
+                          className="ak-button-danger px-3.5 py-2"
+                        >
+                          Delete
+                        </button>
                       )}
-
-                      {item.allowedAgentIds && item.allowedAgentIds.length > 0 && (
-                        <div className="mt-4">
-                          <p className="text-sm text-neutral-400">
-                            Allowed agents:
-                          </p>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {item.allowedAgentIds.map((agentId) => {
-                              const agent = agents?.find((a) => a._id === agentId);
-
-                              return (
-                                <span
-                                  key={agentId}
-                                  className="ak-status-neutral"
-                                >
-                                  {agent?.name ?? "Unknown agent"}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </article>
-              ))}
+                    </div>
                   </div>
+
+                  <p className="mt-1 text-sm text-neutral-400">
+                    {item.category}
+                  </p>
+
+                  <p className="mt-4 text-neutral-200">{item.content}</p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {item.canUseToAnswer && (
+                      <span className="ak-status-neutral">
+                        Can answer
+                      </span>
+                    )}
+
+                    {item.canUseToAct && (
+                      <span className="ak-status-neutral">
+                        Can act
+                      </span>
+                    )}
+
+                    {item.requiresApproval && (
+                      <span className="ak-status-warning">
+                        Approval required
+                      </span>
+                    )}
+                  </div>
+
+                  {item.sourceUrl && (
+                    <p className="mt-4 text-sm text-neutral-400">
+                      Source:{" "}
+                      <a
+                        href={item.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-neutral-200 underline"
+                      >
+                        {item.sourceUrl}
+                      </a>
+                    </p>
+                  )}
+
+                  {item.lastReviewedAt && (
+                    <p className="mt-1 text-sm text-neutral-400">
+                      Last reviewed:{" "}
+                      {new Date(item.lastReviewedAt).toLocaleDateString()}
+                    </p>
+                  )}
+
+                  {item.allowedAgentIds && item.allowedAgentIds.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-sm text-neutral-400">
+                        Allowed agents:
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {item.allowedAgentIds.map((agentId) => {
+                          const agent = agents?.find((a) => a._id === agentId);
+
+                          return (
+                            <span
+                              key={agentId}
+                              className="ak-status-neutral"
+                            >
+                              {agent?.name ?? "Unknown agent"}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
           )}
-                </section>
+        </section>
       </div>
     </AppShell>
-        );
+  );
 }
