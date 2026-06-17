@@ -49,8 +49,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
     return `block rounded-xl px-3 py-2.5 text-sm font-medium transition ${isActive
-        ? "bg-white text-neutral-950 shadow-sm"
-        : "text-neutral-400 hover:bg-neutral-900/80 hover:text-white"
+      ? "bg-white text-neutral-950 shadow-sm"
+      : "text-neutral-400 hover:bg-neutral-900/80 hover:text-white"
       }`;
   }
 
@@ -78,6 +78,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             <Link href="/ask" prefetch={false} className={navClass("/ask")}>
               Ask
+            </Link>
+
+            <Link
+              href="/retrieval-history" prefetch={false} className={navClass("/retrieval-history")}>
+              Retrieval History
             </Link>
 
             <Link href="/knowledge" prefetch={false} className={navClass("/knowledge")}>

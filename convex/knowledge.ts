@@ -519,6 +519,21 @@ export const searchKnowledgeForAgent = query({
   },
 });
 
+export const listRetrievalLogs = query({
+  args: {
+    organizationId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("retrievalLogs")
+      .withIndex("by_organization", (q) =>
+        q.eq("organizationId", args.organizationId)
+      )
+      .order("desc")
+      .take(50);
+  },
+});
+
 export const logRetrievalSearch = mutation({
   args: {
     organizationId: v.string(),

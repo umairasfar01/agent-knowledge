@@ -18,5 +18,7 @@ export const config = {
 
     "/api/workos/invite",
     "/api/workos/invite/:path*",
+
+    "/retrieval-history/:path*",
   ],
 };
