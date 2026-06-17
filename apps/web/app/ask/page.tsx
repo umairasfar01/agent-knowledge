@@ -8,6 +8,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 
+
 export default function AskPage() {
     const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | "">("");
     const [question, setQuestion] = useState("");
@@ -125,80 +126,107 @@ export default function AskPage() {
 
                     {results && results.length > 0 && (
                         <section className="ak-card">
-                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                <h2 className="text-xl font-semibold">Draft answer</h2>
+                            <div className="flex flex-col gap-4 border-b border-neutral-800 pb-5 sm:flex-row sm:items-start sm:justify-between">
+                                <div>
+                                    <p className="ak-header-eyebrow">Retrieval draft</p>
+                                    <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                                        Draft answer
+                                    </h2>
+                                    <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
+                                        Generated from verified knowledge assigned to the selected agent.
+                                    </p>
+                                </div>
 
-                                <button
-                                    type="button"
-                                    onClick={copyDraftAnswer}
-                                    className="ak-button-secondary w-fit"
-                                >
-                                    {copied ? "Copied!" : "Copy draft"}
-                                </button>
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={copyDraftAnswer}
+                                        className="ak-button-primary"
+                                    >
+                                        {copied ? "Copied" : "Copy draft"}
+                                    </button>
 
-                                {/* Future: enable this when OPENAI_API_KEY billing/quota is ready. */}
-                                <button
-                                    type="button"
-                                    disabled
-                                    className="ak-button-secondary w-fit opacity-60"
-                                >
-                                    AI answer coming soon
-                                </button>
+                                    <button
+                                        type="button"
+                                        disabled
+                                        className="ak-button-secondary opacity-50"
+                                    >
+                                        AI answer coming soon
+                                    </button>
+                                </div>
                             </div>
 
-                            {results.some((item) => item.requiresApproval) && (
-                                <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-                                    <p className="text-sm font-medium text-amber-300">
-                                        Approval warning
-                                    </p>
-                                    <p className="mt-1 text-sm text-amber-200/80">
-                                        Some retrieved knowledge requires approval before action. The agent may
-                                        use approved answerable knowledge to respond, but should not take action
-                                        without approval.
+                            <div className="mt-5 grid gap-4 md:grid-cols-[1fr_260px]">
+                                <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <span className="ak-status-success">Source-grounded</span>
+                                        <span className="ak-status-neutral">Agent-scoped</span>
+                                        <span className="ak-status-neutral">Draft only</span>
+                                    </div>
+
+                                    <div className="mt-5 space-y-4">
+                                        <p className="text-sm font-medium text-neutral-300">
+                                            Based on the allowed knowledge for this agent, here are the most relevant points:
+                                        </p>
+
+                                        <ul className="space-y-4">
+                                            {results.map((item) => (
+                                                <li
+                                                    key={item._id}
+                                                    className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
+                                                >
+                                                    <p className="font-medium text-white">{item.title}</p>
+                                                    <p className="mt-2 text-sm leading-6 text-neutral-300">
+                                                        {item.content}
+                                                    </p>
+
+                                                    <Link
+                                                        href={`/knowledge/${item._id}`}
+                                                        className="mt-3 inline-flex text-sm font-medium text-neutral-400 underline underline-offset-4 hover:text-white"
+                                                    >
+                                                        Source: {item.title}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <p className="mt-5 border-t border-neutral-800 pt-4 text-sm text-neutral-500">
+                                        This is a retrieval-based draft. AI generation can be added later.
                                     </p>
                                 </div>
-                            )}
 
-                            {results.some((item) => item.canUseToAct === false) && (
-                                <div className="ak-panel mt-4">
-                                    <p className="text-sm font-medium text-neutral-300">
-                                        Action limitation
-                                    </p>
-                                    <p className="mt-1 text-sm text-neutral-500">
-                                        Some retrieved knowledge can be used to answer, but not to take action.
-                                        The agent should not perform tool actions based on this knowledge.
-                                    </p>
-                                </div>
-                            )}
+                                <aside className="space-y-3">
+                                    <div className="ak-panel">
+                                        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                            Answer policy
+                                        </p>
+                                        <p className="mt-2 text-sm leading-6 text-neutral-300">
+                                            The agent should answer only from verified sources shown here.
+                                        </p>
+                                    </div>
 
-                            <p className="mt-4 whitespace-pre-wrap text-neutral-300">
-                                Based on the allowed knowledge for this agent, here are the most relevant
-                                points:
-                            </p>
+                                    <div className="ak-panel">
+                                        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                            Action limitation
+                                        </p>
+                                        <p className="mt-2 text-sm leading-6 text-neutral-300">
+                                            Some retrieved knowledge can be used to answer, but not to take action.
+                                        </p>
+                                    </div>
 
-                            <ul className="mt-4 list-disc space-y-3 pl-5 text-neutral-300">
-                                {results.slice(0, 3).map((item) => (
-                                    <li key={item._id}>
-                                        <span className="font-medium">{item.title}:</span> {item.content}
-
-                                        <div className="mt-1">
-                                            <Link
-                                                href={`/knowledge/${item._id}`}
-                                                className="text-sm text-neutral-400 underline hover:text-white"
-                                            >
-                                                Source: {item.title}
-                                            </Link>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <p className="mt-4 text-sm text-neutral-500">
-                                This is a retrieval-based draft. AI generation can be added next.
-                            </p>
+                                    <div className="ak-panel">
+                                        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                            Sources
+                                        </p>
+                                        <p className="mt-2 text-sm text-neutral-300">
+                                            {results.length} verified source{results.length === 1 ? "" : "s"}
+                                        </p>
+                                    </div>
+                                </aside>
+                            </div>
                         </section>
                     )}
-
                     {!selectedAgentId ? (
                         <div className="ak-card">
                             <p className="text-neutral-300">Select an agent first.</p>
@@ -281,7 +309,7 @@ export default function AskPage() {
                                                 {item.confidence} confidence
                                             </span>
                                         )}
-                                        
+
                                     </div>
 
                                     <p className="mt-4 line-clamp-3 text-neutral-300">
