@@ -27,7 +27,11 @@ Agent Knowledge Management System is a web-based application built to help users
 
 ## Screenshots
 
-Screenshots will be added after the UI is completed.
+### Home Page
+![Home Page](public/screenshots/home.png)
+
+### Dashboard
+![Dashboard](public/screenshots/dashboard.png)
 
 ## Getting Started
 
