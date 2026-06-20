@@ -92,6 +92,87 @@ export default function KnowledgePage() {
 
   const [importAllowedAgentIds, setImportAllowedAgentIds] = useState<Id<"agents">[]>([]);
 
+  function downloadTextFile(filename: string, content: string, type: string) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function escapeCsvValue(value: string) {
+    const escaped = value.replaceAll('"', '""');
+    return `"${escaped}"`;
+  }
+
+  function exportKnowledgeMarkdown() {
+    if (!knowledgeItems || knowledgeItems.length === 0) return;
+
+    const content = knowledgeItems
+      .map((item) => {
+        return [
+          `# ${item.title}`,
+          "",
+          `Category: ${item.category}`,
+          `Status: ${item.status}`,
+          `Can answer: ${item.canUseToAnswer ? "Yes" : "No"}`,
+          `Can act: ${item.canUseToAct ? "Yes" : "No"}`,
+          "",
+          item.content,
+        ].join("\n");
+      })
+      .join("\n\n---\n\n");
+
+    downloadTextFile(
+      "agent-knowledge-export.md",
+      content,
+      "text/markdown;charset=utf-8"
+    );
+  }
+
+  function exportKnowledgeCsv() {
+    if (!knowledgeItems || knowledgeItems.length === 0) return;
+
+    const rows = [
+      [
+        "Title",
+        "Category",
+        "Status",
+        "Can answer",
+        "Can act",
+        "Requires approval",
+        "Source URL",
+        "Content",
+      ],
+      ...knowledgeItems.map((item) => [
+        item.title,
+        item.category,
+        item.status,
+        item.canUseToAnswer ? "Yes" : "No",
+        item.canUseToAct ? "Yes" : "No",
+        item.requiresApproval ? "Yes" : "No",
+        item.sourceUrl ?? "",
+        item.content,
+      ]),
+    ];
+
+    const content = rows
+      .map((row) => row.map((value) => escapeCsvValue(String(value))).join(","))
+      .join("\n");
+
+    downloadTextFile(
+      "agent-knowledge-export.csv",
+      content,
+      "text/csv;charset=utf-8"
+    );
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -284,16 +365,34 @@ export default function KnowledgePage() {
   return (
     <AppShell>
       <div className="ak-page">
-        <header>
-          <p className="ak-header-eyebrow">
-            Knowledge Workspace
-          </p>
-          <h1 className="ak-header-title">
-            Trusted knowledge records
-          </h1>
-          <p className="ak-header-description">
-            Create knowledge that agents can later retrieve, follow, and act on.
-          </p>
+        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="ak-header-eyebrow">Knowledge</p>
+            <h1 className="ak-header-title">Knowledge base</h1>
+            <p className="ak-header-description">
+              Manage trusted knowledge your agents can retrieve and use.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={exportKnowledgeMarkdown}
+              disabled={!knowledgeItems || knowledgeItems.length === 0}
+              className="ak-button-secondary"
+            >
+              Export Markdown
+            </button>
+
+            <button
+              type="button"
+              onClick={exportKnowledgeCsv}
+              disabled={!knowledgeItems || knowledgeItems.length === 0}
+              className="ak-button-secondary"
+            >
+              Export CSV
+            </button>
+          </div>
         </header>
 
         {canManage && (
