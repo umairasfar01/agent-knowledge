@@ -9,6 +9,7 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { canManageKnowledge } from "@/lib/role";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 export default function ApprovalsPage() {
     const approvalItems = useQuery(api.knowledge.listApprovalQueue, {
@@ -18,6 +19,19 @@ export default function ApprovalsPage() {
     const { user } = useAuth();
     const currentRole = useCurrentRole();
     const canManage = canManageKnowledge(currentRole);
+    const rejectKnowledge = useMutation(api.knowledge.rejectKnowledge);
+
+    async function handleRejectKnowledge(id: Id<"knowledge">) {
+        const reviewNote = window.prompt("Why are you rejecting this knowledge?");
+
+        await rejectKnowledge({
+            id,
+            organizationId: DEFAULT_ORG_ID,
+            workosUserId: user?.id ?? "",
+            actorEmail: user?.email ?? "unknown-user",
+            reviewNote: reviewNote ?? "",
+        });
+    }
 
     return (
         <AppShell>
@@ -110,6 +124,14 @@ export default function ApprovalsPage() {
                                             </button>
 
                                         )}
+
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRejectKnowledge(item._id)}
+                                            className="ak-button-danger"
+                                        >
+                                            Reject
+                                        </button>
 
                                     </div>
                                 </article>

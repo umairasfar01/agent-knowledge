@@ -275,6 +275,57 @@ export const listApprovalQueue = query({
   },
 });
 
+export const rejectKnowledge = mutation({
+  args: {
+    id: v.id("knowledge"),
+    organizationId: v.string(),
+    workosUserId: v.string(),
+    actorEmail: v.optional(v.string()),
+    reviewNote: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await requireAdminForWorkosUser(
+      ctx,
+      args.workosUserId,
+      args.organizationId
+    );
+
+    const item = await ctx.db.get(args.id);
+
+    if (!item) {
+      throw new Error("Knowledge item not found");
+    }
+
+    if (
+      item.organizationId !== args.organizationId &&
+      item.organizationId !== undefined
+    ) {
+      throw new Error("Knowledge item does not belong to this organization");
+    }
+
+    const now = Date.now();
+
+    await ctx.db.patch(args.id, {
+      status: "draft",
+      requiresApproval: true,
+      updatedAt: now,
+    });
+
+    await ctx.db.insert("auditLogs", {
+      action: "knowledge.rejected",
+      knowledgeId: args.id,
+      knowledgeTitle: item.title,
+      actorId: "demo-user",
+      actorEmail: args.actorEmail,
+      organizationId: args.organizationId,
+      metadata: {
+        note: args.reviewNote ?? "",
+      },
+      createdAt: now,
+    });
+  },
+});
+
 export const approveKnowledge = mutation({
   args: {
     id: v.id("knowledge"),

@@ -22,7 +22,7 @@ export default function ReviewsPage() {
       id: id as never,
       organizationId: DEFAULT_ORG_ID,
       workosUserId: user?.id ?? "",
-      actorEmail: user?.email ?? "unknown-user",
+      actorEmail: user?.email ?? "unknown-user"
     });
   }
 
