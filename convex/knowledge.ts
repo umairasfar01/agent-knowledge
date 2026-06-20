@@ -643,3 +643,79 @@ export const restoreKnowledgeVersion = mutation({
   },
 });
 
+export const listKnowledgeDueForReview = query({
+  args: {
+    organizationId: v.string(),
+    reviewAfterDays: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const reviewAfterDays = args.reviewAfterDays ?? 90;
+    const threshold = Date.now() - reviewAfterDays * 24 * 60 * 60 * 1000;
+
+    const items = await ctx.db.query("knowledge").collect();
+
+    return items
+      .filter((item) => {
+        const orgMatches =
+          item.organizationId === args.organizationId ||
+          item.organizationId === undefined;
+
+        const lastReviewed = item.lastReviewedAt ?? item.createdAt ?? item._creationTime;
+
+        return orgMatches && lastReviewed <= threshold;
+      })
+      .sort((a, b) => {
+        const aReviewed = a.lastReviewedAt ?? a.createdAt ?? a._creationTime;
+        const bReviewed = b.lastReviewedAt ?? b.createdAt ?? b._creationTime;
+
+        return aReviewed - bReviewed;
+      });
+  },
+});
+
+export const markKnowledgeReviewed = mutation({
+  args: {
+    id: v.id("knowledge"),
+    organizationId: v.string(),
+    workosUserId: v.string(),
+    actorEmail: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await requireAdminForWorkosUser(
+      ctx,
+      args.workosUserId,
+      args.organizationId
+    );
+
+    const item = await ctx.db.get(args.id);
+
+    if (!item) {
+      throw new Error("Knowledge item not found");
+    }
+
+    if (
+      item.organizationId !== args.organizationId &&
+      item.organizationId !== undefined
+    ) {
+      throw new Error("Knowledge item does not belong to this organization");
+    }
+
+    const now = Date.now();
+
+    await ctx.db.patch(args.id, {
+      lastReviewedAt: now,
+      updatedAt: now,
+    });
+
+    await ctx.db.insert("auditLogs", {
+      action: "knowledge.reviewed",
+      knowledgeId: args.id,
+      knowledgeTitle: item.title,
+      actorId: "demo-user",
+      actorEmail: args.actorEmail,
+      organizationId: args.organizationId,
+      createdAt: now,
+    });
+  },
+});
+

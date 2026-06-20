@@ -20,5 +20,7 @@ export const config = {
     "/api/workos/invite/:path*",
 
     "/retrieval-history/:path*",
+
+    "/reviews/:path*",
   ],
 };

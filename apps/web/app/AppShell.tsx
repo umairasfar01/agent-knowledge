@@ -97,6 +97,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               Approvals
             </Link>
 
+            <Link href="/reviews" prefetch={false} className={navClass("/reviews")}>
+              Reviews
+            </Link>
+
             <Link href="/members" prefetch={false} className={navClass("/members")}>
               Members
             </Link>

@@ -76,7 +76,8 @@ export default defineSchema({
       v.literal("member_role_updated"),
       v.literal("member_removed"),
       v.literal("member_invited"),
-      v.literal("organization_settings_updated")
+      v.literal("organization_settings_updated"),
+      v.literal("knowledge.reviewed")
     ),
 
     knowledgeId: v.optional(v.id("knowledge")),
