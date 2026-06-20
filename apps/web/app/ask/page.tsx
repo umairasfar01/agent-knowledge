@@ -16,6 +16,9 @@ export default function AskPage() {
     const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | "">("");
     const [question, setQuestion] = useState("");
     const [copied, setCopied] = useState(false);
+    const [aiAnswer, setAiAnswer] = useState("");
+    const [aiError, setAiError] = useState("");
+    const [aiLoading, setAiLoading] = useState(false);
 
 
     const agents = useQuery(api.agents.listAgents, {
@@ -91,6 +94,60 @@ export default function AskPage() {
             setCopied(false);
         }, 2000);
     }
+
+    async function generateAiAnswer() {
+        if (!question.trim() || !results || results.length === 0) return;
+
+        setAiAnswer("");
+        setAiError("");
+        setAiLoading(true);
+
+        try {
+            const response = await fetch("/api/ask/answer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    question,
+                    agentName: selectedAgent?.name,
+                    sources: results.map((item) => ({
+                        title: item.title,
+                        category: item.category,
+                        content: item.content,
+                        sourceUrl: item.sourceUrl,
+                    })),
+                }),
+            });
+
+            const text = await response.text();
+
+            const data = text
+                ? (JSON.parse(text) as { answer?: string; error?: string })
+                : { error: "The AI answer route returned an empty response." };
+
+            if (!response.ok) {
+                throw new Error(data.error ?? "Failed to generate AI answer.");
+            }
+
+            setAiAnswer(data.answer ?? "");
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : "Failed to generate AI answer.";
+
+            setAiError(
+                message.includes("RESOURCE_EXHAUSTED") ||
+                    message.includes("Quota exceeded") ||
+                    message.includes("quota")
+                    ? "AI generation is optional and currently unavailable for this Gemini API key/project. You can still use the source-grounded draft answer above."
+                    : message
+            );
+        } finally {
+            setAiLoading(false);
+        }
+    }
+
+
 
 
 
@@ -183,12 +240,34 @@ export default function AskPage() {
                                         {copied ? "Copied" : "Copy draft"}
                                     </button>
 
+                                    {aiError && (
+                                        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+                                            <p className="text-sm text-red-300">{aiError}</p>
+                                        </div>
+                                    )}
+
+                                    {aiAnswer && (
+                                        <div className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="ak-status-success">AI generated</span>
+                                                <span className="ak-status-neutral">Source-grounded</span>
+                                            </div>
+
+                                            <h3 className="mt-4 text-lg font-semibold text-white">AI answer</h3>
+
+                                            <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-neutral-300">
+                                                {aiAnswer}
+                                            </p>
+                                        </div>
+                                    )}
+
                                     <button
                                         type="button"
-                                        disabled
-                                        className="ak-button-secondary opacity-50"
+                                        onClick={generateAiAnswer}
+                                        disabled={aiLoading || !results || results.length === 0}
+                                        className="ak-button-secondary"
                                     >
-                                        AI answer coming soon
+                                        {aiLoading ? "Generating..." : "Generate AI answer optional"}
                                     </button>
                                 </div>
                             </div>

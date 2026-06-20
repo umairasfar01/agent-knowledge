@@ -22,5 +22,8 @@ export const config = {
     "/retrieval-history/:path*",
 
     "/reviews/:path*",
+
+    "/api/ask/answer",
+    "/api/ask/answer/:path*",
   ],
 };
