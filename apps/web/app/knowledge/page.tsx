@@ -57,13 +57,18 @@ export default function KnowledgePage() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("Company Policy");
-  const [status, setStatus] = useState<"draft" | "verified">("draft");
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState<"draft" | "verified" | "">("");
   const [editingId, setEditingId] = useState<Id<"knowledge"> | null>(null);
 
-  const [canUseToAnswer, setCanUseToAnswer] = useState(true);
-  const [canUseToAct, setCanUseToAct] = useState(false);
+  const [canUseToAnswer, setCanUseToAnswer] = useState<boolean | null>(null);
+  const [canUseToAct, setCanUseToAct] = useState<boolean | null>(null);
   const [requiresApproval, setRequiresApproval] = useState(false);
+
+  const effectiveCategory = category || defaultKnowledgeCategory;
+  const effectiveStatus = status || defaultKnowledgeStatus;
+  const effectiveCanUseToAnswer = canUseToAnswer ?? defaultCanUseToAnswer;
+  const effectiveCanUseToAct = canUseToAct ?? defaultCanUseToAct;
 
   const [sourceUrl, setSourceUrl] = useState("");
   const [lastReviewedAt, setLastReviewedAt] = useState("");
@@ -95,11 +100,11 @@ export default function KnowledgePage() {
     const payload = {
       title,
       content,
-      category,
-      status,
-      canUseToAnswer,
-      canUseToAct,
-      requiresApproval,
+      category: effectiveImportCategory,
+      status: effectiveStatus,
+      canUseToAnswer: effectiveCanUseToAnswer,
+      canUseToAct: effectiveCanUseToAct,
+      requiresApproval: effectiveStatus === "draft",
       sourceUrl: sourceUrl.trim() || undefined,
       lastReviewedAt: lastReviewedAt
         ? new Date(lastReviewedAt).getTime()
@@ -115,7 +120,19 @@ export default function KnowledgePage() {
     if (editingId) {
       await updateKnowledge({
         id: editingId,
-        ...payload,
+        title,
+        content,
+        category: effectiveCategory,
+        status: effectiveStatus,
+        canUseToAnswer: effectiveCanUseToAnswer,
+        canUseToAct: effectiveCanUseToAct,
+        requiresApproval: effectiveStatus === "draft" || requiresApproval,
+        sourceUrl: sourceUrl || undefined,
+        lastReviewedAt: undefined,
+        allowedAgentIds,
+        organizationId: DEFAULT_ORG_ID,
+        workosUserId: user?.id ?? "",
+        actorEmail: user?.email ?? "unknown-user",
       });
 
 
@@ -129,10 +146,10 @@ export default function KnowledgePage() {
   function resetForm() {
     setTitle("");
     setContent("");
-    setCategory("Company Policy");
-    setStatus("draft");
-    setCanUseToAnswer(true);
-    setCanUseToAct(false);
+    setCategory("");
+    setStatus("");
+    setCanUseToAnswer(null);
+    setCanUseToAct(null);
     setRequiresApproval(false);
     setSourceUrl("");
     setLastReviewedAt("");
@@ -189,9 +206,14 @@ export default function KnowledgePage() {
 
       const headingMatch = firstLine.match(/^#{1,3}\s+(.+)$/);
 
+      const firstNonEmptyLine =
+        lines.find((line) => line.trim().length > 0)?.trim() ?? "";
+
       const title = headingMatch
         ? headingMatch[1].trim()
-        : `Imported Knowledge ${index + 1}`;
+        : firstNonEmptyLine.length <= 80
+          ? firstNonEmptyLine
+          : `Imported Knowledge ${index + 1}`;
 
       const content = headingMatch
         ? lines.slice(1).join("\n").trim()
@@ -236,7 +258,7 @@ export default function KnowledgePage() {
           status: effectiveImportStatus,
           canUseToAnswer: defaultCanUseToAnswer,
           canUseToAct: defaultCanUseToAct,
-          requiresApproval: effectiveImportStatus === "draft",
+          requiresApproval: effectiveStatus === "draft" || requiresApproval,
           sourceUrl: "",
           lastReviewedAt: undefined,
           allowedAgentIds: importAllowedAgentIds,
@@ -504,8 +526,9 @@ export default function KnowledgePage() {
                 <label className="flex items-center gap-2 text-sm text-neutral-300">
                   <input
                     type="checkbox"
-                    checked={canUseToAnswer}
+                    checked={effectiveCanUseToAnswer}
                     onChange={(e) => setCanUseToAnswer(e.target.checked)}
+                    value={effectiveCategory}
                   />
                   Can use to answer
                 </label>
@@ -513,8 +536,9 @@ export default function KnowledgePage() {
                 <label className="flex items-center gap-2 text-sm text-neutral-300">
                   <input
                     type="checkbox"
-                    checked={canUseToAct}
+                    checked={effectiveCanUseToAct}
                     onChange={(e) => setCanUseToAct(e.target.checked)}
+                    value={effectiveStatus}
                   />
                   Can use to take action
                 </label>
@@ -522,7 +546,7 @@ export default function KnowledgePage() {
                 <label className="flex items-center gap-2 text-sm text-neutral-300">
                   <input
                     type="checkbox"
-                    checked={requiresApproval}
+                    checked={requiresApproval || effectiveStatus === "draft"}
                     onChange={(e) => setRequiresApproval(e.target.checked)}
                   />
                   Requires approval
