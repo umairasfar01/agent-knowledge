@@ -28,6 +28,26 @@ export default function KnowledgePage() {
   const agents = useQuery(api.agents.listAgents, {
     organizationId: DEFAULT_ORG_ID,
   });
+
+  const organizationSettings = useQuery(
+    api.organizations.getOrganizationSettings,
+    {
+      organizationId: DEFAULT_ORG_ID,
+    }
+  );
+
+  const defaultKnowledgeCategory =
+    organizationSettings?.defaultKnowledgeCategory ?? "Company Policy";
+
+  const defaultKnowledgeStatus =
+    organizationSettings?.defaultKnowledgeStatus ?? "draft";
+
+  const defaultCanUseToAnswer =
+    organizationSettings?.defaultCanUseToAnswer ?? true;
+
+  const defaultCanUseToAct =
+    organizationSettings?.defaultCanUseToAct ?? false;
+
   const { user } = useAuth();
 
   const createKnowledge = useMutation(api.knowledge.createKnowledge);
@@ -53,8 +73,15 @@ export default function KnowledgePage() {
   const canManage = canManageKnowledge(currentRole);
 
   const [importText, setImportText] = useState("");
-  const [importCategory, setImportCategory] = useState("Company Policy");
-  const [importStatus, setImportStatus] = useState<"draft" | "verified">("draft");
+  const [importCategory, setImportCategory] = useState("");
+  const [importStatus, setImportStatus] = useState<"draft" | "verified" | "">("");
+
+  const effectiveImportCategory =
+    importCategory || defaultKnowledgeCategory;
+
+  const effectiveImportStatus =
+    importStatus || defaultKnowledgeStatus;
+
   const [importError, setImportError] = useState("");
   const [importSuccess, setImportSuccess] = useState("");
 
@@ -205,11 +232,11 @@ export default function KnowledgePage() {
         await createKnowledge({
           title: item.title,
           content: item.content,
-          category: importCategory,
-          status: importStatus,
-          canUseToAnswer: true,
-          canUseToAct: false,
-          requiresApproval: importStatus === "draft",
+          category: effectiveImportCategory,
+          status: effectiveImportStatus,
+          canUseToAnswer: defaultCanUseToAnswer,
+          canUseToAct: defaultCanUseToAct,
+          requiresApproval: effectiveImportStatus === "draft",
           sourceUrl: "",
           lastReviewedAt: undefined,
           allowedAgentIds: importAllowedAgentIds,
@@ -222,6 +249,8 @@ export default function KnowledgePage() {
       setImportSuccess(`Imported ${items.length} knowledge item${items.length === 1 ? "" : "s"}.`);
       setImportAllowedAgentIds([]);
       setImportText("");
+      setImportCategory("");
+      setImportStatus("");
     } catch (error) {
       setImportError(
         error instanceof Error ? error.message : "Failed to import knowledge."
@@ -312,7 +341,7 @@ export default function KnowledgePage() {
                 <div>
                   <label className="ak-label">Category</label>
                   <input
-                    value={importCategory}
+                    value={effectiveImportCategory}
                     onChange={(e) => setImportCategory(e.target.value)}
                     className="ak-input mt-2"
                     placeholder="Company Policy"
@@ -322,7 +351,7 @@ export default function KnowledgePage() {
                 <div>
                   <label className="ak-label">Status</label>
                   <select
-                    value={importStatus}
+                    value={effectiveImportStatus}
                     onChange={(e) =>
                       setImportStatus(e.target.value as "draft" | "verified")
                     }
