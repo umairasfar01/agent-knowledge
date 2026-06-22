@@ -11,9 +11,14 @@ import { canManageKnowledge } from "@/lib/role";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useToast } from "../components/ToastProvider";
+import { useEffect, useState } from "react";
 
 export default function ApprovalsPage() {
     const { showToast } = useToast();
+    const [rejectingKnowledgeId, setRejectingKnowledgeId] =
+        useState<Id<"knowledge"> | null>(null);
+    const [rejectionNote, setRejectionNote] = useState("");
+    const [rejectionError, setRejectionError] = useState("");
     const approvalItems = useQuery(api.knowledge.listApprovalQueue, {
         organizationId: DEFAULT_ORG_ID,
     });
@@ -22,6 +27,20 @@ export default function ApprovalsPage() {
     const currentRole = useCurrentRole();
     const canManage = canManageKnowledge(currentRole);
     const rejectKnowledge = useMutation(api.knowledge.rejectKnowledge);
+
+    useEffect(() => {
+        if (!rejectingKnowledgeId) return;
+
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape") {
+                closeRejectDialog();
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [rejectingKnowledgeId]);
 
     async function handleApproveKnowledge(id: Id<"knowledge">) {
         await approveKnowledge({
@@ -38,17 +57,32 @@ export default function ApprovalsPage() {
         });
     }
 
-    async function handleRejectKnowledge(id: Id<"knowledge">) {
-        const reviewNote = window.prompt("Why are you rejecting this knowledge?");
+    function openRejectDialog(id: Id<"knowledge">) {
+        setRejectingKnowledgeId(id);
+        setRejectionNote("");
+        setRejectionError("");
+    }
+
+    function closeRejectDialog() {
+        setRejectingKnowledgeId(null);
+        setRejectionNote("");
+        setRejectionError("");
+    }
+
+    async function handleRejectKnowledge() {
+        if (!rejectingKnowledgeId) return;
+
+        setRejectionError("");
 
         await rejectKnowledge({
-            id,
+            id: rejectingKnowledgeId,
             organizationId: DEFAULT_ORG_ID,
             workosUserId: user?.id ?? "",
             actorEmail: user?.email ?? "unknown-user",
-            reviewNote: reviewNote ?? "",
+            reviewNote: rejectionNote,
         });
 
+        closeRejectDialog();
         showToast({
             type: "success",
             title: "Knowledge rejected",
@@ -143,7 +177,7 @@ export default function ApprovalsPage() {
 
                                         <button
                                             type="button"
-                                            onClick={() => handleRejectKnowledge(item._id)}
+                                            onClick={() => openRejectDialog(item._id)}
                                             className="ak-button-danger"
                                         >
                                             Reject
@@ -155,6 +189,82 @@ export default function ApprovalsPage() {
                         </div>
                     )}
                 </section>
+
+                {rejectingKnowledgeId && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm"
+                        role="presentation"
+                        onMouseDown={(event) => {
+                            if (event.target === event.currentTarget) {
+                                closeRejectDialog();
+                            }
+                        }}
+                    >
+                        <div
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="reject-knowledge-title"
+                            aria-describedby="reject-knowledge-description"
+                            className="w-full max-w-lg rounded-2xl border border-neutral-800 bg-neutral-950 p-6 text-white shadow-2xl shadow-black/40"
+                        >
+                            <div className="mb-5 h-1 w-14 rounded-full bg-red-400" />
+
+                            <h2
+                                id="reject-knowledge-title"
+                                className="text-lg font-semibold tracking-tight text-white"
+                            >
+                                Reject knowledge
+                            </h2>
+                            <p
+                                id="reject-knowledge-description"
+                                className="mt-3 text-sm leading-6 text-neutral-400"
+                            >
+                                Add a reviewer note explaining why this knowledge item is being rejected.
+                            </p>
+
+                            <div className="mt-5">
+                                <label className="ak-label">Reviewer note</label>
+                                <textarea
+                                    value={rejectionNote}
+                                    onChange={(event) => setRejectionNote(event.target.value)}
+                                    className="ak-textarea mt-2 min-h-32"
+                                    placeholder="Explain what needs to change before approval."
+                                />
+                            </div>
+
+                            {rejectionError && (
+                                <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+                                    <p className="text-sm text-red-300">{rejectionError}</p>
+                                </div>
+                            )}
+
+                            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                                <button
+                                    type="button"
+                                    onClick={closeRejectDialog}
+                                    className="ak-button-secondary justify-center"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        void handleRejectKnowledge().catch((error) => {
+                                            setRejectionError(
+                                                error instanceof Error
+                                                    ? error.message
+                                                    : "Failed to reject knowledge."
+                                            );
+                                        });
+                                    }}
+                                    className="ak-button-danger justify-center"
+                                >
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </AppShell>
     );
