@@ -51,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     return `block rounded-xl px-3 py-2.5 text-sm font-medium transition ${isActive
       ? "bg-white text-neutral-950 shadow-sm"
-      : "text-neutral-400 hover:bg-neutral-900/80 hover:text-white"
+      : "text-neutral-400 hover:bg-[#0b0b0b] hover:text-white"
       }`;
   }
 
@@ -85,12 +85,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 
   return (
-    <main className="min-h-screen bg-neutral-950 bg-[radial-gradient(circle_at_top_left,_rgba(64,64,64,0.24),_transparent_34%)] text-white">
+    <main className="min-h-screen bg-[#050505] bg-[radial-gradient(circle_at_top_left,_rgba(38,38,38,0.18),_transparent_34%)] text-white">
       <CommandPalette />
 
       <div className="grid min-h-screen md:grid-cols-[280px_1fr]">
-        <aside className="border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur md:sticky md:top-0 md:h-screen md:overflow-y-auto md:border-b-0 md:border-r md:p-6">
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 shadow-sm">
+        <aside className="border-b border-neutral-800 bg-[#080808] p-4 backdrop-blur md:sticky md:top-0 md:h-screen md:overflow-y-auto md:border-b-0 md:border-r md:p-6">
+          <div className="rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-4 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
               Agent Knowledge
             </p>
@@ -141,7 +141,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
 
 
-            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm md:mt-6">
+            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-4 shadow-sm md:mt-6">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                 Organization
               </p>
@@ -153,14 +153,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   onClick={() => switchToOrganization(currentOrgId)}
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950/60 px-3 py-2 text-xs font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-[#0b0b0b] px-3 py-2 text-xs font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
                 >
                   Use WorkOS organization
                 </button>
               )}
             </div>
 
-            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm md:mt-6">
+            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-4 shadow-sm md:mt-6">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                 Signed in as
               </p>
@@ -178,7 +178,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={() => signOut()}
-                className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950/60 px-3 py-2 text-sm font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-[#0b0b0b] px-3 py-2 text-sm font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
               >
                 Sign out
               </button>
