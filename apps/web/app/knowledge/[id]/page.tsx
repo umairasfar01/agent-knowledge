@@ -12,6 +12,7 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
+import { Breadcrumbs } from "../../components/Breadcrumbs";
 
 export default function KnowledgeDetailPage() {
     const params = useParams();
@@ -45,6 +46,16 @@ export default function KnowledgeDetailPage() {
     return (
         <AppShell>
             <div className="ak-page">
+                <Breadcrumbs
+                    items={[
+                        { label: "Knowledge", href: "/knowledge" },
+                        {
+                            label:
+                                item && item !== null ? item.title : "Knowledge item",
+                        },
+                    ]}
+                />
+
                 <div>
                     <Link
                         href="/knowledge"

@@ -7,6 +7,7 @@ import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { AppShell } from "../../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { Breadcrumbs } from "../../components/Breadcrumbs";
 
 
 export default function AgentDetailPage() {
@@ -27,6 +28,13 @@ export default function AgentDetailPage() {
   return (
     <AppShell>
       <div className="ak-page">
+        <Breadcrumbs
+          items={[
+            { label: "Agents", href: "/agents" },
+            { label: agent && agent !== null ? agent.name : "Agent" },
+          ]}
+        />
+
         <div>
           <Link
             href="/agents"
