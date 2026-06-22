@@ -11,6 +11,7 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 import { canManageKnowledge } from "@/lib/role";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { useToast } from "../components/ToastProvider";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 export default function KnowledgePage() {
   const { showToast } = useToast();
@@ -62,6 +63,9 @@ export default function KnowledgePage() {
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState<"draft" | "verified" | "">("");
   const [editingId, setEditingId] = useState<Id<"knowledge"> | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<Id<"knowledge"> | null>(
+    null
+  );
 
   const [canUseToAnswer, setCanUseToAnswer] = useState<boolean | null>(null);
   const [canUseToAct, setCanUseToAct] = useState<boolean | null>(null);
@@ -401,6 +405,8 @@ export default function KnowledgePage() {
       title: "Knowledge deleted",
       description: "The knowledge item was removed.",
     });
+
+    setDeleteTargetId(null);
   }
 
 
@@ -914,7 +920,7 @@ export default function KnowledgePage() {
                       {canManage && (
                         <button
                           type="button"
-                          onClick={() => handleDeleteKnowledge(item._id)}
+                          onClick={() => setDeleteTargetId(item._id)}
                           className="ak-button-danger px-3.5 py-2"
                         >
                           Delete
@@ -996,6 +1002,19 @@ export default function KnowledgePage() {
             </div>
           )}
         </section>
+
+        <ConfirmDialog
+          open={deleteTargetId !== null}
+          title="Delete knowledge?"
+          description="This removes the knowledge item from the workspace. This action cannot be undone."
+          confirmLabel="Delete knowledge"
+          tone="danger"
+          onConfirm={() => {
+            if (!deleteTargetId) return;
+            return handleDeleteKnowledge(deleteTargetId);
+          }}
+          onCancel={() => setDeleteTargetId(null)}
+        />
       </div>
     </AppShell>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
@@ -10,6 +11,7 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 
 export default function KnowledgeDetailPage() {
     const params = useParams();
@@ -33,6 +35,8 @@ export default function KnowledgeDetailPage() {
     const { user } = useAuth();
     const currentRole = useCurrentRole();
     const canManage = canManageKnowledge(currentRole);
+    const [restoreTargetId, setRestoreTargetId] =
+        useState<Id<"knowledgeVersions"> | null>(null);
 
     const restoreKnowledgeVersion = useMutation(
         api.knowledge.restoreKnowledgeVersion
@@ -200,7 +204,7 @@ export default function KnowledgeDetailPage() {
                                                     {canManage && (
                                                         <button
                                                             type="button"
-                                                            onClick={() => handleRestoreVersion(version._id)}
+                                                            onClick={() => setRestoreTargetId(version._id)}
                                                             className="ak-button-secondary w-fit px-3 py-2 text-xs"
                                                         >
                                                             Restore this version
@@ -278,21 +282,30 @@ export default function KnowledgeDetailPage() {
                         </section>
                     </>
                 )}
+
+                <ConfirmDialog
+                    open={restoreTargetId !== null}
+                    title="Restore this version?"
+                    description="This will replace the current title, content, category, and status with the selected version."
+                    confirmLabel="Restore version"
+                    tone="default"
+                    onConfirm={() => {
+                        if (!restoreTargetId) return;
+                        return handleRestoreVersion(restoreTargetId);
+                    }}
+                    onCancel={() => setRestoreTargetId(null)}
+                />
             </div>
         </AppShell>
     );
     async function handleRestoreVersion(versionId: Id<"knowledgeVersions">) {
-        const confirmed = window.confirm(
-            "Restore this version? This will replace the current title, content, category, and status."
-        );
-
-        if (!confirmed) return;
-
         await restoreKnowledgeVersion({
             versionId,
             actorEmail: user?.email ?? "unknown-user",
             organizationId: DEFAULT_ORG_ID,
             workosUserId: user?.id ?? "",
         });
+
+        setRestoreTargetId(null);
     }
 }

@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
 import { useToast } from "../components/ToastProvider";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 export default function MembersPage() {
     const { showToast } = useToast();
@@ -28,6 +29,8 @@ export default function MembersPage() {
     const removeMember = useMutation(api.users.removeMember);
 
     const [memberError, setMemberError] = useState("");
+    const [removeTargetId, setRemoveTargetId] =
+        useState<Id<"memberships"> | null>(null);
 
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteName, setInviteName] = useState("");
@@ -66,10 +69,6 @@ export default function MembersPage() {
     }
 
     async function handleRemoveMember(membershipId: Id<"memberships">) {
-        const confirmed = window.confirm("Remove this member from the organization?");
-
-        if (!confirmed) return;
-
         setMemberError("");
 
         try {
@@ -85,6 +84,7 @@ export default function MembersPage() {
                 title: "Member removed",
                 description: "The member was removed from the workspace.",
             });
+            setRemoveTargetId(null);
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : "Failed to remove member.";
@@ -101,6 +101,7 @@ export default function MembersPage() {
                 title: "Remove failed",
                 description: cleanMessage,
             });
+            setRemoveTargetId(null);
         }
     }
 
@@ -322,7 +323,7 @@ export default function MembersPage() {
                                                 {canManage ? (
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleRemoveMember(member._id)}
+                                                        onClick={() => setRemoveTargetId(member._id)}
                                                         className="ak-button-danger px-3 py-1.5 text-xs"
                                                     >
                                                         Remove
@@ -338,6 +339,19 @@ export default function MembersPage() {
                         </div>
                     )}
                 </section>
+
+                <ConfirmDialog
+                    open={removeTargetId !== null}
+                    title="Remove member?"
+                    description="This removes the member from the workspace. Role protections still apply."
+                    confirmLabel="Remove member"
+                    tone="danger"
+                    onConfirm={() => {
+                        if (!removeTargetId) return;
+                        return handleRemoveMember(removeTargetId);
+                    }}
+                    onCancel={() => setRemoveTargetId(null)}
+                />
             </div>
         </AppShell>
     );

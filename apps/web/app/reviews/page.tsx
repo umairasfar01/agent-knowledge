@@ -4,13 +4,19 @@ import Link from "next/link";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useToast } from "../components/ToastProvider";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { useState } from "react";
 
 export default function ReviewsPage() {
   const { showToast } = useToast();
   const { user } = useAuth({ ensureSignedIn: true });
+  const [reviewTargetId, setReviewTargetId] = useState<Id<"knowledge"> | null>(
+    null
+  );
 
   const reviewItems = useQuery(api.knowledge.listKnowledgeDueForReview, {
     organizationId: DEFAULT_ORG_ID,
@@ -19,7 +25,7 @@ export default function ReviewsPage() {
 
   const markReviewed = useMutation(api.knowledge.markKnowledgeReviewed);
 
-  async function handleMarkReviewed(id: string) {
+  async function handleMarkReviewed(id: Id<"knowledge">) {
     await markReviewed({
       id: id as never,
       organizationId: DEFAULT_ORG_ID,
@@ -32,6 +38,8 @@ export default function ReviewsPage() {
       title: "Marked reviewed",
       description: "The knowledge item review date was updated.",
     });
+
+    setReviewTargetId(null);
   }
 
   return (
@@ -107,7 +115,7 @@ export default function ReviewsPage() {
 
                       <button
                         type="button"
-                        onClick={() => handleMarkReviewed(item._id)}
+                        onClick={() => setReviewTargetId(item._id)}
                         className="ak-button-primary"
                       >
                         Mark reviewed
@@ -119,6 +127,19 @@ export default function ReviewsPage() {
             </div>
           )}
         </section>
+
+        <ConfirmDialog
+          open={reviewTargetId !== null}
+          title="Mark as reviewed?"
+          description="This updates the knowledge item review date to today."
+          confirmLabel="Mark reviewed"
+          tone="default"
+          onConfirm={() => {
+            if (!reviewTargetId) return;
+            return handleMarkReviewed(reviewTargetId);
+          }}
+          onCancel={() => setReviewTargetId(null)}
+        />
       </div>
     </AppShell>
   );
