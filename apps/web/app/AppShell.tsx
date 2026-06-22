@@ -8,6 +8,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { getCurrentOrgId } from "@/lib/org";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { CommandPalette } from "./components/CommandPalette";
 
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -85,6 +86,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <main className="min-h-screen bg-neutral-950 bg-[radial-gradient(circle_at_top_left,_rgba(64,64,64,0.24),_transparent_34%)] text-white">
+      <CommandPalette />
+
       <div className="grid min-h-screen md:grid-cols-[280px_1fr]">
         <aside className="border-b border-neutral-800 bg-neutral-950/95 p-4 backdrop-blur md:sticky md:top-0 md:h-screen md:overflow-y-auto md:border-b-0 md:border-r md:p-6">
           <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-4 shadow-sm">
@@ -97,6 +100,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <p className="mt-2 text-xs leading-5 text-neutral-500">
               Trusted knowledge for agents
             </p>
+
+            <div className="mt-3 inline-flex items-center gap-1 rounded-lg border border-neutral-800 bg-neutral-950/70 px-2 py-1 text-xs text-neutral-500">
+              <span>Press</span>
+              <kbd className="rounded border border-neutral-700 px-1 text-neutral-300">
+                Ctrl
+              </kbd>
+              <span>+</span>
+              <kbd className="rounded border border-neutral-700 px-1 text-neutral-300">
+                K
+              </kbd>
+            </div>
+
           </div>
 
           <nav className="mt-6">
