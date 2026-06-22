@@ -8,8 +8,10 @@ import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
+import { useToast } from "../components/ToastProvider";
 
 export default function SettingsPage() {
+  const { showToast } = useToast();
   const { user } = useAuth({ ensureSignedIn: true });
   const currentRole = useCurrentRole();
   const canManage = currentRole !== "loading" && canManageKnowledge(currentRole);
@@ -54,14 +56,12 @@ export default function SettingsPage() {
     defaultCanActInput ?? settings?.defaultCanUseToAct ?? false;
 
 
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
 
   async function handleSaveSettings(e: React.FormEvent) {
     e.preventDefault();
 
-    setMessage("");
     setError("");
 
     try {
@@ -76,18 +76,28 @@ export default function SettingsPage() {
         defaultCanUseToAct: defaultCanAct,
       });
 
-      setMessage("Organization settings updated.");
+      showToast({
+        type: "success",
+        title: "Settings saved",
+        description: "Organization settings were updated.",
+      });
       setDisplayNameInput(null);
       setDefaultCategoryInput(null);
       setDefaultStatusInput(null);
       setDefaultCanAnswerInput(null);
       setDefaultCanActInput(null);
     } catch (err) {
-      setError(
+      const message =
         err instanceof Error
           ? err.message
-          : "Failed to update organization settings."
-      );
+          : "Failed to update organization settings.";
+
+      setError(message);
+      showToast({
+        type: "error",
+        title: "Save failed",
+        description: message,
+      });
     }
   }
 
@@ -197,12 +207,6 @@ export default function SettingsPage() {
                     </span>
                   </label>
                 </div>
-
-                {message && (
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-                    <p className="text-sm text-emerald-300">{message}</p>
-                  </div>
-                )}
 
                 {error && (
                   <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">

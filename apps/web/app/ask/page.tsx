@@ -8,11 +8,13 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { useToast } from "../components/ToastProvider";
 
 
 
 
 export default function AskPage() {
+    const { showToast } = useToast();
     const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | "">("");
     const [question, setQuestion] = useState("");
     const [copied, setCopied] = useState(false);
@@ -89,6 +91,11 @@ export default function AskPage() {
         await navigator.clipboard.writeText(text);
 
         setCopied(true);
+        showToast({
+            type: "success",
+            title: "Draft copied",
+            description: "The source-grounded draft is on your clipboard.",
+        });
 
         setTimeout(() => {
             setCopied(false);
@@ -131,17 +138,28 @@ export default function AskPage() {
             }
 
             setAiAnswer(data.answer ?? "");
+            showToast({
+                type: "success",
+                title: "AI answer generated",
+                description: "The answer was generated from the retrieved sources.",
+            });
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : "Failed to generate AI answer.";
 
-            setAiError(
+            const cleanMessage =
                 message.includes("RESOURCE_EXHAUSTED") ||
                     message.includes("Quota exceeded") ||
-                    message.includes("quota")
+                    message.toLowerCase().includes("quota")
                     ? "AI generation is optional and currently unavailable for this Gemini API key/project. You can still use the source-grounded draft answer above."
-                    : message
-            );
+                    : message;
+
+            setAiError(cleanMessage);
+            showToast({
+                type: "error",
+                title: "AI unavailable",
+                description: cleanMessage,
+            });
         } finally {
             setAiLoading(false);
         }

@@ -6,8 +6,10 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { useToast } from "../components/ToastProvider";
 
 export default function ReviewsPage() {
+  const { showToast } = useToast();
   const { user } = useAuth({ ensureSignedIn: true });
 
   const reviewItems = useQuery(api.knowledge.listKnowledgeDueForReview, {
@@ -23,6 +25,12 @@ export default function ReviewsPage() {
       organizationId: DEFAULT_ORG_ID,
       workosUserId: user?.id ?? "",
       actorEmail: user?.email ?? "unknown-user"
+    });
+
+    showToast({
+      type: "success",
+      title: "Marked reviewed",
+      description: "The knowledge item review date was updated.",
     });
   }
 

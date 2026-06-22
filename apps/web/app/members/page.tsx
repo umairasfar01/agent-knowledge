@@ -10,8 +10,11 @@ import { useState } from "react";
 
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
+import { useToast } from "../components/ToastProvider";
 
 export default function MembersPage() {
+    const { showToast } = useToast();
+
     const members = useQuery(api.users.listMembers, {
         organizationId: DEFAULT_ORG_ID,
     });
@@ -32,20 +35,34 @@ export default function MembersPage() {
         "member"
     );
     const [inviteError, setInviteError] = useState("");
-    const [inviteSuccess, setInviteSuccess] = useState("");
 
 
     async function handleRoleChange(
         membershipId: Id<"memberships">,
         role: "owner" | "admin" | "member"
     ) {
-        await updateMemberRole({
-            membershipId,
-            role,
-            organizationId: DEFAULT_ORG_ID,
-            workosUserId: user?.id ?? "",
-            actorEmail: user?.email ?? "unknown-user",
-        });
+        try {
+            await updateMemberRole({
+                membershipId,
+                role,
+                organizationId: DEFAULT_ORG_ID,
+                workosUserId: user?.id ?? "",
+                actorEmail: user?.email ?? "unknown-user",
+            });
+
+            showToast({
+                type: "success",
+                title: "Role changed",
+                description: `Member role updated to ${role}.`,
+            });
+        } catch (error) {
+            showToast({
+                type: "error",
+                title: "Role change failed",
+                description:
+                    error instanceof Error ? error.message : "Could not update the member role.",
+            });
+        }
     }
 
     async function handleRemoveMember(membershipId: Id<"memberships">) {
@@ -62,6 +79,12 @@ export default function MembersPage() {
                 workosUserId: user?.id ?? "",
                 actorEmail: user?.email ?? "unknown-user",
             });
+
+            showToast({
+                type: "success",
+                title: "Member removed",
+                description: "The member was removed from the workspace.",
+            });
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : "Failed to remove member.";
@@ -73,6 +96,11 @@ export default function MembersPage() {
                 : "Failed to remove member.";
 
             setMemberError(cleanMessage);
+            showToast({
+                type: "error",
+                title: "Remove failed",
+                description: cleanMessage,
+            });
         }
     }
 
@@ -80,7 +108,6 @@ export default function MembersPage() {
         e.preventDefault();
 
         setInviteError("");
-        setInviteSuccess("");
 
         try {
             const response = await fetch("/api/workos/invite", {
@@ -102,7 +129,11 @@ export default function MembersPage() {
                 throw new Error(data.error ?? "Failed to send invitation.");
             }
 
-            setInviteSuccess(`Added ${inviteEmail} as ${inviteRole}.`);
+            showToast({
+                type: "success",
+                title: "Invitation sent",
+                description: `${inviteEmail} was added as ${inviteRole}.`,
+            });
             setInviteEmail("");
             setInviteName("");
             setInviteRole("member");
@@ -112,6 +143,11 @@ export default function MembersPage() {
                 error instanceof Error ? error.message : "Failed to add member.";
 
             setInviteError(message);
+            showToast({
+                type: "error",
+                title: "Invite failed",
+                description: message,
+            });
         }
     }
 
@@ -184,11 +220,6 @@ export default function MembersPage() {
                             </div>
                         )}
 
-                        {inviteSuccess && (
-                            <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-                                <p className="text-sm text-emerald-300">{inviteSuccess}</p>
-                            </div>
-                        )}
                     </section>
                 )}
 

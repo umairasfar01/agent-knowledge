@@ -10,8 +10,10 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { canManageKnowledge } from "@/lib/role";
 import { useCurrentRole } from "@/lib/useCurrentRole";
+import { useToast } from "../components/ToastProvider";
 
 export default function KnowledgePage() {
+  const { showToast } = useToast();
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "verified">(
@@ -88,7 +90,6 @@ export default function KnowledgePage() {
     importStatus || defaultKnowledgeStatus;
 
   const [importError, setImportError] = useState("");
-  const [importSuccess, setImportSuccess] = useState("");
 
   const [importAllowedAgentIds, setImportAllowedAgentIds] = useState<Id<"agents">[]>([]);
 
@@ -134,6 +135,12 @@ export default function KnowledgePage() {
       content,
       "text/markdown;charset=utf-8"
     );
+
+    showToast({
+      type: "success",
+      title: "Markdown exported",
+      description: `${knowledgeItems.length} knowledge item${knowledgeItems.length === 1 ? "" : "s"} downloaded.`,
+    });
   }
 
   function exportKnowledgeCsv() {
@@ -171,6 +178,12 @@ export default function KnowledgePage() {
       content,
       "text/csv;charset=utf-8"
     );
+
+    showToast({
+      type: "success",
+      title: "CSV exported",
+      description: `${knowledgeItems.length} knowledge item${knowledgeItems.length === 1 ? "" : "s"} downloaded.`,
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -216,9 +229,20 @@ export default function KnowledgePage() {
         actorEmail: user?.email ?? "unknown-user",
       });
 
+      showToast({
+        type: "success",
+        title: "Knowledge updated",
+        description: "The knowledge item was saved.",
+      });
 
     } else {
       await createKnowledge(payload);
+
+      showToast({
+        type: "success",
+        title: "Knowledge created",
+        description: "The knowledge item was added.",
+      });
     }
 
     resetForm();
@@ -321,7 +345,6 @@ export default function KnowledgePage() {
     e.preventDefault();
 
     setImportError("");
-    setImportSuccess("");
 
     const items = importPreview;
 
@@ -349,7 +372,11 @@ export default function KnowledgePage() {
         });
       }
 
-      setImportSuccess(`Imported ${items.length} knowledge item${items.length === 1 ? "" : "s"}.`);
+      showToast({
+        type: "success",
+        title: "Knowledge imported",
+        description: `${items.length} item${items.length === 1 ? "" : "s"} added to the knowledge base.`,
+      });
       setImportAllowedAgentIds([]);
       setImportText("");
       setImportCategory("");
@@ -359,6 +386,21 @@ export default function KnowledgePage() {
         error instanceof Error ? error.message : "Failed to import knowledge."
       );
     }
+  }
+
+  async function handleDeleteKnowledge(id: Id<"knowledge">) {
+    await deleteKnowledge({
+      id,
+      actorEmail: user?.email ?? "unknown-user",
+      organizationId: "default-org",
+      workosUserId: user?.id ?? "",
+    });
+
+    showToast({
+      type: "success",
+      title: "Knowledge deleted",
+      description: "The knowledge item was removed.",
+    });
   }
 
 
@@ -527,12 +569,6 @@ export default function KnowledgePage() {
               {importError && (
                 <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
                   <p className="text-sm text-red-300">{importError}</p>
-                </div>
-              )}
-
-              {importSuccess && (
-                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-                  <p className="text-sm text-emerald-300">{importSuccess}</p>
                 </div>
               )}
 
@@ -878,14 +914,7 @@ export default function KnowledgePage() {
                       {canManage && (
                         <button
                           type="button"
-                          onClick={() =>
-                            deleteKnowledge({
-                              id: item._id,
-                              actorEmail: user?.email ?? "unknown-user",
-                              organizationId: "default-org",
-                              workosUserId: user?.id ?? "",
-                            })
-                          }
+                          onClick={() => handleDeleteKnowledge(item._id)}
                           className="ak-button-danger px-3.5 py-2"
                         >
                           Delete

@@ -10,8 +10,10 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 import { canManageKnowledge } from "@/lib/role";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useToast } from "../components/ToastProvider";
 
 export default function ApprovalsPage() {
+    const { showToast } = useToast();
     const approvalItems = useQuery(api.knowledge.listApprovalQueue, {
         organizationId: DEFAULT_ORG_ID,
     });
@@ -20,6 +22,21 @@ export default function ApprovalsPage() {
     const currentRole = useCurrentRole();
     const canManage = canManageKnowledge(currentRole);
     const rejectKnowledge = useMutation(api.knowledge.rejectKnowledge);
+
+    async function handleApproveKnowledge(id: Id<"knowledge">) {
+        await approveKnowledge({
+            id,
+            actorEmail: user?.email ?? "unknown-user",
+            organizationId: DEFAULT_ORG_ID,
+            workosUserId: user?.id ?? "",
+        });
+
+        showToast({
+            type: "success",
+            title: "Knowledge approved",
+            description: "The item can now be used by agents.",
+        });
+    }
 
     async function handleRejectKnowledge(id: Id<"knowledge">) {
         const reviewNote = window.prompt("Why are you rejecting this knowledge?");
@@ -30,6 +47,12 @@ export default function ApprovalsPage() {
             workosUserId: user?.id ?? "",
             actorEmail: user?.email ?? "unknown-user",
             reviewNote: reviewNote ?? "",
+        });
+
+        showToast({
+            type: "success",
+            title: "Knowledge rejected",
+            description: "The item was removed from the approval queue.",
         });
     }
 
@@ -110,14 +133,7 @@ export default function ApprovalsPage() {
 
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    approveKnowledge({
-                                                        id: item._id,
-                                                        actorEmail: user?.email ?? "unknown-user",
-                                                        organizationId: DEFAULT_ORG_ID,
-                                                        workosUserId: user?.id ?? "",
-                                                    })
-                                                }
+                                                onClick={() => handleApproveKnowledge(item._id)}
                                                 className="ak-button-primary px-3 py-1 text-xs"
                                             >
                                                 Mark as approved
