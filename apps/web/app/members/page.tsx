@@ -12,6 +12,7 @@ import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
 import { useToast } from "../components/ToastProvider";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { SkeletonCard, SkeletonList } from "../components/Skeleton";
 
 export default function MembersPage() {
     const { showToast } = useToast();
@@ -157,9 +158,7 @@ export default function MembersPage() {
             <div className="ak-page">
 
                 {currentRole === "loading" && (
-                    <div className="ak-card">
-                        <p className="text-neutral-300">Loading your workspace access...</p>
-                    </div>
+                    <SkeletonCard lines={2} />
                 )}
 
                 {canManage && (
@@ -242,17 +241,7 @@ export default function MembersPage() {
                     )}
 
                     {members === undefined ? (
-                        <div className="mt-5 space-y-3">
-                            {[1, 2, 3].map((item) => (
-                                <div
-                                    key={item}
-                                    className="ak-panel"
-                                >
-                                    <div className="h-5 w-1/3 rounded bg-neutral-800" />
-                                    <div className="mt-3 h-4 w-1/4 rounded bg-neutral-800" />
-                                </div>
-                            ))}
-                        </div>
+                        <SkeletonList count={4} className="mt-5 space-y-3" lines={2} />
                     ) : members.length === 0 ? (
                         <div className="ak-panel mt-5">
                             <p className="text-neutral-300">No members found.</p>

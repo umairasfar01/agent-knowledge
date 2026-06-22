@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { SkeletonCard, SkeletonList } from "../components/Skeleton";
 
 export default function DashboardPage() {
   const metrics = useQuery(api.dashboard.getDashboardMetrics, {
@@ -75,9 +76,25 @@ export default function DashboardPage() {
         </header>
 
         {metrics === undefined ? (
-          <section className="ak-card">
-            <p className="ak-muted">Loading dashboard metrics...</p>
-          </section>
+          <>
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={2} />
+              <SkeletonCard lines={2} />
+            </section>
+
+            <section className="grid gap-6 xl:grid-cols-2">
+              <div className="ak-card">
+                <SkeletonList count={3} lines={2} />
+              </div>
+              <div className="ak-card">
+                <SkeletonList count={3} lines={2} />
+              </div>
+            </section>
+          </>
         ) : (
           <>
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

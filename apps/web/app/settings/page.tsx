@@ -9,6 +9,7 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { canManageKnowledge } from "@/lib/role";
 import { useToast } from "../components/ToastProvider";
+import { SkeletonCard, SkeletonLine } from "../components/Skeleton";
 
 export default function SettingsPage() {
   const { showToast } = useToast();
@@ -124,7 +125,18 @@ export default function SettingsPage() {
             </div>
 
             {settings === undefined ? (
-              <p className="ak-muted">Loading settings...</p>
+              <div className="space-y-5">
+                <SkeletonLine className="h-10 w-full" />
+                <div className="grid gap-4 md:grid-cols-2">
+                  <SkeletonLine className="h-10 w-full" />
+                  <SkeletonLine className="h-10 w-full" />
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <SkeletonCard lines={2} />
+                  <SkeletonCard lines={2} />
+                </div>
+                <SkeletonLine className="h-10 w-32" />
+              </div>
             ) : (
               <>
                 <div>
@@ -230,18 +242,26 @@ export default function SettingsPage() {
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                 Signed in user
               </p>
-              <p className="mt-2 text-sm font-medium text-white">
-                {user?.email ?? "Loading user..."}
-              </p>
+              {user?.email ? (
+                <p className="mt-2 text-sm font-medium text-white">
+                  {user.email}
+                </p>
+              ) : (
+                <SkeletonLine className="mt-3 h-4 w-2/3" />
+              )}
             </section>
 
             <section className="ak-card">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                 Current role
               </p>
-              <p className="mt-2 text-sm font-medium text-white">
-                {currentRole === "loading" ? "Loading..." : currentRole}
-              </p>
+              {currentRole === "loading" ? (
+                <SkeletonLine className="mt-3 h-4 w-24" />
+              ) : (
+                <p className="mt-2 text-sm font-medium text-white">
+                  {currentRole}
+                </p>
+              )}
             </section>
 
             <section className="ak-card">

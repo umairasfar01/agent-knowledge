@@ -5,6 +5,7 @@ import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useMemo, useState } from "react";
+import { SkeletonList } from "../components/Skeleton";
 
 export default function RetrievalHistoryPage() {
     const logs = useQuery(api.knowledge.listRetrievalLogs, {
@@ -111,7 +112,7 @@ export default function RetrievalHistoryPage() {
                     </div>
 
                     {logs === undefined ? (
-                        <p className="ak-muted">Loading retrieval history...</p>
+                        <SkeletonList count={4} lines={3} />
                     ) : logs.length === 0 ? (
                         <div className="ak-panel">
                             <p className="font-medium text-white">No retrieval history yet.</p>

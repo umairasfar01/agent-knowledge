@@ -12,6 +12,7 @@ import { canManageKnowledge } from "@/lib/role";
 import { useCurrentRole } from "@/lib/useCurrentRole";
 import { useToast } from "../components/ToastProvider";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { SkeletonLine, SkeletonList } from "../components/Skeleton";
 
 export default function KnowledgePage() {
   const { showToast } = useToast();
@@ -536,7 +537,10 @@ export default function KnowledgePage() {
 
                   <div className="mt-2 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
                     {agents === undefined ? (
-                      <p className="text-sm text-neutral-500">Loading agents...</p>
+                      <div className="space-y-3">
+                        <SkeletonLine className="h-5 w-1/3" />
+                        <SkeletonLine className="h-10 w-full" />
+                      </div>
                     ) : agents.length === 0 ? (
                       <p className="text-sm text-neutral-500">
                         No agents yet. Create an agent before importing assigned knowledge.
@@ -705,7 +709,10 @@ export default function KnowledgePage() {
 
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 {agents === undefined ? (
-                  <p className="text-sm text-neutral-400">Loading agents...</p>
+                  <div className="space-y-3 md:col-span-2">
+                    <SkeletonLine className="h-5 w-1/3" />
+                    <SkeletonLine className="h-10 w-full" />
+                  </div>
                 ) : agents.length === 0 ? (
                   <p className="text-sm text-neutral-400">
                     No agents yet. Create agents first.
@@ -828,21 +835,7 @@ export default function KnowledgePage() {
           </div>
 
           {knowledgeItems === undefined ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="ak-card"
-                >
-                  <div className="h-5 w-1/3 rounded bg-neutral-800" />
-                  <div className="mt-3 h-4 w-1/4 rounded bg-neutral-800" />
-                  <div className="mt-5 space-y-2">
-                    <div className="h-4 w-full rounded bg-neutral-800" />
-                    <div className="h-4 w-2/3 rounded bg-neutral-800" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SkeletonList count={3} lines={3} />
           ) : knowledgeItems.length === 0 ? (
             <div className="ak-card">
               <p className="font-medium text-neutral-200">

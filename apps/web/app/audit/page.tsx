@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
+import { SkeletonList } from "../components/Skeleton";
 
 export default function AuditPage() {
     const auditLogs = useQuery(api.agents.listAuditLogs, {
@@ -65,14 +66,7 @@ export default function AuditPage() {
 
                 <section className="ak-card">
                     {auditLogs === undefined ? (
-                        <div className="space-y-3">
-                            {[1, 2, 3].map((item) => (
-                                <div key={item} className="ak-panel">
-                                    <div className="h-4 w-1/3 rounded bg-neutral-800" />
-                                    <div className="mt-3 h-3 w-1/2 rounded bg-neutral-800" />
-                                </div>
-                            ))}
-                        </div>
+                        <SkeletonList count={4} lines={2} />
                     ) : auditLogs.length === 0 ? (
                         <div className="ak-panel">
                             <p className="font-medium text-neutral-200">No audit logs yet.</p>

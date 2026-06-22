@@ -9,6 +9,7 @@ import { AppShell } from "../AppShell";
 import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { useToast } from "../components/ToastProvider";
+import { SkeletonList } from "../components/Skeleton";
 
 
 
@@ -377,21 +378,7 @@ export default function AskPage() {
                             </p>
                         </div>
                     ) : results === undefined ? (
-                        <div className="space-y-3">
-                            {[1, 2, 3].map((item) => (
-                                <div
-                                    key={item}
-                                    className="ak-card"
-                                >
-                                    <div className="h-5 w-1/3 rounded bg-neutral-800" />
-                                    <div className="mt-3 h-4 w-1/4 rounded bg-neutral-800" />
-                                    <div className="mt-5 space-y-2">
-                                        <div className="h-4 w-full rounded bg-neutral-800" />
-                                        <div className="h-4 w-2/3 rounded bg-neutral-800" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <SkeletonList count={3} lines={3} />
                     ) : results.length === 0 ? (
                         <div className="ak-card">
                             <p className="font-medium text-neutral-200">

@@ -10,6 +10,7 @@ import { DEFAULT_ORG_ID } from "@/lib/org";
 import { useToast } from "../components/ToastProvider";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useState } from "react";
+import { SkeletonList } from "../components/Skeleton";
 
 export default function ReviewsPage() {
   const { showToast } = useToast();
@@ -55,7 +56,7 @@ export default function ReviewsPage() {
 
         <section className="ak-card">
           {reviewItems === undefined ? (
-            <p className="ak-muted">Loading review queue...</p>
+            <SkeletonList count={3} lines={3} />
           ) : reviewItems.length === 0 ? (
             <div className="ak-panel">
               <p className="font-medium text-white">Everything is up to date.</p>
