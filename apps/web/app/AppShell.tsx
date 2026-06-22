@@ -54,6 +54,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       }`;
   }
 
+  const navGroups = [
+    {
+      label: "Workspace",
+      links: [
+        { href: "/dashboard", label: "Dashboard" },
+        { href: "/ask", label: "Ask" },
+        { href: "/retrieval-history", label: "Retrieval History" },
+      ],
+    },
+    {
+      label: "Knowledge",
+      links: [
+        { href: "/knowledge", label: "Knowledge" },
+        { href: "/agents", label: "Agents" },
+        { href: "/approvals", label: "Approvals" },
+        { href: "/reviews", label: "Reviews" },
+        { href: "/audit", label: "Audit Logs" },
+      ],
+    },
+    {
+      label: "Admin",
+      links: [
+        { href: "/members", label: "Members" },
+        { href: "/settings", label: "Settings" },
+      ],
+    },
+  ];
+
 
   return (
     <main className="min-h-screen bg-neutral-950 bg-[radial-gradient(circle_at_top_left,_rgba(64,64,64,0.24),_transparent_34%)] text-white">
@@ -71,47 +99,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </p>
           </div>
 
-          <nav className="mt-5 grid grid-cols-2 gap-1.5 md:mt-6 md:block md:space-y-1.5">
-            <Link href="/dashboard" prefetch={false} className={navClass("/dashboard")}>
-              Dashboard
-            </Link>
-
-            <Link href="/ask" prefetch={false} className={navClass("/ask")}>
-              Ask
-            </Link>
-
-            <Link
-              href="/retrieval-history" prefetch={false} className={navClass("/retrieval-history")}>
-              Retrieval History
-            </Link>
-
-            <Link href="/knowledge" prefetch={false} className={navClass("/knowledge")}>
-              Knowledge
-            </Link>
-
-            <Link href="/agents" prefetch={false} className={navClass("/agents")}>
-              Agents
-            </Link>
-
-            <Link href="/approvals" prefetch={false} className={navClass("/approvals")}>
-              Approvals
-            </Link>
-
-            <Link href="/reviews" prefetch={false} className={navClass("/reviews")}>
-              Reviews
-            </Link>
-
-            <Link href="/members" prefetch={false} className={navClass("/members")}>
-              Members
-            </Link>
-
-            <Link href="/audit" prefetch={false} className={navClass("/audit")}>
-              Audit Logs
-            </Link>
-
-            <Link href="/settings" prefetch={false} className={navClass("/settings")}>
-              Settings
-            </Link>
+          <nav className="mt-6">
+            <div className="grid grid-cols-2 gap-5 md:block">
+              {navGroups.map((group, groupIndex) => (
+                <div
+                  key={group.label}
+                  className={`col-span-2 ${groupIndex === 0 ? "md:mt-0" : "md:mt-5"}`}
+                >
+                  <p className="px-3 text-xs font-medium uppercase tracking-wide text-neutral-600">
+                    {group.label}
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-1.5 md:block md:space-y-1.5">
+                    {group.links.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        prefetch={false}
+                        className={navClass(link.href)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
 
 
             <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-sm md:mt-6">
