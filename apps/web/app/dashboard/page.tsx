@@ -12,45 +12,91 @@ export default function DashboardPage() {
     organizationId: DEFAULT_ORG_ID,
   });
 
+  const setupItems = metrics
+    ? [
+      {
+        label: "Create your first agent",
+        description: "Agents define who can use which knowledge.",
+        complete: metrics.totalAgents > 0,
+        href: "/agents",
+        action: "Create agent",
+      },
+      {
+        label: "Add trusted knowledge",
+        description: "Create or import company knowledge for agents.",
+        complete: metrics.totalKnowledge > 0,
+        href: "/knowledge",
+        action: "Add knowledge",
+      },
+      {
+        label: "Verify answerable sources",
+        description: "Verified knowledge can be used in agent answers.",
+        complete: metrics.verifiedKnowledge > 0,
+        href: "/knowledge",
+        action: "Review knowledge",
+      },
+      {
+        label: "Ask your first question",
+        description: "Test retrieval with a source-grounded answer.",
+        complete: metrics.totalRetrievals > 0,
+        href: "/ask",
+        action: "Ask agent",
+      },
+      {
+        label: "Invite your team",
+        description: "Add members to collaborate on the workspace.",
+        complete: metrics.totalMembers > 1,
+        href: "/members",
+        action: "Invite member",
+      },
+    ]
+    : [];
+
+  const completedSetupItems = setupItems.filter((item) => item.complete).length;
+  const setupProgress =
+    setupItems.length > 0
+      ? Math.round((completedSetupItems / setupItems.length) * 100)
+      : 0;
+
   const statCards = metrics
     ? [
-        {
-          label: "Knowledge items",
-          value: metrics.totalKnowledge,
-          detail: `${metrics.verifiedKnowledge} verified · ${metrics.draftKnowledge} draft`,
-          href: "/knowledge",
-        },
-        {
-          label: "Answerable sources",
-          value: metrics.answerableKnowledge,
-          detail: "Allowed for agent answers",
-          href: "/knowledge",
-        },
-        {
-          label: "Agents",
-          value: metrics.totalAgents,
-          detail: `${metrics.activeAgents} active`,
-          href: "/agents",
-        },
-        {
-          label: "Members",
-          value: metrics.totalMembers,
-          detail: "Workspace users",
-          href: "/members",
-        },
-        {
-          label: "Retrievals",
-          value: metrics.totalRetrievals,
-          detail: `${metrics.retrievalsLast7Days} in the last 7 days`,
-          href: "/retrieval-history",
-        },
-        {
-          label: "Audit events",
-          value: metrics.totalAuditEvents,
-          detail: "Governance activity",
-          href: "/audit",
-        },
-      ]
+      {
+        label: "Knowledge items",
+        value: metrics.totalKnowledge,
+        detail: `${metrics.verifiedKnowledge} verified · ${metrics.draftKnowledge} draft`,
+        href: "/knowledge",
+      },
+      {
+        label: "Answerable sources",
+        value: metrics.answerableKnowledge,
+        detail: "Allowed for agent answers",
+        href: "/knowledge",
+      },
+      {
+        label: "Agents",
+        value: metrics.totalAgents,
+        detail: `${metrics.activeAgents} active`,
+        href: "/agents",
+      },
+      {
+        label: "Members",
+        value: metrics.totalMembers,
+        detail: "Workspace users",
+        href: "/members",
+      },
+      {
+        label: "Retrievals",
+        value: metrics.totalRetrievals,
+        detail: `${metrics.retrievalsLast7Days} in the last 7 days`,
+        href: "/retrieval-history",
+      },
+      {
+        label: "Audit events",
+        value: metrics.totalAuditEvents,
+        detail: "Governance activity",
+        href: "/audit",
+      },
+    ]
     : [];
 
   return (
@@ -97,6 +143,70 @@ export default function DashboardPage() {
           </>
         ) : (
           <>
+
+            <section className="ak-card">
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="ak-header-eyebrow">Setup checklist</p>
+                  <h2 className="mt-2 text-xl font-semibold text-white">
+                    Make your workspace agent-ready
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
+                    Complete these steps to prepare trusted knowledge for your agents.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-neutral-800 bg-[#0b0b0b] px-4 py-3 text-right">
+                  <p className="text-2xl font-bold text-white">{setupProgress}%</p>
+                  <p className="mt-1 text-xs text-neutral-500">
+                    {completedSetupItems} of {setupItems.length} complete
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 h-2 overflow-hidden rounded-full bg-neutral-900">
+                <div
+                  className="h-full rounded-full bg-white transition-all"
+                  style={{ width: `${setupProgress}%` }}
+                />
+              </div>
+
+              <div className="mt-6 grid gap-3 lg:grid-cols-2">
+                {setupItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4 transition hover:border-neutral-700 hover:bg-neutral-900/70"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span
+                        className={
+                          item.complete
+                            ? "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-sm text-emerald-300 ring-1 ring-emerald-500/20"
+                            : "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm text-neutral-500 ring-1 ring-neutral-700"
+                        }
+                      >
+                        {item.complete ? "✓" : "○"}
+                      </span>
+
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-white">
+                          {item.label}
+                        </span>
+                        <span className="mt-1 block text-sm leading-6 text-neutral-500">
+                          {item.description}
+                        </span>
+                        <span className="mt-3 inline-flex text-xs font-medium text-neutral-400">
+                          {item.complete ? "Completed" : item.action}
+                        </span>
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {statCards.map((card) => (
                 <Link
