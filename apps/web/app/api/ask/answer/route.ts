@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { withAuth } from "@workos-inc/authkit-nextjs";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../../../../../../convex/_generated/api";
 
 type Source = {
   title: string;
@@ -11,7 +13,11 @@ type Source = {
 
 export async function POST(request: Request) {
   try {
-    await withAuth({ ensureSignedIn: true });
+    const { user } = await withAuth({ ensureSignedIn: true });
+
+    if (!user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -44,6 +50,24 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+
+    if (!convexUrl) {
+      return NextResponse.json(
+        { error: "Convex URL is not configured." },
+        { status: 500 }
+      );
+    }
+
+    const convex = new ConvexHttpClient(convexUrl);
+
+    await convex.mutation(api.security.checkRateLimit, {
+      key: `user:${user.id}`,
+      route: "ask-answer",
+      limit: 10,
+      windowMs: 10 * 60 * 1000,
+    });
 
     const sourceText = sources
       .map((source, index) =>

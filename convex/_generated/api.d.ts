@@ -14,6 +14,7 @@ import type * as knowledge from "../knowledge.js";
 import type * as organizations from "../organizations.js";
 import type * as permissions from "../permissions.js";
 import type * as search from "../search.js";
+import type * as security from "../security.js";
 import type * as users from "../users.js";
 
 import type {
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   organizations: typeof organizations;
   permissions: typeof permissions;
   search: typeof search;
+  security: typeof security;
   users: typeof users;
 }>;
 

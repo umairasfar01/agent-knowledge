@@ -25,6 +25,17 @@ export default defineSchema({
 
   }),
 
+  rateLimits: defineTable({
+    key: v.string(),
+    route: v.string(),
+    organizationId: v.optional(v.string()),
+    count: v.number(),
+    resetAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_key_route", ["key", "route"])
+    .index("by_route", ["route"]),
+
   users: defineTable({
     workosUserId: v.optional(v.string()),
     email: v.string(),

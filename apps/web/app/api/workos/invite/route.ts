@@ -46,6 +46,14 @@ export async function POST(request: Request) {
 
     const convex = new ConvexHttpClient(convexUrl);
 
+    await convex.mutation(api.security.checkRateLimit, {
+      key: `user:${user.id}`,
+      route: "workos-invite",
+      organizationId,
+      limit: 10,
+      windowMs: 60 * 60 * 1000,
+    });
+
     const membershipData = await convex.query(
       api.users.getMembershipByWorkosUser,
       {
