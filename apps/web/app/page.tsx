@@ -158,27 +158,27 @@ export default function HomePage() {
           aria-hidden="true"
         />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-16 px-5 pb-20 pt-20 sm:px-6 sm:pb-28 sm:pt-28 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-8 lg:py-32">
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-5 pb-18 pt-16 sm:px-6 sm:pb-24 sm:pt-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-16 lg:px-8 lg:py-28">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/80 px-3 py-1.5 text-xs font-medium text-neutral-300 shadow-sm">
               <span className="size-1.5 rounded-full bg-neutral-400" />
               Trusted knowledge for AI agents
             </div>
 
-            <h1 className="mt-7 max-w-4xl text-5xl font-semibold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
               Company knowledge your AI agents can trust
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-400 sm:text-xl">
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-neutral-400 sm:text-xl">
               Store, govern, retrieve, and audit the knowledge agents use to
               answer and act.
             </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button
                 asChild
                 size="lg"
-                className="h-11 bg-white px-5 text-neutral-950 hover:bg-neutral-200"
+                className="h-11 w-full bg-white px-5 text-neutral-950 hover:bg-neutral-200 sm:w-auto"
               >
                 <Link href="/dashboard">
                   Get started
@@ -189,21 +189,26 @@ export default function HomePage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-11 border-neutral-700 bg-neutral-950/70 px-5 text-white hover:border-neutral-600 hover:bg-neutral-900 hover:text-white"
+                className="h-11 w-full border-neutral-700 bg-neutral-950/70 px-5 text-white hover:border-neutral-600 hover:bg-neutral-900 hover:text-white sm:w-auto"
               >
                 <Link href="#workflow">View demo flow</Link>
               </Button>
             </div>
 
-            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm text-neutral-500">
-              {["Governed sources", "Cited answers", "Auditable usage"].map(
-                (item) => (
-                  <span key={item} className="flex items-center gap-2">
-                    <Check className="size-3.5 text-neutral-300" aria-hidden="true" />
-                    {item}
-                  </span>
-                ),
-              )}
+            <div className="mt-8 grid gap-3 border-t border-neutral-800/80 pt-5 text-sm text-neutral-500 sm:grid-cols-3 sm:gap-5">
+              {[
+                "Verified sources",
+                "Agent-scoped answers",
+                "Audit-ready workflows",
+              ].map((item) => (
+                <span key={item} className="flex items-center gap-2">
+                  <Check
+                    className="size-3.5 shrink-0 text-neutral-300"
+                    aria-hidden="true"
+                  />
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -280,7 +285,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="features" className="scroll-mt-20 py-20 sm:py-28">
+      <section id="features" className="scroll-mt-20 py-18 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-medium text-neutral-500">
@@ -295,7 +300,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {features.map(({ title, description, icon: Icon }) => (
               <article
                 key={title}
@@ -316,10 +321,10 @@ export default function HomePage() {
 
       <section
         id="workflow"
-        className="scroll-mt-20 border-y border-neutral-800 bg-[#080808] py-20 sm:py-28"
+        className="scroll-mt-20 border-y border-neutral-800 bg-[#080808] py-18 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
+          <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
             <div>
               <p className="text-sm font-medium text-neutral-500">
                 A clear operating loop
@@ -357,10 +362,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="security" className="scroll-mt-20 py-20 sm:py-28">
+      <section id="security" className="scroll-mt-20 py-18 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-neutral-800 bg-[#0b0b0b] p-6 sm:p-10 lg:p-12">
-            <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-20">
+            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
               <div>
                 <span className="flex size-11 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950">
                   <LockKeyhole className="size-5 text-neutral-300" aria-hidden="true" />
@@ -396,8 +401,8 @@ export default function HomePage() {
       </section>
 
       <section className="border-t border-neutral-800">
-        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl border border-neutral-800 bg-[#0b0b0b] px-6 py-14 text-center sm:px-12 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 py-18 sm:px-6 sm:py-24 lg:px-8">
+          <div className="relative overflow-hidden rounded-3xl border border-neutral-800 bg-[#0b0b0b] px-6 py-12 text-center shadow-2xl shadow-black/30 sm:px-12 sm:py-16">
             <div
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.07),transparent_45%)]"
               aria-hidden="true"
@@ -406,14 +411,14 @@ export default function HomePage() {
               <h2 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                 Start building your agent knowledge layer
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral-400">
+              <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral-300">
                 Give every agent a trusted, governed foundation for answering
                 and acting.
               </p>
               <Button
                 asChild
                 size="lg"
-                className="mt-8 h-11 bg-white px-5 text-neutral-950 hover:bg-neutral-200"
+                className="mt-7 h-11 min-w-40 bg-white px-6 text-neutral-950 shadow-sm hover:bg-neutral-200"
               >
                 <Link href="/dashboard">
                   Get started
@@ -426,9 +431,30 @@ export default function HomePage() {
       </section>
 
       <footer className="border-t border-neutral-800">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 text-sm text-neutral-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>Agent Knowledge</p>
-          <p>Trusted company knowledge for AI agents.</p>
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-8 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div>
+            <p className="text-sm font-medium text-neutral-200">
+              Agent Knowledge
+            </p>
+            <p className="mt-1 text-sm text-neutral-600">
+              Trusted company knowledge for AI agents.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-neutral-500">
+            <Link href="/dashboard" className="transition hover:text-white">
+              Dashboard
+            </Link>
+            <Link href="#features" className="transition hover:text-white">
+              Features
+            </Link>
+            <Link href="#workflow" className="transition hover:text-white">
+              Workflow
+            </Link>
+            <Link href="#security" className="transition hover:text-white">
+              Security
+            </Link>
+          </div>
         </div>
       </footer>
     </main>
