@@ -25,7 +25,7 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: #0a0a0a;
+  background: #050505;
 }
 
 body {
@@ -41,19 +41,19 @@ button {
 
 @layer components {
   .ak-page {
-    @apply mx-auto max-w-6xl space-y-8;
+    @apply mx-auto max-w-6xl space-y-7;
   }
 
   .ak-page-wide {
-    @apply mx-auto max-w-7xl space-y-8;
+    @apply mx-auto max-w-7xl space-y-7;
   }
 
   .ak-header-eyebrow {
-    @apply text-sm font-medium text-neutral-400;
+    @apply text-xs font-medium uppercase tracking-[0.14em] text-neutral-500;
   }
 
   .ak-header-title {
-    @apply mt-2 text-3xl font-bold tracking-tight text-white;
+    @apply mt-2 text-3xl font-semibold tracking-tight text-white;
   }
 
   .ak-header-description {
@@ -61,15 +61,15 @@ button {
   }
 
   .ak-card {
-    @apply rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 shadow-sm;
+    @apply rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] p-5 shadow-sm shadow-black/20 sm:p-6;
   }
 
   .ak-card-hover {
-    @apply rounded-2xl border border-neutral-800 bg-neutral-900/80 p-6 shadow-sm transition hover:border-neutral-700 hover:bg-neutral-900;
+    @apply rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] p-5 shadow-sm shadow-black/20 transition duration-200 hover:border-neutral-700 hover:bg-[#0e0e0e] sm:p-6;
   }
 
   .ak-panel {
-    @apply rounded-xl border border-neutral-800 bg-neutral-950/70 p-4;
+    @apply rounded-xl border border-neutral-800/90 bg-neutral-950/70 p-4;
   }
 
   .ak-label {
@@ -77,51 +77,51 @@ button {
   }
 
   .ak-input {
-    @apply w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none transition placeholder:text-neutral-500 focus:border-neutral-500;
+    @apply w-full rounded-xl border border-neutral-800 bg-[#080808] px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-neutral-600 hover:border-neutral-700 focus:border-neutral-600 focus:ring-2 focus:ring-white/5 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-textarea {
-    @apply w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none transition placeholder:text-neutral-500 focus:border-neutral-500;
+    @apply w-full rounded-xl border border-neutral-800 bg-[#080808] px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-neutral-600 hover:border-neutral-700 focus:border-neutral-600 focus:ring-2 focus:ring-white/5 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-select {
-    @apply w-full rounded-xl border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-white outline-none transition focus:border-neutral-500;
+    @apply w-full rounded-xl border border-neutral-800 bg-[#080808] px-3.5 py-2.5 text-sm text-white outline-none transition hover:border-neutral-700 focus:border-neutral-600 focus:ring-2 focus:ring-white/5 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-button-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 text-sm font-medium text-neutral-950 shadow-sm transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white bg-white px-4 py-2 text-sm font-medium text-neutral-950 shadow-sm transition hover:border-neutral-200 hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-button-secondary {
-    @apply inline-flex items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:border-neutral-600 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-[#0b0b0b] px-4 py-2 text-sm font-medium text-neutral-300 transition hover:border-neutral-700 hover:bg-neutral-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/10 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-button-danger {
-    @apply inline-flex items-center justify-center rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition hover:border-red-500/50 hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-500/25 bg-red-500/8 px-4 py-2 text-sm font-medium text-red-300 transition hover:border-red-500/40 hover:bg-red-500/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/15 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-button-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-neutral-400 transition hover:bg-neutral-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-neutral-400 transition hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/10 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ak-status-success {
-    @apply inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 ring-1 ring-inset ring-emerald-500/20;
+    @apply inline-flex items-center rounded-md bg-emerald-500/8 px-2.5 py-1 text-xs font-medium text-emerald-300/90 ring-1 ring-inset ring-emerald-500/20;
   }
 
   .ak-status-warning {
-    @apply inline-flex items-center rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-300 ring-1 ring-inset ring-amber-500/20;
+    @apply inline-flex items-center rounded-md bg-amber-500/8 px-2.5 py-1 text-xs font-medium text-amber-300/90 ring-1 ring-inset ring-amber-500/20;
   }
 
   .ak-status-neutral {
-    @apply inline-flex items-center rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium text-neutral-300 ring-1 ring-inset ring-neutral-700;
+    @apply inline-flex items-center rounded-md bg-white/5 px-2.5 py-1 text-xs font-medium text-neutral-400 ring-1 ring-inset ring-white/8;
   }
 
   .ak-muted {
-    @apply text-sm text-neutral-500;
+    @apply text-sm leading-6 text-neutral-500;
   }
 
   .ak-table-wrap {
-    @apply overflow-x-auto rounded-2xl border border-neutral-800;
+    @apply overflow-x-auto rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] shadow-sm shadow-black/20;
   }
 
   .ak-table {
@@ -129,7 +129,7 @@ button {
   }
 
   .ak-table-head {
-    @apply bg-neutral-950 text-xs uppercase tracking-wide text-neutral-500;
+    @apply bg-[#080808] text-xs uppercase tracking-[0.1em] text-neutral-500;
   }
 
   .ak-table-th {
@@ -137,7 +137,7 @@ button {
   }
 
   .ak-table-row {
-    @apply border-t border-neutral-800 bg-neutral-900 transition hover:bg-neutral-800/60;
+    @apply border-t border-neutral-800/90 bg-[#0b0b0b] transition hover:bg-white/[0.025];
   }
 
   .ak-table-td {

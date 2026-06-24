@@ -71,12 +71,12 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
         aria-describedby={description ? "confirm-dialog-description" : undefined}
-        className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-950 p-6 text-white shadow-2xl shadow-black/40"
+        className="w-full max-w-md rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-6 text-white shadow-2xl shadow-black/50"
       >
         <div
           className={
             tone === "danger"
-              ? "mb-5 h-1 w-14 rounded-full bg-red-400"
+              ? "mb-5 h-1 w-14 rounded-full bg-red-400/80"
               : "mb-5 h-1 w-14 rounded-full bg-neutral-700"
           }
         />

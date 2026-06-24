@@ -32,14 +32,14 @@ const toastStyles: Record<
   { accent: string; label: string; dot: string }
 > = {
   success: {
-    accent: "border-emerald-500/30",
-    label: "text-emerald-300",
-    dot: "bg-emerald-400",
+    accent: "border-emerald-500/25",
+    label: "text-emerald-300/90",
+    dot: "bg-emerald-400/80",
   },
   error: {
-    accent: "border-red-500/30",
-    label: "text-red-300",
-    dot: "bg-red-400",
+    accent: "border-red-500/25",
+    label: "text-red-300/90",
+    dot: "bg-red-400/80",
   },
   info: {
     accent: "border-neutral-700",
@@ -80,7 +80,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           return (
             <div
               key={toast.id}
-              className={`rounded-xl border ${styles.accent} bg-neutral-950/95 p-4 text-white shadow-2xl shadow-black/30 backdrop-blur`}
+              className={`rounded-xl border ${styles.accent} bg-[#0b0b0b]/95 p-4 text-white shadow-2xl shadow-black/40 backdrop-blur`}
               role="status"
             >
               <div className="flex items-start gap-3">

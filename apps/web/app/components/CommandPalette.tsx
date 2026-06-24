@@ -121,8 +121,8 @@ export function CommandPalette() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 px-4 py-20 backdrop-blur-sm">
-      <div className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-2xl">
+    <div className="fixed inset-0 z-50 bg-black/75 px-4 py-20 backdrop-blur-sm">
+      <div className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-neutral-800 bg-[#0b0b0b] shadow-2xl shadow-black/50">
         <div className="border-b border-neutral-800 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -147,7 +147,7 @@ export function CommandPalette() {
             autoFocus
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="mt-4 w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-white outline-none placeholder:text-neutral-500 focus:border-neutral-600"
+            className="ak-input mt-4 px-4 py-3"
             placeholder="Search dashboard, ask, members, settings..."
           />
         </div>
@@ -169,7 +169,7 @@ export function CommandPalette() {
                   key={command.href}
                   type="button"
                   onClick={() => runCommand(command.href)}
-                  className="flex w-full items-start justify-between gap-4 rounded-xl px-4 py-3 text-left transition hover:bg-neutral-900"
+                  className="flex w-full items-start justify-between gap-4 rounded-xl border border-transparent px-4 py-3 text-left transition hover:border-neutral-800 hover:bg-white/[0.035]"
                 >
                   <span>
                     <span className="block text-sm font-medium text-white">

@@ -17,7 +17,7 @@ type SkeletonListProps = {
 export function SkeletonLine({ className = "h-4 w-full" }: SkeletonLineProps) {
   return (
     <div
-      className={`animate-pulse rounded bg-neutral-800/80 ${className}`}
+      className={`animate-pulse rounded bg-neutral-800/60 ${className}`}
       aria-hidden="true"
     />
   );
@@ -29,7 +29,7 @@ export function SkeletonCard({
 }: SkeletonCardProps) {
   return (
     <div
-      className={`rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5 ${className}`}
+      className={`rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] p-5 ${className}`}
       aria-hidden="true"
     >
       <SkeletonLine className="h-5 w-1/3" />

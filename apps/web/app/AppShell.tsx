@@ -49,9 +49,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   function navClass(href: string) {
     const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
-    return `block rounded-xl px-3 py-2.5 text-sm font-medium transition ${isActive
-      ? "bg-white text-neutral-950 shadow-sm"
-      : "text-neutral-400 hover:bg-[#0b0b0b] hover:text-white"
+    return `block rounded-xl border px-3 py-2.5 text-sm font-medium transition ${isActive
+      ? "border-neutral-200 bg-white text-neutral-950 shadow-sm"
+      : "border-transparent text-neutral-400 hover:border-neutral-800 hover:bg-white/[0.035] hover:text-white"
       }`;
   }
 
@@ -87,29 +87,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 
   return (
-    <main className="min-h-screen bg-[#050505] bg-[radial-gradient(circle_at_top_left,_rgba(38,38,38,0.18),_transparent_34%)] text-white">
+    <main className="min-h-screen bg-[#050505] bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.035),_transparent_30%)] text-white">
       <CommandPalette />
 
       <div className="grid min-h-screen md:grid-cols-[280px_1fr]">
-        <aside className="border-b border-neutral-800 bg-[#080808] p-4 backdrop-blur md:sticky md:top-0 md:h-screen md:overflow-y-auto md:border-b-0 md:border-r md:p-6">
-          <div className="rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-4 shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+        <aside className="border-b border-neutral-800/90 bg-[#080808]/95 p-4 backdrop-blur-xl md:sticky md:top-0 md:h-screen md:overflow-y-auto md:border-b-0 md:border-r md:p-6">
+          <div className="rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] p-4 shadow-sm shadow-black/20">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
               Agent Knowledge
             </p>
-            <h1 className="mt-1 text-xl font-bold tracking-tight text-white">
+            <h1 className="mt-1.5 text-xl font-semibold tracking-tight text-white">
               Company Brain
             </h1>
             <p className="mt-2 text-xs leading-5 text-neutral-500">
               Trusted knowledge for agents
             </p>
 
-            <div className="mt-3 inline-flex items-center gap-1 rounded-lg border border-neutral-800 bg-neutral-950/70 px-2 py-1 text-xs text-neutral-500">
+            <div className="mt-4 inline-flex items-center gap-1 rounded-lg border border-neutral-800 bg-[#080808] px-2 py-1 text-xs text-neutral-500">
               <span>Press</span>
-              <kbd className="rounded border border-neutral-700 px-1 text-neutral-300">
+              <kbd className="rounded border border-neutral-700 bg-neutral-950 px-1 text-neutral-300">
                 Ctrl
               </kbd>
               <span>+</span>
-              <kbd className="rounded border border-neutral-700 px-1 text-neutral-300">
+              <kbd className="rounded border border-neutral-700 bg-neutral-950 px-1 text-neutral-300">
                 K
               </kbd>
             </div>
@@ -123,7 +123,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   key={group.label}
                   className={`col-span-2 ${groupIndex === 0 ? "md:mt-0" : "md:mt-5"}`}
                 >
-                  <p className="px-3 text-xs font-medium uppercase tracking-wide text-neutral-600">
+                  <p className="px-3 text-xs font-medium uppercase tracking-[0.14em] text-neutral-600">
                     {group.label}
                   </p>
                   <div className="mt-2 grid grid-cols-2 gap-1.5 md:block md:space-y-1.5">
@@ -143,8 +143,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
 
 
-            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-4 shadow-sm md:mt-6">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] p-4 shadow-sm shadow-black/20 md:mt-6">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                 Organization
               </p>
               <p className="mt-2 break-all text-sm font-medium text-neutral-200">
@@ -155,22 +155,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   onClick={() => switchToOrganization(currentOrgId)}
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-[#0b0b0b] px-3 py-2 text-xs font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
+                  className="mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-xl border border-neutral-800 bg-[#080808] px-3 py-2 text-xs font-medium text-neutral-300 transition hover:border-neutral-700 hover:bg-neutral-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/10"
                 >
                   Use WorkOS organization
                 </button>
               )}
             </div>
 
-            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-4 shadow-sm md:mt-6">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            <div className="col-span-2 mt-4 rounded-2xl border border-neutral-800/90 bg-[#0b0b0b] p-4 shadow-sm shadow-black/20 md:mt-6">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                 Signed in as
               </p>
               <p className="mt-2 truncate text-sm font-medium text-neutral-200">
                 {user?.email ?? "Loading user..."}
               </p>
 
-              <p className="mt-4 text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <p className="mt-4 text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
                 Role
               </p>
               <p className="mt-2 text-sm text-neutral-300">
@@ -180,7 +180,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={() => signOut()}
-                className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-neutral-700 bg-[#0b0b0b] px-3 py-2 text-sm font-medium text-neutral-300 transition hover:border-neutral-600 hover:bg-neutral-800 hover:text-white"
+                className="mt-5 inline-flex min-h-10 w-full items-center justify-center rounded-xl border border-neutral-800 bg-[#080808] px-3 py-2 text-sm font-medium text-neutral-300 transition hover:border-neutral-700 hover:bg-neutral-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/10"
               >
                 Sign out
               </button>
