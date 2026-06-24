@@ -173,7 +173,7 @@ export default function AskPage() {
     return (
         <AppShell>
             <div className="ak-page">
-                <header>
+                <header className="border-b border-neutral-800/80 pb-6">
                     <p className="ak-header-eyebrow">
                         Agent Retrieval
                     </p>
@@ -185,6 +185,16 @@ export default function AskPage() {
                 </header>
 
                 <section className="ak-card">
+                    <div className="mb-5 border-b border-neutral-800/80 pb-5">
+                        <p className="ak-header-eyebrow">Retrieval query</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                            Ask from approved knowledge
+                        </h2>
+                        <p className="mt-2 text-sm leading-6 text-neutral-400">
+                            Choose an agent context, then ask a question against its verified sources.
+                        </p>
+                    </div>
+
                     <div className="grid gap-5 md:grid-cols-2">
                         <div className="flex flex-col gap-2">
                             <label className="ak-label">
@@ -235,7 +245,12 @@ export default function AskPage() {
                 </section>
 
                 <section className="space-y-4">
-                    <h2 className="text-xl font-semibold">Matching knowledge</h2>
+                    <div>
+                        <p className="ak-header-eyebrow">Results</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                            Matching knowledge
+                        </h2>
+                    </div>
 
                     {results && results.length > 0 && (
                         <section className="ak-card">
@@ -259,27 +274,6 @@ export default function AskPage() {
                                         {copied ? "Copied" : "Copy draft"}
                                     </button>
 
-                                    {aiError && (
-                                        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-                                            <p className="text-sm text-red-300">{aiError}</p>
-                                        </div>
-                                    )}
-
-                                    {aiAnswer && (
-                                        <div className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                <span className="ak-status-success">AI generated</span>
-                                                <span className="ak-status-neutral">Source-grounded</span>
-                                            </div>
-
-                                            <h3 className="mt-4 text-lg font-semibold text-white">AI answer</h3>
-
-                                            <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-neutral-300">
-                                                {aiAnswer}
-                                            </p>
-                                        </div>
-                                    )}
-
                                     <button
                                         type="button"
                                         onClick={generateAiAnswer}
@@ -292,7 +286,7 @@ export default function AskPage() {
                             </div>
 
                             <div className="mt-5 grid gap-4 md:grid-cols-[1fr_260px]">
-                                <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
+                                <div className="ak-panel p-5">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <span className="ak-status-success">Source-grounded</span>
                                         <span className="ak-status-neutral">Agent-scoped</span>
@@ -308,7 +302,7 @@ export default function AskPage() {
                                             {results.map((item) => (
                                                 <li
                                                     key={item._id}
-                                                    className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
+                                                    className="ak-panel"
                                                 >
                                                     <p className="font-medium text-white">{item.title}</p>
                                                     <p className="mt-2 text-sm leading-6 text-neutral-300">
@@ -360,6 +354,39 @@ export default function AskPage() {
                                     </div>
                                 </aside>
                             </div>
+
+                            {(aiError || aiAnswer) && (
+                                <div className="mt-4 border-t border-neutral-800/80 pt-4">
+                                    {aiError && (
+                                        <div className="rounded-xl border border-red-500/25 bg-red-500/8 p-4">
+                                            <p className="text-xs font-medium uppercase tracking-[0.14em] text-red-300/80">
+                                                Optional AI unavailable
+                                            </p>
+                                            <p className="mt-2 text-sm leading-6 text-red-200/80">
+                                                {aiError}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {aiAnswer && (
+                                        <div className="ak-panel p-5">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="ak-status-success">AI generated</span>
+                                                <span className="ak-status-neutral">Source-grounded</span>
+                                                <span className="ak-status-neutral">Optional</span>
+                                            </div>
+
+                                            <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">
+                                                AI answer
+                                            </h3>
+
+                                            <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-neutral-300">
+                                                {aiAnswer}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </section>
                     )}
                     {!selectedAgentId ? (

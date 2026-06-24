@@ -23,7 +23,7 @@ export default function SearchPage() {
   return (
     <AppShell>
       <div className="ak-page">
-        <header>
+        <header className="border-b border-neutral-800/80 pb-6">
           <p className="ak-header-eyebrow">Workspace</p>
           <h1 className="ak-header-title">Global Search</h1>
           <p className="ak-header-description">
@@ -32,6 +32,12 @@ export default function SearchPage() {
         </header>
 
         <section className="ak-card space-y-5">
+          <div>
+            <p className="ak-header-eyebrow">Search index</p>
+            <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+              Find anything in the workspace
+            </h2>
+          </div>
           <div>
             <label className="ak-label">Search workspace</label>
             <input
@@ -67,7 +73,7 @@ export default function SearchPage() {
                 <Link
                   key={`${result.type}-${result.title}-${index}`}
                   href={result.href}
-                  className="block rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5 transition hover:border-neutral-700 hover:bg-neutral-900/70"
+                  className="ak-card-hover block p-5"
                 >
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0">

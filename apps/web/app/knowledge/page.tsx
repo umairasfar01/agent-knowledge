@@ -414,7 +414,7 @@ export default function KnowledgePage() {
   return (
     <AppShell>
       <div className="ak-page">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <header className="flex flex-col gap-5 border-b border-neutral-800/80 pb-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="ak-header-eyebrow">Knowledge</p>
             <h1 className="ak-header-title">Knowledge base</h1>
@@ -445,8 +445,8 @@ export default function KnowledgePage() {
         </header>
 
         {canManage && (
-          <section className="ak-card">
-            <div>
+          <section className="ak-card overflow-hidden">
+            <div className="border-b border-neutral-800/80 pb-5">
               <p className="ak-header-eyebrow">Import</p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
                 Import knowledge from Markdown
@@ -467,7 +467,7 @@ export default function KnowledgePage() {
                 />
 
                 {importText.trim() && (
-                  <div className="mt-4 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
+                  <div className="ak-panel mt-4">
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-sm font-medium text-white">Import preview</p>
@@ -490,7 +490,7 @@ export default function KnowledgePage() {
                         {importPreview.map((item, index) => (
                           <div
                             key={`${item.title}-${index}`}
-                            className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
+                            className="ak-panel"
                           >
                             <p className="text-sm font-medium text-white">
                               {index + 1}. {item.title}
@@ -535,7 +535,7 @@ export default function KnowledgePage() {
                 <div>
                   <label className="ak-label">Assign to agents</label>
 
-                  <div className="mt-2 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
+                  <div className="ak-panel mt-2">
                     {agents === undefined ? (
                       <div className="space-y-3">
                         <SkeletonLine className="h-5 w-1/3" />
@@ -550,7 +550,7 @@ export default function KnowledgePage() {
                         {agents.map((agent) => (
                           <label
                             key={agent._id}
-                            className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900/70 p-3 text-sm text-neutral-300 transition hover:border-neutral-700 hover:bg-neutral-900"
+                            className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-[#080808] p-3 text-sm text-neutral-300 transition hover:border-neutral-700 hover:bg-white/[0.025]"
                           >
                             <input
                               type="checkbox"
@@ -601,6 +601,17 @@ export default function KnowledgePage() {
             onSubmit={handleSubmit}
             className="ak-card flex flex-col gap-5"
           >
+            <div className="border-b border-neutral-800/80 pb-5">
+              <p className="ak-header-eyebrow">
+                {editingId ? "Edit record" : "Create"}
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                {editingId ? "Update knowledge" : "Create knowledge"}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-neutral-400">
+                Define the source, governance rules, and agents allowed to use this record.
+              </p>
+            </div>
 
             <div className="flex flex-col gap-2">
               <label className="ak-label">
@@ -721,7 +732,7 @@ export default function KnowledgePage() {
                   agents.map((agent) => (
                     <label
                       key={agent._id}
-                      className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/70 px-3 py-2 text-sm text-neutral-300 transition hover:border-neutral-700"
+                      className="flex items-center gap-2 rounded-xl border border-neutral-800 bg-[#080808] px-3 py-2.5 text-sm text-neutral-300 transition hover:border-neutral-700 hover:bg-white/[0.025]"
                     >
                       <input
                         type="checkbox"
@@ -794,12 +805,20 @@ export default function KnowledgePage() {
         )}
 
         <section className="space-y-4">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h2 className="text-xl font-semibold">Knowledge Items</h2>
+          <div className="ak-card flex flex-col gap-5">
+            <div>
+              <p className="ak-header-eyebrow">Library</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                Knowledge items
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-neutral-400">
+                Filter and manage the trusted records available in this workspace.
+              </p>
+            </div>
 
-            <div className="flex flex-col gap-3 md:flex-row">
+            <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_220px]">
               <input
-                className="ak-input md:w-72"
+                className="ak-input"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search title or content..."

@@ -102,7 +102,7 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="ak-page-wide">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <header className="flex flex-col gap-5 border-b border-neutral-800/80 pb-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="ak-header-eyebrow">Workspace overview</p>
             <h1 className="ak-header-title">Dashboard</h1>
@@ -132,7 +132,7 @@ export default function DashboardPage() {
               <SkeletonCard lines={2} />
             </section>
 
-            <section className="grid gap-6 xl:grid-cols-2">
+            <section className="grid gap-5 xl:grid-cols-2">
               <div className="ak-card">
                 <SkeletonList count={3} lines={2} />
               </div>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
         ) : (
           <>
 
-            <section className="ak-card">
+            <section className="ak-card overflow-hidden">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
                   <p className="ak-header-eyebrow">Setup checklist</p>
@@ -156,15 +156,15 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-neutral-800 bg-[#0b0b0b] px-4 py-3 text-right">
-                  <p className="text-2xl font-bold text-white">{setupProgress}%</p>
+                <div className="ak-panel min-w-32 text-left md:text-right">
+                  <p className="text-2xl font-semibold tracking-tight text-white">{setupProgress}%</p>
                   <p className="mt-1 text-xs text-neutral-500">
                     {completedSetupItems} of {setupItems.length} complete
                   </p>
                 </div>
               </div>
 
-              <div className="mt-5 h-2 overflow-hidden rounded-full bg-neutral-900">
+              <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-neutral-900">
                 <div
                   className="h-full rounded-full bg-white transition-all"
                   style={{ width: `${setupProgress}%` }}
@@ -176,14 +176,14 @@ export default function DashboardPage() {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4 transition hover:border-neutral-700 hover:bg-neutral-900/70"
+                    className="ak-panel transition hover:border-neutral-700 hover:bg-white/[0.025]"
                   >
                     <div className="flex items-start gap-3">
                       <span
                         className={
                           item.complete
-                            ? "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-sm text-emerald-300 ring-1 ring-emerald-500/20"
-                            : "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm text-neutral-500 ring-1 ring-neutral-700"
+                            ? "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/8 text-sm text-emerald-300/90 ring-1 ring-emerald-500/20"
+                            : "mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-sm text-neutral-500 ring-1 ring-white/8"
                         }
                       >
                         {item.complete ? "✓" : "○"}
@@ -214,10 +214,10 @@ export default function DashboardPage() {
                   href={card.href}
                   className="ak-card-hover block"
                 >
-                  <p className="text-sm font-medium text-neutral-400">
+                  <p className="ak-header-eyebrow">
                     {card.label}
                   </p>
-                  <p className="mt-3 text-3xl font-bold tracking-tight text-white">
+                  <p className="mt-3 text-3xl font-semibold tracking-tight text-white">
                     {card.value}
                   </p>
                   <p className="mt-2 text-sm text-neutral-500">{card.detail}</p>
@@ -225,7 +225,7 @@ export default function DashboardPage() {
               ))}
             </section>
 
-            <section className="grid gap-6 xl:grid-cols-2">
+            <section className="grid gap-5 xl:grid-cols-2">
               <div className="ak-card">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -251,7 +251,7 @@ export default function DashboardPage() {
                     {metrics.recentRetrievalLogs.map((log) => (
                       <article
                         key={log._id}
-                        className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                        className="ak-panel"
                       >
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="ak-status-neutral">
@@ -281,7 +281,7 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              <section className="grid gap-6 xl:grid-cols-[1fr_380px]">
+              <section className="grid gap-5 xl:grid-cols-[1fr_360px]">
                 <div className="ak-card">
                   <div className="flex items-center justify-between gap-4">
                     <div>
@@ -307,7 +307,7 @@ export default function DashboardPage() {
 
                       return (
                         <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
-                          <div className="flex h-40 w-full items-end rounded-xl bg-neutral-950/70 p-1">
+                          <div className="flex h-40 w-full items-end rounded-xl border border-neutral-800/80 bg-[#080808] p-1">
                             <div
                               className="w-full rounded-lg bg-white transition-all"
                               style={{ height }}
@@ -328,8 +328,8 @@ export default function DashboardPage() {
                     Workspace quality
                   </h2>
 
-                  <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
-                    <p className="text-4xl font-bold tracking-tight text-white">
+                  <div className="ak-panel mt-6 p-5">
+                    <p className="text-4xl font-semibold tracking-tight text-white">
                       {metrics.knowledgeHealthScore}%
                     </p>
                     <p className="mt-2 text-sm text-neutral-500">
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                 </div>
               </section>
 
-              <section className="grid gap-6 xl:grid-cols-2">
+              <section className="grid gap-5 xl:grid-cols-2">
                 <div className="ak-card">
                   <div className="flex items-center justify-between gap-4">
                     <div>
@@ -395,7 +395,7 @@ export default function DashboardPage() {
                       {metrics.topQuestions.map((item, index) => (
                         <div
                           key={`${item.question}-${index}`}
-                          className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                          className="ak-panel"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <p className="text-sm font-medium text-white">{item.question}</p>
@@ -432,7 +432,7 @@ export default function DashboardPage() {
                       {metrics.topSources.map((item, index) => (
                         <div
                           key={`${item.title}-${index}`}
-                          className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                          className="ak-panel"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <p className="text-sm font-medium text-white">{item.title}</p>
@@ -470,7 +470,7 @@ export default function DashboardPage() {
                     {metrics.recentAuditLogs.map((log) => (
                       <article
                         key={log._id}
-                        className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                        className="ak-panel"
                       >
                         <p className="font-medium text-white">
                           {log.knowledgeTitle ??

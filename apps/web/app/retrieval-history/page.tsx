@@ -57,7 +57,7 @@ export default function RetrievalHistoryPage() {
     return (
         <AppShell>
             <div className="ak-page">
-                <header>
+                <header className="border-b border-neutral-800/80 pb-6">
                     <p className="ak-header-eyebrow">Agent Retrieval</p>
                     <h1 className="ak-header-title">Retrieval History</h1>
                     <p className="ak-header-description">
@@ -66,6 +66,12 @@ export default function RetrievalHistoryPage() {
                 </header>
 
                 <section className="ak-card space-y-5">
+                    <div>
+                        <p className="ak-header-eyebrow">Filters</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                            Review retrieval activity
+                        </h2>
+                    </div>
                     <div className="grid gap-3 lg:grid-cols-[1fr_220px_220px]">
                         <div>
                             <label className="ak-label">Search history</label>
@@ -132,7 +138,7 @@ export default function RetrievalHistoryPage() {
                             {filteredLogs.map((log) => (
                                 <article
                                     key={log._id}
-                                    className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5"
+                                    className="ak-panel p-5"
                                 >
                                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                                         <div className="min-w-0">
@@ -170,7 +176,7 @@ export default function RetrievalHistoryPage() {
                                                         {Array.from(new Set(log.sourceTitles)).map((title, index) => (
                                                             <span
                                                                 key={`${title}-${index}`}
-                                                                className="rounded-lg border border-neutral-800 bg-neutral-900 px-2.5 py-1 text-xs text-neutral-300"
+                                                                className="ak-status-neutral"
                                                             >
                                                                 {title}
                                                             </span>
