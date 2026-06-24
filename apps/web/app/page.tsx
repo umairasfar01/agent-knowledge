@@ -140,7 +140,7 @@ export default function HomePage() {
             size="sm"
             className="border border-neutral-200 bg-white text-neutral-950 hover:bg-neutral-200"
           >
-            <Link href="/login">Sign in</Link>
+            <Link href="/dashboard">Sign in</Link>
           </Button>
         </div>
       </nav>
@@ -180,7 +180,7 @@ export default function HomePage() {
                 size="lg"
                 className="h-11 bg-white px-5 text-neutral-950 hover:bg-neutral-200"
               >
-                <Link href="/login">
+                <Link href="/dashboard">
                   Get started
                   <ArrowRight aria-hidden="true" />
                 </Link>
@@ -415,7 +415,7 @@ export default function HomePage() {
                 size="lg"
                 className="mt-8 h-11 bg-white px-5 text-neutral-950 hover:bg-neutral-200"
               >
-                <Link href="/login">
+                <Link href="/dashboard">
                   Get started
                   <ArrowRight aria-hidden="true" />
                 </Link>

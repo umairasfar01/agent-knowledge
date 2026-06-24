@@ -4,7 +4,6 @@ export default authkitMiddleware();
 
 export const config = {
   matcher: [
-    "/",
     "/login/:path*",
     "/callback/:path*",
     "/dashboard/:path*",
