@@ -140,7 +140,9 @@ export default function HomePage() {
             size="sm"
             className="border border-neutral-200 bg-white text-neutral-950 hover:bg-neutral-200"
           >
-            <Link href="/dashboard">Sign in</Link>
+            <Link href="/login" prefetch={false}>
+              Sign in
+            </Link>
           </Button>
         </div>
       </nav>
@@ -180,9 +182,8 @@ export default function HomePage() {
                 size="lg"
                 className="h-11 w-full bg-white px-5 text-neutral-950 hover:bg-neutral-200 sm:w-auto"
               >
-                <Link href="/dashboard">
+                <Link href="/login" prefetch={false}>
                   Get started
-                  <ArrowRight aria-hidden="true" />
                 </Link>
               </Button>
               <Button
@@ -342,9 +343,8 @@ export default function HomePage() {
               {workflow.map((step, index) => (
                 <article
                   key={step.number}
-                  className={`border-b border-neutral-800 py-7 sm:p-7 ${
-                    index % 2 === 0 ? "sm:border-r" : ""
-                  }`}
+                  className={`border-b border-neutral-800 py-7 sm:p-7 ${index % 2 === 0 ? "sm:border-r" : ""
+                    }`}
                 >
                   <span className="font-mono text-xs text-neutral-600">
                     {step.number}
@@ -420,7 +420,7 @@ export default function HomePage() {
                 size="lg"
                 className="mt-7 h-11 min-w-40 bg-white px-6 text-neutral-950 shadow-sm hover:bg-neutral-200"
               >
-                <Link href="/dashboard">
+                <Link href="/login" prefetch={false}>
                   Get started
                   <ArrowRight aria-hidden="true" />
                 </Link>
