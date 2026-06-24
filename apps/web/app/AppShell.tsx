@@ -62,8 +62,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         { href: "/dashboard", label: "Dashboard" },
         { href: "/ask", label: "Ask" },
         { href: "/retrieval-history", label: "Retrieval History" },
+        { href: "/search", label: "Search" },
       ],
     },
+    
     {
       label: "Knowledge",
       links: [

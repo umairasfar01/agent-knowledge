@@ -13,6 +13,7 @@ import type * as dashboard from "../dashboard.js";
 import type * as knowledge from "../knowledge.js";
 import type * as organizations from "../organizations.js";
 import type * as permissions from "../permissions.js";
+import type * as search from "../search.js";
 import type * as users from "../users.js";
 
 import type {
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   knowledge: typeof knowledge;
   organizations: typeof organizations;
   permissions: typeof permissions;
+  search: typeof search;
   users: typeof users;
 }>;
 

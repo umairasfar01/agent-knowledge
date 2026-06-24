@@ -25,5 +25,7 @@ export const config = {
 
     "/api/ask/answer",
     "/api/ask/answer/:path*",
+
+    "/search/:path*",
   ],
 };

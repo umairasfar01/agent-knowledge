@@ -12,6 +12,12 @@ const commands = [
   },
   {
     group: "Workspace",
+    label: "Search",
+    description: "Search across knowledge, agents, logs, and retrievals",
+    href: "/search",
+  },
+  {
+    group: "Workspace",
     label: "Ask",
     description: "Ask an agent using verified knowledge",
     href: "/ask",
