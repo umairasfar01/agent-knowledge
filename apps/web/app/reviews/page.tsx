@@ -46,7 +46,7 @@ export default function ReviewsPage() {
   return (
     <AppShell>
       <div className="ak-page">
-        <header>
+        <header className="border-b border-neutral-800/80 pb-6">
           <p className="ak-header-eyebrow">Governance</p>
           <h1 className="ak-header-title">Knowledge Reviews</h1>
           <p className="ak-header-description">
@@ -55,6 +55,16 @@ export default function ReviewsPage() {
         </header>
 
         <section className="ak-card">
+          <div className="mb-5 border-b border-neutral-800/80 pb-5">
+            <p className="ak-header-eyebrow">Review queue</p>
+            <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+              Knowledge due for review
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-neutral-400">
+              Reconfirm older records so agents continue using current guidance.
+            </p>
+          </div>
+
           {reviewItems === undefined ? (
             <SkeletonList count={3} lines={3} />
           ) : reviewItems.length === 0 ? (
@@ -69,7 +79,7 @@ export default function ReviewsPage() {
               {reviewItems.map((item) => (
                 <article
                   key={item._id}
-                  className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5"
+                  className="ak-panel p-5 transition hover:border-neutral-700 hover:bg-white/[0.025]"
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div>

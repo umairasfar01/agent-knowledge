@@ -156,6 +156,13 @@ export default function MembersPage() {
     return (
         <AppShell>
             <div className="ak-page">
+                <header className="border-b border-neutral-800/80 pb-6">
+                    <p className="ak-header-eyebrow">Workspace administration</p>
+                    <h1 className="ak-header-title">Members</h1>
+                    <p className="ak-header-description">
+                        Invite teammates and manage roles for the current organization.
+                    </p>
+                </header>
 
                 {currentRole === "loading" && (
                     <SkeletonCard lines={2} />
@@ -163,10 +170,15 @@ export default function MembersPage() {
 
                 {canManage && (
                     <section className="ak-card">
-                        <h2 className="text-xl font-semibold">Add member</h2>
-                        <p className="mt-1 text-sm text-neutral-500">
+                        <div className="border-b border-neutral-800/80 pb-5">
+                            <p className="ak-header-eyebrow">Invitation</p>
+                            <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                                Add member
+                            </h2>
+                            <p className="mt-2 text-sm leading-6 text-neutral-400">
                             Add a teammate to this organization and assign their starting role.
-                        </p>
+                            </p>
+                        </div>
 
                         <form onSubmit={handleInviteMember} className="mt-5 grid gap-4 md:grid-cols-4">
                             <div className="md:col-span-2">
@@ -223,16 +235,11 @@ export default function MembersPage() {
                     </section>
                 )}
 
-                <header>
-                    <p className="ak-header-eyebrow">Workspace</p>
-                    <h1 className="ak-header-title">Members</h1>
-                    <p className="ak-header-description">
-                        View users and roles for the current organization.
-                    </p>
-                </header>
-
                 <section className="ak-card">
-                    <h2 className="text-xl font-semibold">Organization members</h2>
+                    <p className="ak-header-eyebrow">Directory</p>
+                    <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                        Organization members
+                    </h2>
 
                     {memberError && (
                         <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4">

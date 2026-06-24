@@ -95,7 +95,7 @@ export default function AgentsPage() {
     return (
         <AppShell>
             <div className="ak-page">
-                <header>
+                <header className="border-b border-neutral-800/80 pb-6">
                     <p className="ak-header-eyebrow">
                         Agent Registry
                     </p>
@@ -112,6 +112,17 @@ export default function AgentsPage() {
                         onSubmit={handleSubmit}
                         className="ak-card flex flex-col gap-5"
                     >
+                        <div className="border-b border-neutral-800/80 pb-5">
+                            <p className="ak-header-eyebrow">
+                                {editingId ? "Edit agent" : "Create"}
+                            </p>
+                            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                                {editingId ? "Update agent" : "Create an agent"}
+                            </h2>
+                            <p className="mt-2 text-sm leading-6 text-neutral-400">
+                                Define the role and operating purpose for this agent.
+                            </p>
+                        </div>
                         <div className="grid gap-5 md:grid-cols-2">
                             <div className="flex flex-col gap-2">
                                 <label className="ak-label">
@@ -199,12 +210,20 @@ export default function AgentsPage() {
                 )}
 
                 <section className="space-y-4">
-                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <h2 className="text-xl font-semibold">Agent List</h2>
+                    <div className="ak-card flex flex-col gap-5">
+                        <div>
+                            <p className="ak-header-eyebrow">Registry</p>
+                            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                                Agent list
+                            </h2>
+                            <p className="mt-2 text-sm leading-6 text-neutral-400">
+                                Filter and manage the agents connected to workspace knowledge.
+                            </p>
+                        </div>
 
-                        <div className="flex flex-col gap-3 md:flex-row">
+                        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px_220px]">
                             <input
-                                className="ak-input md:w-72"
+                                className="ak-input"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search agents..."

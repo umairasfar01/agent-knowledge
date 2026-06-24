@@ -56,7 +56,7 @@ export default function KnowledgeDetailPage() {
                     ]}
                 />
 
-                <div>
+                <div className="border-b border-neutral-800/80 pb-4">
                     <Link
                         href="/knowledge"
                         className="ak-button-ghost px-0"
@@ -76,11 +76,11 @@ export default function KnowledgeDetailPage() {
                     </div>
                 ) : (
                     <>
-                        <header className="ak-card">
+                        <header className="border-b border-neutral-800/80 pb-6">
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                 <div className="min-w-0">
-                                    <p className="text-sm text-neutral-400">{item.category}</p>
-                                    <h1 className="mt-2 break-words text-3xl font-bold">{item.title}</h1>
+                                    <p className="ak-header-eyebrow">{item.category}</p>
+                                    <h1 className="ak-header-title break-words">{item.title}</h1>
                                 </div>
 
                                 <span className={`${item.status === "verified" ? "ak-status-success" : "ak-status-warning"} w-fit shrink-0`}>
@@ -90,29 +90,32 @@ export default function KnowledgeDetailPage() {
                         </header>
 
                         <section className="ak-card">
-                            <h2 className="text-lg font-semibold">Content</h2>
-                            <p className="mt-4 whitespace-pre-wrap text-neutral-200">
+                            <p className="ak-header-eyebrow">Knowledge record</p>
+                            <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                                Content
+                            </h2>
+                            <p className="mt-5 whitespace-pre-wrap text-sm leading-7 text-neutral-300">
                                 {item.content}
                             </p>
                         </section>
 
                         <section className="grid gap-4 md:grid-cols-3">
                             <div className="ak-card">
-                                <p className="text-sm text-neutral-400">Can answer</p>
+                                <p className="ak-header-eyebrow">Can answer</p>
                                 <p className="mt-2 text-xl font-semibold">
                                     {item.canUseToAnswer ? "Yes" : "No"}
                                 </p>
                             </div>
 
                             <div className="ak-card">
-                                <p className="text-sm text-neutral-400">Can act</p>
+                                <p className="ak-header-eyebrow">Can act</p>
                                 <p className="mt-2 text-xl font-semibold">
                                     {item.canUseToAct ? "Yes" : "No"}
                                 </p>
                             </div>
 
                             <div className="ak-card">
-                                <p className="text-sm text-neutral-400">Approval required</p>
+                                <p className="ak-header-eyebrow">Approval required</p>
                                 <p className="mt-2 text-xl font-semibold">
                                     {item.requiresApproval ? "Yes" : "No"}
                                 </p>
@@ -120,7 +123,10 @@ export default function KnowledgeDetailPage() {
                         </section>
 
                         <section className="ak-card">
-                            <h2 className="text-lg font-semibold">Allowed agents</h2>
+                            <p className="ak-header-eyebrow">Access</p>
+                            <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                                Allowed agents
+                            </h2>
 
                             {!item.allowedAgentIds || item.allowedAgentIds.length === 0 ? (
                                 <p className="mt-3 text-neutral-400">
@@ -145,10 +151,13 @@ export default function KnowledgeDetailPage() {
                         </section>
 
                         <section className="ak-card">
-                            <h2 className="text-lg font-semibold">Trust metadata</h2>
+                            <p className="ak-header-eyebrow">Trust and provenance</p>
+                            <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                                Trust metadata
+                            </h2>
 
-                            <section className="ak-panel">
-                                <h2 className="text-lg font-semibold">Audit history</h2>
+                            <section className="ak-panel mt-5">
+                                <h3 className="text-lg font-semibold tracking-tight text-white">Audit history</h3>
 
                                 {auditLogs === undefined ? (
                                     <p className="mt-3 text-neutral-400">Loading audit history...</p>
@@ -161,7 +170,7 @@ export default function KnowledgeDetailPage() {
                                         {auditLogs.map((log) => (
                                             <div
                                                 key={log._id}
-                                                className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
+                                                className="ak-panel"
                                             >
                                                 <p className="font-medium">
                                                     {log.action === "seed.demo_created" ? "created" : log.action}
@@ -182,7 +191,7 @@ export default function KnowledgeDetailPage() {
                             </section>
 
                             <section className="ak-panel mt-4">
-                                <h2 className="text-xl font-semibold">Version history</h2>
+                                <h3 className="text-lg font-semibold tracking-tight text-white">Version history</h3>
 
                                 {versions === undefined ? (
                                     <p className="mt-3 text-neutral-400">Loading version history...</p>
@@ -195,7 +204,7 @@ export default function KnowledgeDetailPage() {
                                         {versions.map((version, index) => (
                                             <div
                                                 key={version._id}
-                                                className="rounded-xl border border-neutral-800 bg-neutral-900/70 p-4"
+                                                className="ak-panel"
                                             >
                                                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                                                     <div>

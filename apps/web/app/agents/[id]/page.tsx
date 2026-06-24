@@ -35,7 +35,7 @@ export default function AgentDetailPage() {
           ]}
         />
 
-        <div>
+        <div className="border-b border-neutral-800/80 pb-4">
           <Link
             href="/agents"
             className="ak-button-ghost px-0"
@@ -55,14 +55,14 @@ export default function AgentDetailPage() {
           </div>
         ) : (
           <>
-            <header className="ak-card">
+            <header className="border-b border-neutral-800/80 pb-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <p className="text-sm text-neutral-400">
+                  <p className="ak-header-eyebrow">
                     {agent.role ?? "Support Agent"}
                   </p>
-                  <h1 className="mt-2 break-words text-3xl font-bold">{agent.name}</h1>
-                  <p className="mt-3 max-w-2xl text-neutral-300">
+                  <h1 className="ak-header-title break-words">{agent.name}</h1>
+                  <p className="ak-header-description">
                     {agent.description}
                   </p>
                 </div>
@@ -74,7 +74,8 @@ export default function AgentDetailPage() {
             </header>
 
             <section className="ak-card">
-              <h2 className="text-xl font-semibold">
+              <p className="ak-header-eyebrow">Access</p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
                 Knowledge this agent can access
               </h2>
 
@@ -90,7 +91,7 @@ export default function AgentDetailPage() {
                     <Link
                       key={item._id}
                       href={`/knowledge/${item._id}`}
-                      className="ak-panel block transition hover:border-neutral-700 hover:bg-neutral-900"
+                      className="ak-panel block transition hover:border-neutral-700 hover:bg-white/[0.025]"
                     >
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0">
@@ -115,7 +116,10 @@ export default function AgentDetailPage() {
             </section>
 
             <section className="ak-card">
-              <h2 className="text-xl font-semibold">Audit history</h2>
+              <p className="ak-header-eyebrow">Governance</p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                Audit history
+              </h2>
 
               {auditLogs === undefined ? (
                 <p className="mt-3 text-neutral-400">Loading audit history...</p>

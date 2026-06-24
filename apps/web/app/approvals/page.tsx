@@ -93,7 +93,7 @@ export default function ApprovalsPage() {
     return (
         <AppShell>
             <div className="ak-page">
-                <header>
+                <header className="border-b border-neutral-800/80 pb-6">
                     <p className="ak-header-eyebrow">Governance</p>
                     <h1 className="ak-header-title">Approval Queue</h1>
                     <p className="ak-header-description">
@@ -102,6 +102,12 @@ export default function ApprovalsPage() {
                 </header>
 
                 <section className="space-y-4">
+                    <div>
+                        <p className="ak-header-eyebrow">Review queue</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                            Pending decisions
+                        </h2>
+                    </div>
                     {approvalItems === undefined ? (
                         <div className="space-y-3">
                             {[1, 2, 3].map((item) => (
@@ -205,9 +211,9 @@ export default function ApprovalsPage() {
                             aria-modal="true"
                             aria-labelledby="reject-knowledge-title"
                             aria-describedby="reject-knowledge-description"
-                            className="w-full max-w-lg rounded-2xl border border-neutral-800 bg-neutral-950 p-6 text-white shadow-2xl shadow-black/40"
+                            className="w-full max-w-lg rounded-2xl border border-neutral-800 bg-[#0b0b0b] p-6 text-white shadow-2xl shadow-black/50"
                         >
-                            <div className="mb-5 h-1 w-14 rounded-full bg-red-400" />
+                            <div className="mb-5 h-1 w-14 rounded-full bg-red-400/80" />
 
                             <h2
                                 id="reject-knowledge-title"

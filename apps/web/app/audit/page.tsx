@@ -54,7 +54,7 @@ export default function AuditPage() {
     return (
         <AppShell>
             <div className="ak-page">
-                <header>
+                <header className="border-b border-neutral-800/80 pb-6">
                     <p className="ak-header-eyebrow">
                         Governance
                     </p>
@@ -65,6 +65,16 @@ export default function AuditPage() {
                 </header>
 
                 <section className="ak-card">
+                    <div className="mb-5 border-b border-neutral-800/80 pb-5">
+                        <p className="ak-header-eyebrow">Activity stream</p>
+                        <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                            Workspace events
+                        </h2>
+                        <p className="mt-2 text-sm leading-6 text-neutral-400">
+                            A chronological record of governed changes across the workspace.
+                        </p>
+                    </div>
+
                     {auditLogs === undefined ? (
                         <SkeletonList count={4} lines={2} />
                     ) : auditLogs.length === 0 ? (
@@ -79,7 +89,7 @@ export default function AuditPage() {
                             {auditLogs.map((log) => (
                                 <div
                                     key={log._id}
-                                    className="ak-panel flex flex-col gap-2 md:flex-row md:items-center md:justify-between"
+                                    className="ak-panel flex flex-col gap-3 transition hover:border-neutral-700 hover:bg-white/[0.025] md:flex-row md:items-center md:justify-between"
                                 >
                                     <div>
                                         <p className="font-medium">

@@ -105,7 +105,7 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <div className="ak-page">
-        <header>
+        <header className="border-b border-neutral-800/80 pb-6">
           <p className="ak-header-eyebrow">Workspace</p>
           <h1 className="ak-header-title">Settings</h1>
           <p className="ak-header-description">
@@ -115,11 +115,12 @@ export default function SettingsPage() {
 
         <section className="grid gap-6 lg:grid-cols-[1fr_360px]">
           <form onSubmit={handleSaveSettings} className="ak-card space-y-6">
-            <div>
-              <h2 className="text-xl font-semibold text-white">
+            <div className="border-b border-neutral-800/80 pb-5">
+              <p className="ak-header-eyebrow">Organization</p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
                 Organization settings
               </h2>
-              <p className="mt-2 text-sm text-neutral-500">
+              <p className="mt-2 text-sm leading-6 text-neutral-400">
                 These settings apply to the current organization.
               </p>
             </div>
@@ -183,7 +184,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-2">
-                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-neutral-800 bg-neutral-950/70 p-4">
+                  <label className="ak-panel flex cursor-pointer items-start gap-3 transition hover:border-neutral-700 hover:bg-white/[0.025]">
                     <input
                       type="checkbox"
                       checked={defaultCanAnswer}
@@ -201,7 +202,7 @@ export default function SettingsPage() {
                     </span>
                   </label>
 
-                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-neutral-800 bg-neutral-950/70 p-4">
+                  <label className="ak-panel flex cursor-pointer items-start gap-3 transition hover:border-neutral-700 hover:bg-white/[0.025]">
                     <input
                       type="checkbox"
                       checked={defaultCanAct}
@@ -239,7 +240,7 @@ export default function SettingsPage() {
 
           <aside className="space-y-4">
             <section className="ak-card">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <p className="ak-header-eyebrow">
                 Signed in user
               </p>
               {user?.email ? (
@@ -252,7 +253,7 @@ export default function SettingsPage() {
             </section>
 
             <section className="ak-card">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <p className="ak-header-eyebrow">
                 Current role
               </p>
               {currentRole === "loading" ? (
@@ -265,7 +266,7 @@ export default function SettingsPage() {
             </section>
 
             <section className="ak-card">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <p className="ak-header-eyebrow">
                 Organization ID
               </p>
               <p className="mt-2 break-all font-mono text-xs text-neutral-300">
