@@ -47,6 +47,79 @@ export const getDashboardMetrics = query({
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 5);
 
+    const retrievalsByDay = Array.from({ length: 7 }).map((_, index) => {
+      const date = new Date(now - (6 - index) * 24 * 60 * 60 * 1000);
+      const start = new Date(date);
+      start.setHours(0, 0, 0, 0);
+
+      const end = new Date(date);
+      end.setHours(23, 59, 59, 999);
+
+      const count = orgRetrievalLogs.filter(
+        (log) => log.createdAt >= start.getTime() && log.createdAt <= end.getTime()
+      ).length;
+
+      return {
+        label: date.toLocaleDateString("en-US", {
+          weekday: "short",
+        }),
+        count,
+      };
+    });
+
+    const questionCounts = new Map<string, number>();
+
+    for (const log of orgRetrievalLogs) {
+      const question = log.question.trim();
+
+      if (!question) continue;
+
+      questionCounts.set(question, (questionCounts.get(question) ?? 0) + 1);
+    }
+
+    const topQuestions = Array.from(questionCounts.entries())
+      .map(([question, count]) => ({ question, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const sourceCounts = new Map<string, number>();
+
+    for (const log of orgRetrievalLogs) {
+      for (const title of new Set(log.sourceTitles)) {
+        sourceCounts.set(title, (sourceCounts.get(title) ?? 0) + 1);
+      }
+    }
+
+    const topSources = Array.from(sourceCounts.entries())
+      .map(([title, count]) => ({ title, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const pendingApprovals = orgKnowledge.filter(
+      (item) => item.requiresApproval === true || item.status === "draft"
+    ).length;
+
+    const reviewThreshold = now - 90 * 24 * 60 * 60 * 1000;
+
+    const reviewDueCount = orgKnowledge.filter((item) => {
+      const lastReviewed = item.lastReviewedAt ?? item.createdAt ?? item._creationTime;
+      return lastReviewed <= reviewThreshold;
+    }).length;
+
+    const knowledgeHealthScore =
+      orgKnowledge.length === 0
+        ? 0
+        : Math.round(
+          ((orgKnowledge.filter((item) => item.status === "verified").length /
+            orgKnowledge.length) *
+            0.5 +
+            (orgKnowledge.filter((item) => item.canUseToAnswer === true).length /
+              orgKnowledge.length) *
+            0.3 +
+            ((orgKnowledge.length - reviewDueCount) / orgKnowledge.length) * 0.2) *
+          100
+        );
+
     return {
       totalKnowledge: orgKnowledge.length,
       verifiedKnowledge: orgKnowledge.filter(
@@ -73,6 +146,12 @@ export const getDashboardMetrics = query({
 
       recentRetrievalLogs,
       recentAuditLogs,
+      knowledgeHealthScore,
+      pendingApprovals,
+      reviewDueCount,
+      retrievalsByDay,
+      topQuestions,
+      topSources,
     };
   },
 });

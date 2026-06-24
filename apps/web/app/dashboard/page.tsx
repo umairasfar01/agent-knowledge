@@ -281,6 +281,170 @@ export default function DashboardPage() {
                 )}
               </div>
 
+              <section className="grid gap-6 xl:grid-cols-[1fr_380px]">
+                <div className="ak-card">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="ak-header-eyebrow">Retrieval activity</p>
+                      <h2 className="mt-2 text-xl font-semibold text-white">
+                        Last 7 days
+                      </h2>
+                    </div>
+
+                    <span className="ak-status-neutral">
+                      {metrics.retrievalsLast7Days} searches
+                    </span>
+                  </div>
+
+                  <div className="mt-6 flex h-48 items-end gap-3">
+                    {metrics.retrievalsByDay.map((day) => {
+                      const maxCount = Math.max(
+                        1,
+                        ...metrics.retrievalsByDay.map((item) => item.count)
+                      );
+
+                      const height = Math.max(8, Math.round((day.count / maxCount) * 160));
+
+                      return (
+                        <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
+                          <div className="flex h-40 w-full items-end rounded-xl bg-neutral-950/70 p-1">
+                            <div
+                              className="w-full rounded-lg bg-white transition-all"
+                              style={{ height }}
+                            />
+                          </div>
+
+                          <p className="text-xs text-neutral-500">{day.label}</p>
+                          <p className="text-xs font-medium text-neutral-300">{day.count}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="ak-card">
+                  <p className="ak-header-eyebrow">Knowledge health</p>
+                  <h2 className="mt-2 text-xl font-semibold text-white">
+                    Workspace quality
+                  </h2>
+
+                  <div className="mt-6 rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5">
+                    <p className="text-4xl font-bold tracking-tight text-white">
+                      {metrics.knowledgeHealthScore}%
+                    </p>
+                    <p className="mt-2 text-sm text-neutral-500">
+                      Based on verified, answerable, and recently reviewed knowledge.
+                    </p>
+
+                    <div className="mt-5 h-2 overflow-hidden rounded-full bg-neutral-900">
+                      <div
+                        className="h-full rounded-full bg-white"
+                        style={{ width: `${metrics.knowledgeHealthScore}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-3">
+                    <div className="ak-panel flex items-center justify-between">
+                      <span className="text-sm text-neutral-400">Verified</span>
+                      <span className="text-sm font-medium text-white">
+                        {metrics.verifiedKnowledge}
+                      </span>
+                    </div>
+
+                    <div className="ak-panel flex items-center justify-between">
+                      <span className="text-sm text-neutral-400">Draft / approval</span>
+                      <span className="text-sm font-medium text-white">
+                        {metrics.pendingApprovals}
+                      </span>
+                    </div>
+
+                    <div className="ak-panel flex items-center justify-between">
+                      <span className="text-sm text-neutral-400">Review due</span>
+                      <span className="text-sm font-medium text-white">
+                        {metrics.reviewDueCount}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="grid gap-6 xl:grid-cols-2">
+                <div className="ak-card">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="ak-header-eyebrow">Search intelligence</p>
+                      <h2 className="mt-2 text-xl font-semibold text-white">
+                        Top questions
+                      </h2>
+                    </div>
+
+                    <Link href="/retrieval-history" className="ak-button-ghost">
+                      View history
+                    </Link>
+                  </div>
+
+                  {metrics.topQuestions.length === 0 ? (
+                    <div className="ak-panel mt-5">
+                      <p className="text-sm text-neutral-400">
+                        No repeated questions yet.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-5 space-y-3">
+                      {metrics.topQuestions.map((item, index) => (
+                        <div
+                          key={`${item.question}-${index}`}
+                          className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <p className="text-sm font-medium text-white">{item.question}</p>
+                            <span className="ak-status-neutral">{item.count}x</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="ak-card">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="ak-header-eyebrow">Source usage</p>
+                      <h2 className="mt-2 text-xl font-semibold text-white">
+                        Top retrieved sources
+                      </h2>
+                    </div>
+
+                    <Link href="/knowledge" className="ak-button-ghost">
+                      View knowledge
+                    </Link>
+                  </div>
+
+                  {metrics.topSources.length === 0 ? (
+                    <div className="ak-panel mt-5">
+                      <p className="text-sm text-neutral-400">
+                        No source usage yet.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-5 space-y-3">
+                      {metrics.topSources.map((item, index) => (
+                        <div
+                          key={`${item.title}-${index}`}
+                          className="rounded-xl border border-neutral-800 bg-neutral-950/70 p-4"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <p className="text-sm font-medium text-white">{item.title}</p>
+                            <span className="ak-status-neutral">{item.count}x</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+
               <div className="ak-card">
                 <div className="flex items-center justify-between gap-4">
                   <div>
