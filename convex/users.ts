@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { canManageKnowledge } from "@agent-knowledge/shared";
-import { requireAdminForWorkosUser } from "./permissions";
+import { requireAdminForIdentity } from "./permissions";
 import { writeAuditLog } from "./audit";
 import { LIMITS, normalizeEmail, optionalText } from "./validation";
 
@@ -141,7 +141,7 @@ export const updateMemberRole = mutation({
         actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+        await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
         const membership = await ctx.db.get(args.membershipId);
 
@@ -204,7 +204,7 @@ export const removeMember = mutation({
         actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+        await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
         const membership = await ctx.db.get(args.membershipId);
 
@@ -264,7 +264,7 @@ export const inviteMember = mutation({
     actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const now = Date.now();
     const normalizedEmail = normalizeEmail(args.email);
