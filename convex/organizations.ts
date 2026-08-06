@@ -90,6 +90,7 @@ export const updateOrganizationSettings = mutation({
       action: "organization_settings_updated",
       knowledgeTitle: "Organization settings updated",
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });

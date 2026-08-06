@@ -7,11 +7,14 @@ type AuditLogFields = WithoutSystemFields<Doc<"auditLogs">>;
 type AuditLogEntry = Omit<AuditLogFields, "actorId" | "createdAt"> &
   Partial<Pick<AuditLogFields, "actorId" | "createdAt">>;
 
-// actorId is still a placeholder everywhere; task #20 swaps it for the authenticated
-// identity, and routing every write through here makes that a one-line change.
+// Task #20: actorId now carries the caller's workosUserId (client-supplied, checked
+// against membership by requireAdminForWorkosUser at each call site) instead of a
+// hardcoded placeholder. It's still not server-verified — that's task #4, which wires
+// ctx.auth up to WorkOS so identity can be read off the request instead of trusted
+// from an argument. Swapping to ctx.auth.getUserIdentity() then becomes a one-line
+// change here, same as this comment originally promised for the placeholder.
 export async function writeAuditLog(ctx: MutationCtx, entry: AuditLogEntry) {
   return await ctx.db.insert("auditLogs", {
-    actorId: "demo-user",
     createdAt: Date.now(),
     ...entry,
   });

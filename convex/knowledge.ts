@@ -61,6 +61,7 @@ export const createKnowledge = mutation({
       knowledgeId,
       knowledgeTitle: title,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       createdAt: now,
       organizationId: args.organizationId,
     });
@@ -141,6 +142,7 @@ export const deleteKnowledge = mutation({
       knowledgeId: undefined,
       knowledgeTitle: item.title ?? "Unknown knowledge item",
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId,
     });
   },
@@ -193,6 +195,7 @@ export const updateKnowledge = mutation({
       knowledgeId: args.id,
       knowledgeTitle: title,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });
@@ -305,6 +308,7 @@ export const rejectKnowledge = mutation({
       knowledgeId: args.id,
       knowledgeTitle: item.title,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       metadata: {
         note: reviewNote ?? "",
@@ -336,6 +340,7 @@ export const approveKnowledge = mutation({
       knowledgeId: args.id,
       knowledgeTitle: item?.title ?? "Unknown knowledge item",
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });
@@ -489,6 +494,7 @@ export const restoreKnowledgeVersion = mutation({
       knowledgeId: version.knowledgeId,
       knowledgeTitle: version.title,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId,
       createdAt: now,
     });
@@ -562,6 +568,7 @@ export const markKnowledgeReviewed = mutation({
       knowledgeId: args.id,
       knowledgeTitle: item.title,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });

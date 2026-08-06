@@ -190,6 +190,7 @@ export const updateMemberRole = mutation({
                 ? `Changed member role for ${user.email} to ${args.role}`
                 : `Changed member role to ${args.role}`,
             actorEmail: args.actorEmail,
+            actorId: args.workosUserId,
             organizationId: args.organizationId,
         });
     },
@@ -245,6 +246,7 @@ export const removeMember = mutation({
                 ? `Removed member ${user.email}`
                 : "Removed member",
             actorEmail: args.actorEmail,
+            actorId: args.workosUserId,
             organizationId: args.organizationId,
         });
 
@@ -316,6 +318,7 @@ export const inviteMember = mutation({
       knowledgeId: undefined,
       knowledgeTitle: `Invited member ${normalizedEmail} as ${args.role}`,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });

@@ -43,6 +43,7 @@ export const createAgent = mutation({
       agentId,
       agentName: name,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });
@@ -121,6 +122,7 @@ export const updateAgent = mutation({
       agentId: args.id,
       agentName: name,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: args.organizationId,
       createdAt: now,
     });
@@ -153,6 +155,7 @@ export const deleteAgent = mutation({
       agentId: undefined,
       agentName: agent.name,
       actorEmail: args.actorEmail,
+      actorId: args.workosUserId,
       organizationId: agent.organizationId,
     });
   },
