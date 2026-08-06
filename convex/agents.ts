@@ -16,7 +16,7 @@ export const createAgent = mutation({
     workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
+    await requireAdminForIdentity(ctx, args.organizationId);
 
     const name = requireText(args.name, "Name", LIMITS.name);
     const description = requireText(
@@ -97,7 +97,7 @@ export const updateAgent = mutation({
     workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
+    await requireAdminForIdentity(ctx, args.organizationId);
 
     const name = requireText(args.name, "Name", LIMITS.name);
     const description = requireText(
@@ -146,7 +146,7 @@ export const deleteAgent = mutation({
       throw new Error("Agent is missing organizationId");
     }
 
-    await requireAdminForIdentity(ctx, agent.organizationId, args.workosUserId);
+    await requireAdminForIdentity(ctx, agent.organizationId);
 
     await ctx.db.delete(args.id);
 
