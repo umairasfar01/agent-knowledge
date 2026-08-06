@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireAdminForWorkosUser } from "./permissions";
+import { requireAdminForIdentity } from "./permissions";
 import { writeAuditLog } from "./audit";
 import { inOrg } from "./tenancy";
 import { LIMITS, requireText } from "./validation";
@@ -16,7 +16,7 @@ export const createAgent = mutation({
     workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const name = requireText(args.name, "Name", LIMITS.name);
     const description = requireText(
@@ -97,7 +97,7 @@ export const updateAgent = mutation({
     workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const name = requireText(args.name, "Name", LIMITS.name);
     const description = requireText(
@@ -146,7 +146,7 @@ export const deleteAgent = mutation({
       throw new Error("Agent is missing organizationId");
     }
 
-    await requireAdminForWorkosUser(ctx, args.workosUserId, agent.organizationId);
+    await requireAdminForIdentity(ctx, agent.organizationId, args.workosUserId);
 
     await ctx.db.delete(args.id);
 

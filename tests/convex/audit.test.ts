@@ -65,6 +65,24 @@ describe("audit log actor identity", () => {
         createdAt: now,
         updatedAt: now,
       });
+
+      // The verified identity is also the one that must hold admin
+      // membership now: agents.ts authorizes off ctx.auth, not the
+      // caller-supplied workosUserId argument.
+      const verifiedUserId = await ctx.db.insert("users", {
+        workosUserId: "workos_verified_user",
+        email: "verified@example.com",
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      await ctx.db.insert("memberships", {
+        userId: verifiedUserId,
+        organizationId: "org_test",
+        role: "admin",
+        createdAt: now,
+        updatedAt: now,
+      });
     });
 
     const asVerifiedUser = t.withIdentity({ subject: "workos_verified_user" });

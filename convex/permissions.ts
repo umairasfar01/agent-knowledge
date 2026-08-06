@@ -41,3 +41,21 @@ export async function requireAdminForWorkosUser(
 
   return membership;
 }
+
+// Prefers ctx.auth's server-verified identity over the caller-supplied
+// workosUserId, same fallback pattern as writeAuditLog in audit.ts: the
+// client-supplied value is only used when ctx.auth has no verified identity
+// for the request (e.g. no JWT reached Convex yet).
+export async function requireAdminForIdentity(
+  ctx: Ctx,
+  organizationId: string,
+  fallbackWorkosUserId: string
+) {
+  const identity = await ctx.auth.getUserIdentity();
+
+  return await requireAdminForWorkosUser(
+    ctx,
+    identity?.subject ?? fallbackWorkosUserId,
+    organizationId
+  );
+}
