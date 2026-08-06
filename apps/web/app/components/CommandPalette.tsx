@@ -86,7 +86,7 @@ export function CommandPalette() {
           />
         </div>
 
-        <div className="max-h-[420px] overflow-y-auto p-2">
+        <div className="max-h-105 overflow-y-auto p-2">
           {filteredCommands.length === 0 ? (
             <div className="rounded-xl p-6 text-center">
               <p className="text-sm font-medium text-white">
