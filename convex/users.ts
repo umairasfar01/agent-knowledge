@@ -141,7 +141,7 @@ export const updateMemberRole = mutation({
         actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
+        await requireAdminForIdentity(ctx, args.organizationId);
 
         const membership = await ctx.db.get(args.membershipId);
 
@@ -204,7 +204,7 @@ export const removeMember = mutation({
         actorEmail: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
+        await requireAdminForIdentity(ctx, args.organizationId);
 
         const membership = await ctx.db.get(args.membershipId);
 
@@ -264,7 +264,7 @@ export const inviteMember = mutation({
     actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
+    await requireAdminForIdentity(ctx, args.organizationId);
 
     const now = Date.now();
     const normalizedEmail = normalizeEmail(args.email);
