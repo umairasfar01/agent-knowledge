@@ -7,15 +7,19 @@ type AuditLogFields = WithoutSystemFields<Doc<"auditLogs">>;
 type AuditLogEntry = Omit<AuditLogFields, "actorId" | "createdAt"> &
   Partial<Pick<AuditLogFields, "actorId" | "createdAt">>;
 
-// Task #20: actorId now carries the caller's workosUserId (client-supplied, checked
-// against membership by requireAdminForWorkosUser at each call site) instead of a
-// hardcoded placeholder. It's still not server-verified — that's task #4, which wires
-// ctx.auth up to WorkOS so identity can be read off the request instead of trusted
-// from an argument. Swapping to ctx.auth.getUserIdentity() then becomes a one-line
-// change here, same as this comment originally promised for the placeholder.
+// Task #4: actorId now prefers ctx.auth's server-verified identity (wired to WorkOS
+// via convex/auth.config.ts) over the caller's workosUserId argument. Callers —
+// agents.ts, knowledge.ts, users.ts, organizations.ts — still pass actorId: args.workosUserId
+// (task #20) and are deliberately left as-is; that client-supplied value is now only
+// a fallback for requests ctx.auth can't identify (e.g. no JWT reached Convex yet).
+// Migrating those call sites off workosUserId entirely is follow-up work, one module
+// at a time, once every mutation can rely on ctx.auth being populated.
 export async function writeAuditLog(ctx: MutationCtx, entry: AuditLogEntry) {
+  const identity = await ctx.auth.getUserIdentity();
+
   return await ctx.db.insert("auditLogs", {
     createdAt: Date.now(),
     ...entry,
+    actorId: identity?.subject ?? entry.actorId,
   });
 }
