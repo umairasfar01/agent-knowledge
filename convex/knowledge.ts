@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireAdminForWorkosUser } from "./permissions";
+import { requireAdminForIdentity } from "./permissions";
 import { writeAuditLog } from "./audit";
 import { inOrg } from "./tenancy";
 import { rankByRelevance } from "./retrieval";
@@ -31,7 +31,7 @@ export const createKnowledge = mutation({
   handler: async (ctx, args) => {
     const now = Date.now();
 
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const title = requireText(args.title, "Title", LIMITS.title);
     const content = requireText(args.content, "Content", LIMITS.content);
@@ -133,7 +133,7 @@ export const deleteKnowledge = mutation({
 
     const organizationId = item.organizationId ?? args.organizationId;
 
-    await requireAdminForWorkosUser(ctx, args.workosUserId, organizationId);
+    await requireAdminForIdentity(ctx, organizationId, args.workosUserId);
 
     await ctx.db.delete(args.id);
 
@@ -167,7 +167,7 @@ export const updateKnowledge = mutation({
     ownerEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const title = requireText(args.title, "Title", LIMITS.title);
     const content = requireText(args.content, "Content", LIMITS.content);
@@ -275,11 +275,7 @@ export const rejectKnowledge = mutation({
     reviewNote: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(
-      ctx,
-      args.workosUserId,
-      args.organizationId
-    );
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const item = await ctx.db.get(args.id);
 
@@ -326,7 +322,7 @@ export const approveKnowledge = mutation({
     organizationId: v.string(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
     const item = await ctx.db.get(args.id);
     const now = Date.now();
 
@@ -460,7 +456,7 @@ export const restoreKnowledgeVersion = mutation({
 
     const organizationId = version.organizationId ?? args.organizationId;
 
-    await requireAdminForWorkosUser(ctx, args.workosUserId, organizationId);
+    await requireAdminForIdentity(ctx, organizationId, args.workosUserId);
 
     const knowledge = await ctx.db.get(version.knowledgeId);
 
@@ -537,11 +533,7 @@ export const markKnowledgeReviewed = mutation({
     actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(
-      ctx,
-      args.workosUserId,
-      args.organizationId
-    );
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const item = await ctx.db.get(args.id);
 
