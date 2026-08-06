@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireAdminForWorkosUser } from "./permissions";
+import { requireAdminForIdentity } from "./permissions";
 import { writeAuditLog } from "./audit";
 import { LIMITS, optionalText } from "./validation";
 
@@ -44,11 +44,7 @@ export const updateOrganizationSettings = mutation({
     defaultCanUseToAct: v.boolean(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForWorkosUser(
-      ctx,
-      args.workosUserId,
-      args.organizationId
-    );
+    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
 
     const now = Date.now();
 
