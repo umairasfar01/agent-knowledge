@@ -79,7 +79,7 @@ describe("updateOrganizationSettings authorization", () => {
     ).rejects.toThrow("Unauthorized");
   });
 
-  test("falls back to the caller-supplied workosUserId when ctx.auth has no identity", async () => {
+  test("rejects the caller when ctx.auth has no identity, even if workosUserId would qualify as admin", async () => {
     const t = convexTest(schema, modules);
     const now = Date.now();
 
@@ -105,6 +105,6 @@ describe("updateOrganizationSettings authorization", () => {
         ...baseArgs,
         workosUserId: "workos_admin",
       })
-    ).resolves.not.toThrow();
+    ).rejects.toThrow("Unauthorized");
   });
 });

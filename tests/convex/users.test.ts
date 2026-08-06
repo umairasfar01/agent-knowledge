@@ -90,7 +90,7 @@ describe("users.ts mutation authorization", () => {
       ).rejects.toThrow("Unauthorized");
     });
 
-    test("falls back to the caller-supplied workosUserId when ctx.auth has no identity", async () => {
+    test("rejects the caller when ctx.auth has no identity, even if workosUserId would qualify as admin", async () => {
       const t = convexTest(schema, modules);
       await seedAdmin(t, "workos_admin", "org_test");
       const membershipId = await seedTargetMember(t, "org_test");
@@ -102,7 +102,7 @@ describe("users.ts mutation authorization", () => {
           organizationId: "org_test",
           workosUserId: "workos_admin",
         })
-      ).resolves.not.toThrow();
+      ).rejects.toThrow("Unauthorized");
     });
   });
 
@@ -123,7 +123,7 @@ describe("users.ts mutation authorization", () => {
       ).rejects.toThrow("Unauthorized");
     });
 
-    test("falls back to the caller-supplied workosUserId when ctx.auth has no identity", async () => {
+    test("rejects the caller when ctx.auth has no identity, even if workosUserId would qualify as admin", async () => {
       const t = convexTest(schema, modules);
       await seedAdmin(t, "workos_admin", "org_test");
       const membershipId = await seedTargetMember(t, "org_test");
@@ -134,7 +134,7 @@ describe("users.ts mutation authorization", () => {
           organizationId: "org_test",
           workosUserId: "workos_admin",
         })
-      ).resolves.not.toThrow();
+      ).rejects.toThrow("Unauthorized");
     });
   });
 
@@ -155,7 +155,7 @@ describe("users.ts mutation authorization", () => {
       ).rejects.toThrow("Unauthorized");
     });
 
-    test("falls back to the caller-supplied workosUserId when ctx.auth has no identity", async () => {
+    test("rejects the caller when ctx.auth has no identity, even if workosUserId would qualify as admin", async () => {
       const t = convexTest(schema, modules);
       await seedAdmin(t, "workos_admin", "org_test");
 
@@ -166,7 +166,7 @@ describe("users.ts mutation authorization", () => {
           organizationId: "org_test",
           workosUserId: "workos_admin",
         })
-      ).resolves.not.toThrow();
+      ).rejects.toThrow("Unauthorized");
     });
   });
 });

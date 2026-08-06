@@ -14,9 +14,9 @@ function mapRoleToWorkOSRoleSlug(role: InviteRole) {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await withAuth({ ensureSignedIn: true });
+    const { user, accessToken } = await withAuth({ ensureSignedIn: true });
 
-    if (!user?.id || !user.email) {
+    if (!user?.id || !user.email || !accessToken) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -45,6 +45,12 @@ export async function POST(request: Request) {
     }
 
     const convex = new ConvexHttpClient(convexUrl);
+
+    // Attaches the same WorkOS-issued JWT withAuth() just verified, so
+    // ctx.auth.getUserIdentity() in Convex functions resolves this request's
+    // identity server-side too — the same bridge ConvexClientProvider.tsx
+    // sets up for the browser via ConvexProviderWithAuth.
+    convex.setAuth(accessToken);
 
     await convex.mutation(api.security.checkRateLimit, {
       key: `user:${user.id}`,
