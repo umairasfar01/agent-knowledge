@@ -42,20 +42,18 @@ export async function requireAdminForWorkosUser(
   return membership;
 }
 
-// Prefers ctx.auth's server-verified identity over the caller-supplied
-// workosUserId, same fallback pattern as writeAuditLog in audit.ts: the
-// client-supplied value is only used when ctx.auth has no verified identity
-// for the request (e.g. no JWT reached Convex yet).
+// Authorization now requires a server-verified ctx.auth identity — no more
+// falling back to a client-supplied workosUserId. writeAuditLog keeps its own
+// separate fallback for actorId; that's unrelated to this authorization check.
 export async function requireAdminForIdentity(
   ctx: Ctx,
-  organizationId: string,
-  fallbackWorkosUserId: string
+  organizationId: string
 ) {
   const identity = await ctx.auth.getUserIdentity();
 
-  return await requireAdminForWorkosUser(
-    ctx,
-    identity?.subject ?? fallbackWorkosUserId,
-    organizationId
-  );
+  if (!identity) {
+    throw new Error("Unauthorized");
+  }
+
+  return await requireAdminForWorkosUser(ctx, identity.subject, organizationId);
 }
