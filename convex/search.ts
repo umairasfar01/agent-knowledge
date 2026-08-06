@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { inOrg } from "./tenancy";
 
 function includesSearch(value: string | undefined, search: string) {
   return (value ?? "").toLowerCase().includes(search);
@@ -22,14 +23,12 @@ export const globalSearch = query({
     const retrievalLogs = await ctx.db.query("retrievalLogs").collect();
     const auditLogs = await ctx.db.query("auditLogs").collect();
 
+    const matchesOrg = inOrg(args.organizationId);
+
     const knowledgeResults = knowledgeItems
       .filter((item) => {
-        const orgMatches =
-          item.organizationId === args.organizationId ||
-          item.organizationId === undefined;
-
         return (
-          orgMatches &&
+          matchesOrg(item) &&
           (includesSearch(item.title, search) ||
             includesSearch(item.category, search) ||
             includesSearch(item.content, search))
@@ -48,7 +47,7 @@ export const globalSearch = query({
     const agentResults = agents
       .filter((agent) => {
         return (
-          agent.organizationId === args.organizationId &&
+          matchesOrg(agent) &&
           (includesSearch(agent.name, search) ||
             includesSearch(agent.role, search) ||
             includesSearch(agent.description, search))
@@ -69,7 +68,7 @@ export const globalSearch = query({
         const sourceText = log.sourceTitles.join(" ");
 
         return (
-          log.organizationId === args.organizationId &&
+          matchesOrg(log) &&
           (includesSearch(log.question, search) ||
             includesSearch(log.agentName, search) ||
             includesSearch(log.actorEmail, search) ||
@@ -94,7 +93,7 @@ export const globalSearch = query({
           log.knowledgeTitle ?? log.agentName ?? log.metadata?.title ?? "";
 
         return (
-          log.organizationId === args.organizationId &&
+          matchesOrg(log) &&
           (includesSearch(title, search) ||
             includesSearch(log.action, search) ||
             includesSearch(log.actorEmail, search))

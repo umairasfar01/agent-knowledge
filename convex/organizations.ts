@@ -1,6 +1,8 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdminForWorkosUser } from "./permissions";
+import { writeAuditLog } from "./audit";
+import { LIMITS, optionalText } from "./validation";
 
 export const getOrganizationSettings = query({
   args: {
@@ -59,9 +61,15 @@ export const updateOrganizationSettings = mutation({
 
     const payload = {
       organizationId: args.organizationId,
-      displayName: args.displayName.trim() || "Agent Knowledge Workspace",
+      displayName:
+        optionalText(args.displayName, "Display name", LIMITS.name) ??
+        "Agent Knowledge Workspace",
       defaultKnowledgeCategory:
-        args.defaultKnowledgeCategory?.trim() || "Company Policy",
+        optionalText(
+          args.defaultKnowledgeCategory,
+          "Default category",
+          LIMITS.category
+        ) ?? "Company Policy",
       defaultKnowledgeStatus: args.defaultKnowledgeStatus,
       defaultCanUseToAnswer: args.defaultCanUseToAnswer,
       defaultCanUseToAct: args.defaultCanUseToAct,
@@ -78,11 +86,9 @@ export const updateOrganizationSettings = mutation({
       });
     }
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "organization_settings_updated",
-      knowledgeId: undefined,
       knowledgeTitle: "Organization settings updated",
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
       organizationId: args.organizationId,
       createdAt: now,

@@ -1,6 +1,9 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { canManageKnowledge } from "@agent-knowledge/shared";
 import { requireAdminForWorkosUser } from "./permissions";
+import { writeAuditLog } from "./audit";
+import { LIMITS, normalizeEmail, optionalText } from "./validation";
 
 export const upsertCurrentUser = mutation({
     args: {
@@ -150,8 +153,7 @@ export const updateMemberRole = mutation({
             throw new Error("Membership does not belong to this organization");
         }
 
-        const isCurrentRolePrivileged =
-            membership.role === "owner" || membership.role === "admin";
+        const isCurrentRolePrivileged = canManageKnowledge(membership.role);
 
         const isNewRoleNonPrivileged = args.role === "member";
 
@@ -163,9 +165,8 @@ export const updateMemberRole = mutation({
                 )
                 .collect();
 
-            const privilegedMemberships = orgMemberships.filter(
-                (item) =>
-                    (item.role === "owner" || item.role === "admin")
+            const privilegedMemberships = orgMemberships.filter((item) =>
+                canManageKnowledge(item.role)
             );
 
             if (privilegedMemberships.length <= 1) {
@@ -182,16 +183,14 @@ export const updateMemberRole = mutation({
 
         const user = await ctx.db.get(membership.userId);
 
-        await ctx.db.insert("auditLogs", {
+        await writeAuditLog(ctx, {
             action: "member_role_updated",
             knowledgeId: undefined,
             knowledgeTitle: user?.email
                 ? `Changed member role for ${user.email} to ${args.role}`
                 : `Changed member role to ${args.role}`,
-            actorId: "demo-user",
             actorEmail: args.actorEmail,
             organizationId: args.organizationId,
-            createdAt: Date.now(),
         });
     },
 });
@@ -216,8 +215,7 @@ export const removeMember = mutation({
             throw new Error("Membership does not belong to this organization");
         }
 
-        const isPrivileged =
-            membership.role === "owner" || membership.role === "admin";
+        const isPrivileged = canManageKnowledge(membership.role);
 
         if (isPrivileged) {
             const orgMemberships = await ctx.db
@@ -227,9 +225,8 @@ export const removeMember = mutation({
                 )
                 .collect();
 
-            const privilegedMemberships = orgMemberships.filter(
-                (item) =>
-                    (item.role === "owner" || item.role === "admin")
+            const privilegedMemberships = orgMemberships.filter((item) =>
+                canManageKnowledge(item.role)
             );
 
             if (privilegedMemberships.length <= 1) {
@@ -241,16 +238,14 @@ export const removeMember = mutation({
 
         const user = await ctx.db.get(membership.userId);
 
-        await ctx.db.insert("auditLogs", {
+        await writeAuditLog(ctx, {
             action: "member_removed",
             knowledgeId: undefined,
             knowledgeTitle: user?.email
                 ? `Removed member ${user.email}`
                 : "Removed member",
-            actorId: "demo-user",
             actorEmail: args.actorEmail,
             organizationId: args.organizationId,
-            createdAt: Date.now(),
         });
 
         await ctx.db.delete(args.membershipId);
@@ -270,11 +265,8 @@ export const inviteMember = mutation({
     await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
 
     const now = Date.now();
-    const normalizedEmail = args.email.trim().toLowerCase();
-
-    if (!normalizedEmail) {
-      throw new Error("Email is required");
-    }
+    const normalizedEmail = normalizeEmail(args.email);
+    const name = optionalText(args.name, "Name", LIMITS.name);
 
     let user = await ctx.db
       .query("users")
@@ -286,7 +278,7 @@ export const inviteMember = mutation({
     if (!userId) {
       userId = await ctx.db.insert("users", {
         email: normalizedEmail,
-        name: args.name?.trim() || normalizedEmail,
+        name: name ?? normalizedEmail,
         workosUserId: undefined,
         createdAt: now,
         updatedAt: now,
@@ -319,11 +311,10 @@ export const inviteMember = mutation({
       updatedAt: now,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "member_invited",
       knowledgeId: undefined,
       knowledgeTitle: `Invited member ${normalizedEmail} as ${args.role}`,
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
       organizationId: args.organizationId,
       createdAt: now,

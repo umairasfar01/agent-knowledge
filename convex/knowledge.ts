@@ -1,6 +1,15 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdminForWorkosUser } from "./permissions";
+import { writeAuditLog } from "./audit";
+import { inOrg } from "./tenancy";
+import { rankByRelevance } from "./retrieval";
+import {
+  LIMITS,
+  normalizeSourceUrl,
+  optionalText,
+  requireText,
+} from "./validation";
 
 export const createKnowledge = mutation({
   args: {
@@ -24,16 +33,21 @@ export const createKnowledge = mutation({
 
     await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
 
+    const title = requireText(args.title, "Title", LIMITS.title);
+    const content = requireText(args.content, "Content", LIMITS.content);
+    const category = requireText(args.category, "Category", LIMITS.category);
+    const sourceUrl = normalizeSourceUrl(args.sourceUrl);
+
     const knowledgeId = await ctx.db.insert("knowledge", {
-      title: args.title,
-      content: args.content,
-      category: args.category,
+      title,
+      content,
+      category,
       status: args.status,
       ownerId: "demo-user",
       canUseToAnswer: args.canUseToAnswer,
       canUseToAct: args.canUseToAct,
       requiresApproval: args.requiresApproval,
-      sourceUrl: args.sourceUrl,
+      sourceUrl,
       lastReviewedAt: args.lastReviewedAt,
       createdAt: now,
       updatedAt: now,
@@ -42,11 +56,10 @@ export const createKnowledge = mutation({
       organizationId: args.organizationId,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "created",
       knowledgeId,
-      knowledgeTitle: args.title,
-      actorId: "demo-user",
+      knowledgeTitle: title,
       actorEmail: args.actorEmail,
       createdAt: now,
       organizationId: args.organizationId,
@@ -54,9 +67,9 @@ export const createKnowledge = mutation({
 
     await ctx.db.insert("knowledgeVersions", {
       knowledgeId,
-      title: args.title,
-      content: args.content,
-      category: args.category,
+      title,
+      content,
+      category,
       status: args.status,
       changedByEmail: args.actorEmail,
       organizationId: args.organizationId,
@@ -83,11 +96,9 @@ export const listKnowledge = query({
     const status = args.status ?? "all";
     const category = args.category ?? "all";
 
-    return items.filter((item) => {
-      const matchesOrganization =
-        item.organizationId === args.organizationId ||
-        item.organizationId === undefined;
+    const matchesOrg = inOrg(args.organizationId);
 
+    return items.filter((item) => {
       const matchesSearch =
         !search ||
         item.title.toLowerCase().includes(search) ||
@@ -99,10 +110,7 @@ export const listKnowledge = query({
         category === "all" || item.category === category;
 
       return (
-        matchesOrganization &&
-        matchesSearch &&
-        matchesStatus &&
-        matchesCategory
+        matchesOrg(item) && matchesSearch && matchesStatus && matchesCategory
       );
     });
   },
@@ -128,14 +136,12 @@ export const deleteKnowledge = mutation({
 
     await ctx.db.delete(args.id);
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "deleted",
       knowledgeId: undefined,
       knowledgeTitle: item.title ?? "Unknown knowledge item",
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
       organizationId,
-      createdAt: Date.now(),
     });
   },
 });
@@ -161,56 +167,46 @@ export const updateKnowledge = mutation({
   handler: async (ctx, args) => {
     await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
 
+    const title = requireText(args.title, "Title", LIMITS.title);
+    const content = requireText(args.content, "Content", LIMITS.content);
+    const category = requireText(args.category, "Category", LIMITS.category);
+    const sourceUrl = normalizeSourceUrl(args.sourceUrl);
+    const now = Date.now();
+
     await ctx.db.patch(args.id, {
-      title: args.title,
-      content: args.content,
-      category: args.category,
+      title,
+      content,
+      category,
       status: args.status,
       canUseToAnswer: args.canUseToAnswer,
       canUseToAct: args.canUseToAct,
       requiresApproval: args.requiresApproval,
-      sourceUrl: args.sourceUrl,
+      sourceUrl,
       lastReviewedAt: args.lastReviewedAt,
-      updatedAt: Date.now(),
+      updatedAt: now,
       allowedAgentIds: args.allowedAgentIds,
       ownerEmail: args.ownerEmail,
     });
-    await ctx.db.insert("auditLogs", {
+
+    await writeAuditLog(ctx, {
       action: "updated",
       knowledgeId: args.id,
-      knowledgeTitle: args.title,
-      actorId: "demo-user",
+      knowledgeTitle: title,
       actorEmail: args.actorEmail,
-      createdAt: Date.now(),
+      organizationId: args.organizationId,
+      createdAt: now,
     });
 
     await ctx.db.insert("knowledgeVersions", {
       knowledgeId: args.id,
-      title: args.title,
-      content: args.content,
-      category: args.category,
+      title,
+      content,
+      category,
       status: args.status,
       changedByEmail: args.actorEmail,
       organizationId: args.organizationId,
-      createdAt: Date.now(),
+      createdAt: now,
     });
-  },
-});
-
-export const listAuditLogs = query({
-  args: {
-    organizationId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const logs = await ctx.db.query("auditLogs").order("desc").collect();
-
-    return logs
-      .filter(
-        (log) =>
-          log.organizationId === args.organizationId ||
-          log.organizationId === undefined
-      )
-      .slice(0, 20);
   },
 });
 
@@ -230,14 +226,10 @@ export const listAuditLogsForKnowledge = query({
   },
   handler: async (ctx, args) => {
     const logs = await ctx.db.query("auditLogs").order("desc").collect();
+    const matchesOrg = inOrg(args.organizationId);
 
     return logs
-      .filter(
-        (log) =>
-          log.knowledgeId === args.knowledgeId &&
-          (log.organizationId === args.organizationId ||
-            log.organizationId === undefined)
-      )
+      .filter((log) => log.knowledgeId === args.knowledgeId && matchesOrg(log))
       .slice(0, 10);
   },
 });
@@ -249,12 +241,10 @@ export const listKnowledgeForAgent = query({
   },
   handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
+    const matchesOrg = inOrg(args.organizationId);
 
     return items.filter(
-      (item) =>
-        item.allowedAgentIds?.includes(args.agentId) &&
-        (item.organizationId === args.organizationId ||
-          item.organizationId === undefined)
+      (item) => item.allowedAgentIds?.includes(args.agentId) && matchesOrg(item)
     );
   },
 });
@@ -265,12 +255,10 @@ export const listApprovalQueue = query({
   },
   handler: async (ctx, args) => {
     const items = await ctx.db.query("knowledge").order("desc").collect();
+    const matchesOrg = inOrg(args.organizationId);
 
     return items.filter(
-      (item) =>
-        item.requiresApproval === true &&
-        (item.organizationId === args.organizationId ||
-          item.organizationId === undefined)
+      (item) => item.requiresApproval === true && matchesOrg(item)
     );
   },
 });
@@ -303,6 +291,7 @@ export const rejectKnowledge = mutation({
       throw new Error("Knowledge item does not belong to this organization");
     }
 
+    const reviewNote = optionalText(args.reviewNote, "Review note", LIMITS.note);
     const now = Date.now();
 
     await ctx.db.patch(args.id, {
@@ -311,15 +300,14 @@ export const rejectKnowledge = mutation({
       updatedAt: now,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "knowledge.rejected",
       knowledgeId: args.id,
       knowledgeTitle: item.title,
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
       organizationId: args.organizationId,
       metadata: {
-        note: args.reviewNote ?? "",
+        note: reviewNote ?? "",
       },
       createdAt: now,
     });
@@ -336,18 +324,20 @@ export const approveKnowledge = mutation({
   handler: async (ctx, args) => {
     await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
     const item = await ctx.db.get(args.id);
+    const now = Date.now();
+
     await ctx.db.patch(args.id, {
       requiresApproval: false,
-      updatedAt: Date.now(),
+      updatedAt: now,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "updated",
       knowledgeId: args.id,
       knowledgeTitle: item?.title ?? "Unknown knowledge item",
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
-      createdAt: Date.now(),
+      organizationId: args.organizationId,
+      createdAt: now,
     });
   },
 });
@@ -359,214 +349,26 @@ export const searchKnowledgeForAgent = query({
     question: v.string(),
   },
   handler: async (ctx, args) => {
-    const rawQuestion = args.question.trim();
-    const question = rawQuestion.toLowerCase();
+    const question = optionalText(args.question, "Question", LIMITS.question);
 
     if (!question) {
       return [];
     }
 
-    const stopWords = new Set([
-      "a",
-      "an",
-      "and",
-      "are",
-      "as",
-      "at",
-      "be",
-      "by",
-      "can",
-      "do",
-      "does",
-      "for",
-      "from",
-      "get",
-      "how",
-      "i",
-      "in",
-      "is",
-      "it",
-      "of",
-      "on",
-      "or",
-      "our",
-      "the",
-      "to",
-      "we",
-      "what",
-      "when",
-      "where",
-      "who",
-      "why",
-      "with",
-    ]);
-
-    const synonymMap: Record<string, string[]> = {
-      refund: ["refund", "return", "reimburse", "reimbursement", "money", "back"],
-      return: ["return", "refund", "money", "back"],
-      money: ["money", "refund", "reimburse", "back"],
-      cancel: ["cancel", "cancellation", "stop"],
-      order: ["order", "purchase", "transaction"],
-      customer: ["customer", "client", "user"],
-      email: ["email", "message", "mail"],
-      support: ["support", "help", "service"],
-      policy: ["policy", "rule", "rules", "guideline"],
-    };
-
-    function tokenize(value: string) {
-      return value
-        .toLowerCase()
-        .split(/[^a-z0-9]+/i)
-        .map((term) => term.trim())
-        .filter((term) => term.length >= 2 && !stopWords.has(term));
-    }
-
-    function getPhrases(tokens: string[]) {
-      const phrases: string[] = [];
-
-      for (let index = 0; index < tokens.length - 1; index += 1) {
-        phrases.push(`${tokens[index]} ${tokens[index + 1]}`);
-      }
-
-      for (let index = 0; index < tokens.length - 2; index += 1) {
-        phrases.push(`${tokens[index]} ${tokens[index + 1]} ${tokens[index + 2]}`);
-      }
-
-      return phrases;
-    }
-
-    const baseTerms = Array.from(new Set(tokenize(question)));
-
-    const expandedTerms = Array.from(
-      new Set(
-        baseTerms.flatMap((term) => {
-          return synonymMap[term] ?? [term];
-        })
-      )
-    );
-
-    const phrases = getPhrases(baseTerms);
-
     const knowledgeItems = await ctx.db.query("knowledge").collect();
+    const matchesOrg = inOrg(args.organizationId);
 
-    const allowedItems = knowledgeItems.filter((item) => {
-      const allowedAgentIds = item.allowedAgentIds ?? [];
-
-      return (
-        (item.organizationId === args.organizationId ||
-          item.organizationId === undefined) &&
+    const allowedItems = knowledgeItems.filter(
+      (item) =>
+        matchesOrg(item) &&
         item.status === "verified" &&
         item.canUseToAnswer === true &&
-        allowedAgentIds.some(
+        (item.allowedAgentIds ?? []).some(
           (agentId) => agentId.toString() === args.agentId.toString()
         )
-      );
-    });
+    );
 
-    const scoredItems = allowedItems
-      .map((item) => {
-        const title = item.title.toLowerCase();
-        const category = item.category.toLowerCase();
-        const content = item.content.toLowerCase();
-
-        let score = 0;
-
-        const matchedFields = new Set<string>();
-        const matchedTerms = new Set<string>();
-
-        if (title.includes(question)) {
-          score += 18;
-          matchedFields.add("title");
-        }
-
-        if (category.includes(question)) {
-          score += 10;
-          matchedFields.add("category");
-        }
-
-        if (content.includes(question)) {
-          score += 7;
-          matchedFields.add("content");
-        }
-
-        for (const phrase of phrases) {
-          if (title.includes(phrase)) {
-            score += 9;
-            matchedFields.add("title");
-          }
-
-          if (category.includes(phrase)) {
-            score += 5;
-            matchedFields.add("category");
-          }
-
-          if (content.includes(phrase)) {
-            score += 3;
-            matchedFields.add("content");
-          }
-        }
-
-        for (const term of expandedTerms) {
-          if (title.includes(term)) {
-            score += 5;
-            matchedFields.add("title");
-            matchedTerms.add(term);
-          }
-
-          if (category.includes(term)) {
-            score += 3;
-            matchedFields.add("category");
-            matchedTerms.add(term);
-          }
-
-          if (content.includes(term)) {
-            score += 1;
-            matchedFields.add("content");
-            matchedTerms.add(term);
-          }
-        }
-
-        const matchedBaseTerms = baseTerms.filter((term) => {
-          const relatedTerms = synonymMap[term] ?? [term];
-
-          return relatedTerms.some(
-            (relatedTerm) =>
-              title.includes(relatedTerm) ||
-              category.includes(relatedTerm) ||
-              content.includes(relatedTerm)
-          );
-        });
-
-        const coverage =
-          baseTerms.length > 0 ? matchedBaseTerms.length / baseTerms.length : 0;
-
-        score += Math.round(coverage * 6);
-
-        if (coverage === 1 && baseTerms.length >= 2) {
-          score += 6;
-        }
-
-        const matchedFieldList = Array.from(matchedFields);
-        const matchedTermList = Array.from(matchedTerms).slice(0, 5);
-
-        return {
-          ...item,
-          score,
-          confidence:
-            score >= 16 ? "High" : score >= 8 ? "Medium" : "Low",
-          matchedFields: matchedFieldList,
-          matchedTerms: matchedTermList,
-          matchSummary:
-            matchedFieldList.length > 0
-              ? `Matched in ${matchedFieldList.join(", ")}`
-              : "No match",
-        };
-      })
-      .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
-
-    return scoredItems;
+    return rankByRelevance(allowedItems, question);
   },
 });
 
@@ -596,7 +398,7 @@ export const logRetrievalSearch = mutation({
     actorEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const question = args.question.trim();
+    const question = optionalText(args.question, "Question", LIMITS.question);
 
     if (!question) {
       return null;
@@ -626,12 +428,12 @@ export const listVersionsForKnowledge = query({
       .order("desc")
       .collect();
 
+    const matchesOrg = inOrg(args.organizationId);
+
     return versions
       .filter(
         (version) =>
-          version.knowledgeId === args.knowledgeId &&
-          (version.organizationId === args.organizationId ||
-            version.organizationId === undefined)
+          version.knowledgeId === args.knowledgeId && matchesOrg(version)
       )
       .slice(0, 20);
   },
@@ -682,11 +484,10 @@ export const restoreKnowledgeVersion = mutation({
       createdAt: now,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "updated",
       knowledgeId: version.knowledgeId,
       knowledgeTitle: version.title,
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
       organizationId,
       createdAt: now,
@@ -704,16 +505,14 @@ export const listKnowledgeDueForReview = query({
     const threshold = Date.now() - reviewAfterDays * 24 * 60 * 60 * 1000;
 
     const items = await ctx.db.query("knowledge").collect();
+    const matchesOrg = inOrg(args.organizationId);
 
     return items
       .filter((item) => {
-        const orgMatches =
-          item.organizationId === args.organizationId ||
-          item.organizationId === undefined;
+        const lastReviewed =
+          item.lastReviewedAt ?? item.createdAt ?? item._creationTime;
 
-        const lastReviewed = item.lastReviewedAt ?? item.createdAt ?? item._creationTime;
-
-        return orgMatches && lastReviewed <= threshold;
+        return matchesOrg(item) && lastReviewed <= threshold;
       })
       .sort((a, b) => {
         const aReviewed = a.lastReviewedAt ?? a.createdAt ?? a._creationTime;
@@ -758,11 +557,10 @@ export const markKnowledgeReviewed = mutation({
       updatedAt: now,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "knowledge.reviewed",
       knowledgeId: args.id,
       knowledgeTitle: item.title,
-      actorId: "demo-user",
       actorEmail: args.actorEmail,
       organizationId: args.organizationId,
       createdAt: now,

@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { inOrg } from "./tenancy";
 
 export const getDashboardMetrics = query({
   args: {
@@ -15,27 +16,13 @@ export const getDashboardMetrics = query({
     const auditLogs = await ctx.db.query("auditLogs").collect();
     const retrievalLogs = await ctx.db.query("retrievalLogs").collect();
 
-    const orgKnowledge = knowledgeItems.filter(
-      (item) =>
-        item.organizationId === args.organizationId ||
-        item.organizationId === undefined
-    );
+    const matchesOrg = inOrg(args.organizationId);
 
-    const orgAgents = agents.filter(
-      (agent) => agent.organizationId === args.organizationId
-    );
-
-    const orgMemberships = memberships.filter(
-      (membership) => membership.organizationId === args.organizationId
-    );
-
-    const orgAuditLogs = auditLogs.filter(
-      (log) => log.organizationId === args.organizationId
-    );
-
-    const orgRetrievalLogs = retrievalLogs.filter(
-      (log) => log.organizationId === args.organizationId
-    );
+    const orgKnowledge = knowledgeItems.filter(matchesOrg);
+    const orgAgents = agents.filter(matchesOrg);
+    const orgMemberships = memberships.filter(matchesOrg);
+    const orgAuditLogs = auditLogs.filter(matchesOrg);
+    const orgRetrievalLogs = retrievalLogs.filter(matchesOrg);
 
     const recentRetrievalLogs = orgRetrievalLogs
       .slice()

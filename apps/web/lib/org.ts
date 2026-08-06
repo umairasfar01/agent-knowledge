@@ -1,4 +1,6 @@
-export const WORKOS_ORG_ID = "org_01KT22HVVQY3QQWQ7QV9KBPBKJ";
+import { DEFAULT_ORG_ID as SHARED_DEFAULT_ORG_ID } from "@agent-knowledge/shared";
+
+export const WORKOS_ORG_ID = SHARED_DEFAULT_ORG_ID;
 
 export const DEFAULT_ORG_ID = WORKOS_ORG_ID;
 

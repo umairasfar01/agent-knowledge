@@ -1,6 +1,9 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdminForWorkosUser } from "./permissions";
+import { writeAuditLog } from "./audit";
+import { inOrg } from "./tenancy";
+import { LIMITS, requireText } from "./validation";
 
 export const createAgent = mutation({
   args: {
@@ -13,32 +16,38 @@ export const createAgent = mutation({
     workosUserId: v.string(),
   },
   handler: async (ctx, args) => {
-
     await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
+    const name = requireText(args.name, "Name", LIMITS.name);
+    const description = requireText(
+      args.description,
+      "Description",
+      LIMITS.description
+    );
+    const role = requireText(args.role, "Role", LIMITS.role);
 
     const now = Date.now();
 
     const agentId = await ctx.db.insert("agents", {
-      name: args.name,
-      description: args.description,
-      role: args.role,
+      name,
+      description,
+      role,
       status: args.status,
       organizationId: args.organizationId,
       createdAt: now,
       updatedAt: now,
     });
-    await ctx.db.insert("auditLogs", {
+
+    await writeAuditLog(ctx, {
       action: "agent.created",
       agentId,
-      agentName: args.name,
+      agentName: name,
       actorEmail: args.actorEmail,
-      actorId: "demo-user",
       organizationId: args.organizationId,
       createdAt: now,
     });
 
     return agentId;
-
   },
 });
 
@@ -58,11 +67,9 @@ export const listAgents = query({
     const status = args.status ?? "all";
     const role = args.role ?? "all";
 
-    return agents.filter((agent) => {
-      const matchesOrganization =
-        agent.organizationId === args.organizationId ||
-        agent.organizationId === undefined;
+    const matchesOrg = inOrg(args.organizationId);
 
+    return agents.filter((agent) => {
       const matchesSearch =
         !search ||
         agent.name.toLowerCase().includes(search) ||
@@ -72,7 +79,7 @@ export const listAgents = query({
 
       const matchesRole = role === "all" || agent.role === role;
 
-      return matchesOrganization && matchesSearch && matchesStatus && matchesRole;
+      return matchesOrg(agent) && matchesSearch && matchesStatus && matchesRole;
     });
   },
 });
@@ -90,23 +97,32 @@ export const updateAgent = mutation({
   },
   handler: async (ctx, args) => {
     await requireAdminForWorkosUser(ctx, args.workosUserId, args.organizationId);
+
+    const name = requireText(args.name, "Name", LIMITS.name);
+    const description = requireText(
+      args.description,
+      "Description",
+      LIMITS.description
+    );
+    const role = requireText(args.role, "Role", LIMITS.role);
+    const now = Date.now();
+
     await ctx.db.patch(args.id, {
-      name: args.name,
-      description: args.description,
-      role: args.role,
+      name,
+      description,
+      role,
       status: args.status,
-      updatedAt: Date.now(),
+      updatedAt: now,
       organizationId: args.organizationId,
     });
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "agent.updated",
       agentId: args.id,
-      agentName: args.name,
+      agentName: name,
       actorEmail: args.actorEmail,
-      actorId: "demo-user",
       organizationId: args.organizationId,
-      createdAt: Date.now(),
+      createdAt: now,
     });
   },
 });
@@ -132,14 +148,12 @@ export const deleteAgent = mutation({
 
     await ctx.db.delete(args.id);
 
-    await ctx.db.insert("auditLogs", {
+    await writeAuditLog(ctx, {
       action: "agent.deleted",
       agentId: undefined,
-      agentName: agent?.name ?? "Unknown agent",
-      actorId: "demo-user",
+      agentName: agent.name,
       actorEmail: args.actorEmail,
-      organizationId: agent?.organizationId,
-      createdAt: Date.now(),
+      organizationId: agent.organizationId,
     });
   },
 });
@@ -160,14 +174,10 @@ export const listAuditLogsForAgent = query({
   },
   handler: async (ctx, args) => {
     const logs = await ctx.db.query("auditLogs").order("desc").collect();
+    const matchesOrg = inOrg(args.organizationId);
 
     return logs
-      .filter(
-        (log) =>
-          log.agentId === args.agentId &&
-          (log.organizationId === args.organizationId ||
-            log.organizationId === undefined)
-      )
+      .filter((log) => log.agentId === args.agentId && matchesOrg(log))
       .slice(0, 10);
   },
 });
@@ -179,8 +189,6 @@ export const listAuditLogs = query({
   handler: async (ctx, args) => {
     const logs = await ctx.db.query("auditLogs").order("desc").collect();
 
-    return logs
-      .filter((log) => log.organizationId === args.organizationId)
-      .slice(0, 50);
+    return logs.filter(inOrg(args.organizationId)).slice(0, 50);
   },
 });

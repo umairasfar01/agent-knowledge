@@ -2,75 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { NAV_COMMANDS } from "@/lib/nav";
 
-const commands = [
-  {
-    group: "Workspace",
-    label: "Dashboard",
-    description: "View workspace metrics and activity",
-    href: "/dashboard",
-  },
-  {
-    group: "Workspace",
-    label: "Search",
-    description: "Search across knowledge, agents, logs, and retrievals",
-    href: "/search",
-  },
-  {
-    group: "Workspace",
-    label: "Ask",
-    description: "Ask an agent using verified knowledge",
-    href: "/ask",
-  },
-  {
-    group: "Workspace",
-    label: "Retrieval History",
-    description: "Review previous agent retrievals",
-    href: "/retrieval-history",
-  },
-  {
-    group: "Knowledge",
-    label: "Knowledge Base",
-    description: "Create, import, edit, and export knowledge",
-    href: "/knowledge",
-  },
-  {
-    group: "Knowledge",
-    label: "Agents",
-    description: "Manage agents and their roles",
-    href: "/agents",
-  },
-  {
-    group: "Governance",
-    label: "Approvals",
-    description: "Approve or reject draft knowledge",
-    href: "/approvals",
-  },
-  {
-    group: "Governance",
-    label: "Reviews",
-    description: "Review stale knowledge",
-    href: "/reviews",
-  },
-  {
-    group: "Governance",
-    label: "Audit Logs",
-    description: "Track workspace activity",
-    href: "/audit",
-  },
-  {
-    group: "Admin",
-    label: "Members",
-    description: "Invite and manage team members",
-    href: "/members",
-  },
-  {
-    group: "Admin",
-    label: "Settings",
-    description: "Manage organization defaults",
-    href: "/settings",
-  },
-];
+const commands = NAV_COMMANDS;
 
 export function CommandPalette() {
   const router = useRouter();

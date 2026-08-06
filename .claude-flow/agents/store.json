@@ -1,0 +1,109 @@
+{
+  "agents": {
+    "queen-coordinator": {
+      "agentId": "queen-coordinator",
+      "agentType": "hierarchical-coordinator",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:40.834Z",
+      "domain": "coordination",
+      "model": "sonnet",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "architect": {
+      "agentId": "architect",
+      "agentType": "system-architect",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:43.998Z",
+      "domain": "architecture",
+      "model": "opus",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "convex-backend-dev": {
+      "agentId": "convex-backend-dev",
+      "agentType": "backend-dev",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:45.984Z",
+      "domain": "backend",
+      "model": "sonnet",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "frontend-dev": {
+      "agentId": "frontend-dev",
+      "agentType": "coder",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:46.685Z",
+      "domain": "frontend",
+      "model": "opus",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "security-lead": {
+      "agentId": "security-lead",
+      "agentType": "security-architect",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:49.164Z",
+      "domain": "security",
+      "model": "opus",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "tester": {
+      "agentId": "tester",
+      "agentType": "tester",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:50.845Z",
+      "domain": "quality",
+      "model": "sonnet",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "code-reviewer": {
+      "agentId": "code-reviewer",
+      "agentType": "reviewer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:53.176Z",
+      "domain": "quality",
+      "model": "opus",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    },
+    "devops": {
+      "agentId": "devops",
+      "agentType": "cicd-engineer",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {},
+      "createdAt": "2026-08-05T11:03:54.198Z",
+      "domain": "infrastructure",
+      "model": "opus",
+      "modelRoutedBy": "router",
+      "provider": "anthropic"
+    }
+  },
+  "version": "3.0.0"
+}

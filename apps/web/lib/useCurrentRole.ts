@@ -4,8 +4,9 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { getCurrentOrgId } from "@/lib/org";
+import type { CurrentRole } from "@agent-knowledge/shared";
 
-export type CurrentRole = "loading" | "owner" | "admin" | "member";
+export type { CurrentRole };
 
 export function useCurrentRole(): CurrentRole {
   const auth = useAuth({ ensureSignedIn: true });

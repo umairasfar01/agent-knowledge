@@ -109,13 +109,17 @@ ${sourceText}
   } catch (error) {
     console.error("Gemini answer route error:", error);
 
+    // Rate limiting is the one failure the caller can act on, so it keeps a
+    // distinct status; everything else stays generic to avoid leaking internals.
+    if (error instanceof Error && error.message.includes("Rate limit exceeded")) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate AI answer.",
-      },
+      { error: "Failed to generate AI answer." },
       { status: 500 }
     );
   }

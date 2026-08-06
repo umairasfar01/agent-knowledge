@@ -184,6 +184,7 @@ export default function HomePage() {
               >
                 <Link href="/login" prefetch={false}>
                   Get started
+                  <ArrowRight aria-hidden="true" />
                 </Link>
               </Button>
               <Button
@@ -442,7 +443,11 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-neutral-500">
-            <Link href="/dashboard" className="transition hover:text-white">
+            <Link
+              href="/dashboard"
+              prefetch={false}
+              className="transition hover:text-white"
+            >
               Dashboard
             </Link>
             <Link href="#features" className="transition hover:text-white">

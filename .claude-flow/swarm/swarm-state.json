@@ -1,0 +1,32 @@
+{
+  "swarms": {
+    "swarm-1785927808078-ltaqnm": {
+      "swarmId": "swarm-1785927808078-ltaqnm",
+      "topology": "hierarchical",
+      "maxAgents": 8,
+      "status": "running",
+      "agents": [
+        "queen-coordinator",
+        "architect",
+        "convex-backend-dev",
+        "frontend-dev",
+        "security-lead",
+        "tester",
+        "code-reviewer",
+        "devops"
+      ],
+      "tasks": [],
+      "config": {
+        "topology": "hierarchical",
+        "maxAgents": 8,
+        "strategy": "specialized",
+        "communicationProtocol": "message-bus",
+        "autoScaling": true,
+        "consensusMechanism": "majority"
+      },
+      "createdAt": "2026-08-05T11:03:28.078Z",
+      "updatedAt": "2026-08-05T11:03:28.078Z"
+    }
+  },
+  "version": "3.0.0"
+}
