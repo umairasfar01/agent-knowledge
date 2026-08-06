@@ -44,7 +44,7 @@ export const updateOrganizationSettings = mutation({
     defaultCanUseToAct: v.boolean(),
   },
   handler: async (ctx, args) => {
-    await requireAdminForIdentity(ctx, args.organizationId, args.workosUserId);
+    await requireAdminForIdentity(ctx, args.organizationId);
 
     const now = Date.now();
 
